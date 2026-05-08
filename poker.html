@@ -3717,7 +3717,6 @@
       tableWrap.style.transition = "none";
       heroCard.style.transition = "none";
       tableWrap.style.filter = "none";
-      tableWrap.style.opacity = "1";
       heroCard.style.transform = "translate3d(0, -120px, 0)";
 
       const existingLayer = document.querySelector(".landing-intro-blur-layer");
@@ -3738,16 +3737,13 @@
       void tableWrap.offsetHeight;
 
       window.requestAnimationFrame(() => {
-        tableWrap.style.transition = "opacity 5000ms ease";
         heroCard.style.transition = "transform 5000ms cubic-bezier(0.22, 1, 0.36, 1), opacity 5000ms ease";
         blurLayer.style.transition = "opacity 5000ms ease";
         blurLayer.style.opacity = "1";
-        tableWrap.style.opacity = "0";
         heroCard.style.transform = "translate3d(0, 0, 0)";
         heroCard.style.opacity = "1";
       });
       window.setTimeout(() => {
-        tableWrap.style.opacity = "";
         tableWrap.style.filter = "blur(6px)";
         if (blurLayer.parentElement) {
           blurLayer.parentElement.removeChild(blurLayer);
