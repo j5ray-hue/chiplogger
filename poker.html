@@ -3255,6 +3255,19 @@
     let editingSessionIndex = null;
     let lastViewBeforeAddSession = "homeView";
     let sessionDetailReturnViewId = "analyticsView";
+    const VIEW_ROUTE_MAP = {
+      homeView: "/home",
+      profileView: "/profile",
+      settingsView: "/settings",
+      addSessionView: "/add-session",
+      addHandView: "/add-hand",
+      historyView: "/history",
+      handHistoryView: "/hand-history",
+      bankrollView: "/bankroll",
+      analyticsView: "/analytics",
+      sessionDetailView: "/session-detail",
+      stakeDetailView: "/stake-detail"
+    };
     const supabaseProjectUrl = "https://gaobxnzfiogklkoueldd.supabase.co";
     const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdhb2J4bnpmaW9na2xrb3VlbGRkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgyMDYyMjQsImV4cCI6MjA5Mzc4MjIyNH0.HTQ5EbjZqTzQpeIblHEPaCNgzVzoZ3_-PYK0iKZY0A0";
     const supabaseClient = window.supabase && window.supabase.createClient
@@ -3264,6 +3277,34 @@
     function closeProfileMenu() {
       profileMenu.classList.remove("open");
       avatarBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function normalizePathname(pathname) {
+      if (!pathname) return "/";
+      const clean = pathname.split("?")[0].split("#")[0];
+      if (clean.length > 1 && clean.endsWith("/")) return clean.slice(0, -1);
+      return clean;
+    }
+
+    function getRouteForView(viewId) {
+      return VIEW_ROUTE_MAP[viewId] || "/home";
+    }
+
+    function getViewForRoute(pathname) {
+      const normalized = normalizePathname(pathname);
+      const entry = Object.entries(VIEW_ROUTE_MAP).find(([, route]) => route === normalized);
+      return entry ? entry[0] : null;
+    }
+
+    function syncRoute(path, replace = false) {
+      const target = normalizePathname(path);
+      const current = normalizePathname(window.location.pathname);
+      if (target === current) return;
+      if (replace) {
+        window.history.replaceState({}, "", target);
+      } else {
+        window.history.pushState({}, "", target);
+      }
     }
 
     function setTopBarMode(mode) {
@@ -3289,7 +3330,7 @@
       }
     }
 
-    function showLanding() {
+    function showLanding(options = {}) {
       landingScreen.classList.remove("hidden");
       appStage.classList.add("hidden");
       authScreen.classList.add("hidden");
@@ -3300,6 +3341,9 @@
       setTopBarMode("landing");
       updateLandingScrollUI();
       refreshLandingChrome();
+      if (options.syncRoute !== false) {
+        syncRoute("/", Boolean(options.replaceRoute));
+      }
     }
 
     function pad(value) {
@@ -3559,7 +3603,7 @@
       customStakeWrap.classList.toggle("hidden", stakeType.value !== "custom");
     }
 
-    function showView(viewId) {
+    function showView(viewId, options = {}) {
       const prevActive = document.querySelector("#homeScreen .view.active");
       if (viewId === "addSessionView" && prevActive && prevActive.id !== "addSessionView") {
         if (prevActive.id !== "addHandView") {
@@ -3611,9 +3655,12 @@
       if (viewId === "handHistoryView") {
         renderHandHistory();
       }
+      if (options.syncRoute !== false) {
+        syncRoute(getRouteForView(viewId), Boolean(options.replaceRoute));
+      }
     }
 
-    function showAuthScreen(name) {
+    function showAuthScreen(name, options = {}) {
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
       document.body.scrollTop = 0;
@@ -3628,6 +3675,10 @@
       sidebarToggleBtn.setAttribute("aria-expanded", "false");
       closeProfileMenu();
       setTopBarMode("auth");
+      if (options.syncRoute !== false) {
+        const authRoute = name === "create" ? "/auth/create" : name === "code" ? "/auth/code" : "/auth/login";
+        syncRoute(authRoute, Boolean(options.replaceRoute));
+      }
     }
 
     function playLandingIntroAnimation() {
@@ -3871,7 +3922,7 @@
       return inserted.change_id;
     }
 
-    async function enterApp(user = null) {
+    async function enterApp(user = null, options = {}) {
       if (user) currentUserId = user.id;
       if (user?.email) profileEmailInput.value = user.email;
       isSignedIn = true;
@@ -3886,7 +3937,9 @@
       sidebarToggleBtn.setAttribute("aria-expanded", "false");
       closeProfileMenu();
       setTopBarMode("app");
-      showView("homeView");
+      const requestedView = getViewForRoute(window.location.pathname);
+      const initialView = requestedView || "homeView";
+      showView(initialView, { syncRoute: options.syncRoute !== false, replaceRoute: Boolean(options.replaceRoute) });
       await loadDataFromSupabase();
       renderAll();
     }
@@ -7484,6 +7537,28 @@
       refreshLandingChrome();
     });
 
+    function applyRouteForCurrentAuthState() {
+      const path = normalizePathname(window.location.pathname);
+      if (isSignedIn) {
+        const targetView = getViewForRoute(path) || "homeView";
+        showView(targetView, { syncRoute: false });
+        return;
+      }
+      if (path === "/auth/create") {
+        showAuthScreen("create", { syncRoute: false });
+        return;
+      }
+      if (path === "/auth/code") {
+        showAuthScreen("code", { syncRoute: false });
+        return;
+      }
+      if (path === "/auth/login") {
+        showAuthScreen("login", { syncRoute: false });
+        return;
+      }
+      showLanding({ syncRoute: false });
+    }
+
     document.querySelectorAll(".sidebar-chip-logo").forEach((img) => {
       const fb = img.nextElementSibling;
       const markLoaded = () => {
@@ -7510,9 +7585,15 @@
         const user = data.session.user;
         currentUserId = user.id;
         await ensureProfileForUser(user);
-        await enterApp(user);
+        await enterApp(user, { replaceRoute: true });
+      } else {
+        applyRouteForCurrentAuthState();
       }
     }
+
+    window.addEventListener("popstate", () => {
+      applyRouteForCurrentAuthState();
+    });
 
     initializeAddSessionForm();
     initializeManualBankrollDateInput();
@@ -7521,7 +7602,7 @@
     showSettingsPanel("generalPanel");
     recomputeBankroll();
     renderAll();
-    showLanding();
+    showLanding({ syncRoute: false });
     applyTheme();
     updateLandingNavActiveState();
     refreshLandingChrome();
@@ -7530,5 +7611,3 @@
   </script>
 </body>
 </html>
-<!-- deploy test -->
-
