@@ -705,6 +705,16 @@
       background: #374151;
     }
 
+    .landing-intro-blur-layer {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0;
+      filter: blur(6px);
+      transform-origin: center center;
+      will-change: opacity;
+    }
+
     .landing-placeholder {
       width: min(980px, 100%);
       min-height: 120vh;
@@ -3689,7 +3699,7 @@
       const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       // Promote animated layers to reduce paint jank.
-      tableWrap.style.willChange = "filter, transform";
+      tableWrap.style.willChange = "opacity, transform";
       tableWrap.style.transform = "translateZ(0)";
       heroCard.style.willChange = "transform, opacity";
       heroCard.style.transform = "translate3d(0, -120px, 0)";
@@ -3706,21 +3716,42 @@
       // Start state: table/cards sharp, CTA off-screen top.
       tableWrap.style.transition = "none";
       heroCard.style.transition = "none";
-      tableWrap.style.filter = "blur(0px)";
+      tableWrap.style.filter = "none";
+      tableWrap.style.opacity = "1";
       heroCard.style.transform = "translate3d(0, -120px, 0)";
+
+      const existingLayer = document.querySelector(".landing-intro-blur-layer");
+      if (existingLayer && existingLayer.parentElement) {
+        existingLayer.parentElement.removeChild(existingLayer);
+      }
+      const tableRect = tableWrap.getBoundingClientRect();
+      const blurLayer = tableWrap.cloneNode(true);
+      blurLayer.classList.add("landing-intro-blur-layer");
+      blurLayer.style.left = `${tableRect.left}px`;
+      blurLayer.style.top = `${tableRect.top}px`;
+      blurLayer.style.width = `${tableRect.width}px`;
+      blurLayer.style.height = `${tableRect.height}px`;
+      blurLayer.style.opacity = "0";
+      document.body.appendChild(blurLayer);
 
       // Force start styles to apply before animating to final state.
       void tableWrap.offsetHeight;
 
       window.requestAnimationFrame(() => {
-        tableWrap.style.transition = "filter 5000ms ease";
+        tableWrap.style.transition = "opacity 5000ms ease";
         heroCard.style.transition = "transform 5000ms cubic-bezier(0.22, 1, 0.36, 1), opacity 5000ms ease";
-        // Smaller blur radius greatly improves smoothness on large layers.
-        tableWrap.style.filter = "blur(6px)";
+        blurLayer.style.transition = "opacity 5000ms ease";
+        blurLayer.style.opacity = "1";
+        tableWrap.style.opacity = "0";
         heroCard.style.transform = "translate3d(0, 0, 0)";
         heroCard.style.opacity = "1";
       });
       window.setTimeout(() => {
+        tableWrap.style.opacity = "";
+        tableWrap.style.filter = "blur(6px)";
+        if (blurLayer.parentElement) {
+          blurLayer.parentElement.removeChild(blurLayer);
+        }
         tableWrap.style.willChange = "auto";
         heroCard.style.willChange = "auto";
       }, 5200);
