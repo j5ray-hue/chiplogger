@@ -1,0 +1,10 @@
+{
+  "name": "chiplogger-site",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Static site with Netlify Functions",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.2",
+    "stripe": "^18.2.1"
+  }
+}
