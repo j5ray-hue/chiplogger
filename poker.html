@@ -3686,13 +3686,28 @@
       const tableWrap = document.querySelector("#landingScreen .landing-table-bg-fixed .landing-hero-table-wrap");
       const heroCard = document.querySelector("#landingHeroSection .landing-hero-cta");
       if (!tableWrap || !heroCard) return;
+      const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Promote animated layers to reduce paint jank.
+      tableWrap.style.willChange = "filter, transform";
+      tableWrap.style.transform = "translateZ(0)";
+      heroCard.style.willChange = "transform, opacity";
+      heroCard.style.transform = "translate3d(0, -120px, 0)";
+      heroCard.style.opacity = "0";
+      if (prefersReducedMotion) {
+        tableWrap.style.filter = "blur(6px)";
+        heroCard.style.transform = "translate3d(0, 0, 0)";
+        heroCard.style.opacity = "1";
+        tableWrap.style.willChange = "auto";
+        heroCard.style.willChange = "auto";
+        return;
+      }
 
       // Start state: table/cards sharp, CTA off-screen top.
       tableWrap.style.transition = "none";
       heroCard.style.transition = "none";
       tableWrap.style.filter = "blur(0px)";
-      heroCard.style.transform = "translateY(-120px)";
-      heroCard.style.opacity = "0";
+      heroCard.style.transform = "translate3d(0, -120px, 0)";
 
       // Force start styles to apply before animating to final state.
       void tableWrap.offsetHeight;
@@ -3700,10 +3715,15 @@
       window.requestAnimationFrame(() => {
         tableWrap.style.transition = "filter 5000ms ease";
         heroCard.style.transition = "transform 5000ms cubic-bezier(0.22, 1, 0.36, 1), opacity 5000ms ease";
-        tableWrap.style.filter = "blur(10px)";
-        heroCard.style.transform = "translateY(0)";
+        // Smaller blur radius greatly improves smoothness on large layers.
+        tableWrap.style.filter = "blur(6px)";
+        heroCard.style.transform = "translate3d(0, 0, 0)";
         heroCard.style.opacity = "1";
       });
+      window.setTimeout(() => {
+        tableWrap.style.willChange = "auto";
+        heroCard.style.willChange = "auto";
+      }, 5200);
     }
 
     function toDbSession(session) {
