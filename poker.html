@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-chip-logger-folder-ui="autosave-v4">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Poker Tracker Prototype</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Chip Logger Prototype</title>
   <style>
     :root {
       --bg: #0b1020;
@@ -591,6 +594,7 @@
       height: 100vh;
       margin-top: 0;
       overflow: hidden;
+      background: #0b1020;
     }
 
     .landing-screen.hidden {
@@ -607,25 +611,44 @@
       overflow: hidden;
     }
 
+    .landing-features-bg-fixed {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .landing-features-bg-panel {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      background: #ffffff;
+      transform: translate3d(0, 120vh, 0);
+      will-change: transform;
+    }
+
     .landing-scroll {
       position: relative;
       z-index: 1;
       height: 100vh;
       min-height: 100vh;
       overflow-y: auto;
-      scroll-snap-type: y mandatory;
+      scroll-snap-type: none;
       scroll-behavior: smooth;
       overscroll-behavior: contain;
       scrollbar-width: thin;
       scrollbar-color: #4b5563 #111827;
+      background: transparent;
     }
 
     .landing-section {
       scroll-snap-align: start;
-      min-height: calc(100vh - 64px);
+      min-height: 100vh;
       padding: 22px 22px 22px 242px;
       display: grid;
       place-items: center;
+      background: transparent;
     }
 
     .landing-section--hero {
@@ -638,8 +661,23 @@
       background: transparent;
     }
 
+    .landing-section--features {
+      min-height: 320vh;
+      padding-top: clamp(560px, 78vh, 920px);
+      padding-bottom: clamp(220px, 28vh, 420px);
+      align-items: start;
+      background: transparent;
+    }
+
+    .landing-section--plans {
+      min-height: 120vh;
+      padding-top: clamp(70px, 10vh, 120px);
+      align-items: start;
+      background: transparent;
+    }
+
     .landing-hero-table-wrap {
-      transform: scale(1.28);
+      transform: translate3d(0, 0, 0) scale(1.16);
       filter: blur(10px);
       opacity: 0.92;
       pointer-events: none;
@@ -654,14 +692,17 @@
     .landing-hero-cta {
       position: relative;
       z-index: 1;
-      width: min(380px, 92vw);
-      padding: 28px 26px;
-      border-radius: 16px;
-      border: 1px solid #374151;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
-      text-align: center;
+      width: min(980px, 92vw);
+      padding: 0;
+      border: none;
+      background: transparent;
+      backdrop-filter: none;
+      box-shadow: none;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-left: clamp(18px, 7vw, 120px);
     }
 
     .landing-hero-cta h2 {
@@ -670,6 +711,32 @@
       font-weight: 800;
       letter-spacing: 0.03em;
       color: #f8fafc;
+    }
+
+    .landing-hero-cta h2.landing-intro-title {
+      margin: 0;
+      font-size: clamp(3.6rem, 9vw, 7.4rem);
+      line-height: 0.92;
+      letter-spacing: 0.01em;
+      font-weight: 900;
+      color: #f8fafc;
+      text-transform: none;
+      text-shadow: 0 6px 26px rgba(0, 0, 0, 0.55);
+      width: min(50vw, 920px);
+      max-width: min(50vw, 920px);
+      white-space: nowrap;
+    }
+
+    .landing-intro-points {
+      margin: clamp(120px, 16vh, 220px) 0 0;
+      padding-left: 1.25rem;
+      text-align: left;
+      color: #cbd5e1;
+      display: grid;
+      gap: 8px;
+      font-size: 0.98rem;
+      line-height: 1.4;
+      font-weight: 600;
     }
 
     .landing-hero-slogan {
@@ -722,6 +789,15 @@
       padding: 18px;
     }
 
+    .landing-features-wrap {
+      width: min(1120px, 92vw);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      color: #111111;
+    }
+
     .landing-section-title {
       margin: 0 0 12px;
       font-size: 1.25rem;
@@ -729,26 +805,30 @@
 
     .landing-features-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      grid-template-columns: minmax(0, 1fr);
+      gap: clamp(120px, 24vh, 260px);
     }
 
     .feature-card {
-      border: 1px solid #374151;
-      border-radius: 12px;
-      background: #111827;
-      padding: 12px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      padding: 0;
+      min-height: 220px;
+      width: min(780px, 92vw);
+      color: #111111;
     }
 
     .feature-card h4 {
       margin: 0 0 8px;
       font-size: 1rem;
+      color: #111111;
     }
 
     .feature-card ul {
       margin: 0;
       padding-left: 18px;
-      color: #d1d5db;
+      color: #111111;
       line-height: 1.45;
     }
 
@@ -786,11 +866,12 @@
       z-index: 35;
       display: flex;
       flex-direction: column;
-      width: 220px;
+      width: 130px;
       padding: 0;
-      border-right: 1px solid #374151;
-      background: rgba(15, 23, 42, 0.95);
-      backdrop-filter: blur(4px);
+      border-right: none;
+      background: transparent;
+      backdrop-filter: none;
+      mix-blend-mode: difference;
       transition: opacity 0.28s ease, transform 0.28s ease;
     }
 
@@ -808,16 +889,10 @@
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: 10px 10px;
+      padding: 14px 14px;
       display: grid;
       gap: 2px;
       align-content: start;
-    }
-
-    .landing-nav-footer {
-      flex-shrink: 0;
-      padding: 12px 10px;
-      border-top: 1px solid #374151;
     }
 
     .landing-nav-links button {
@@ -827,22 +902,30 @@
       border-radius: 8px;
       border: none;
       background: transparent;
-      color: #cbd5e1;
+      color: #ffffff;
       font-size: 0.88rem;
       line-height: 1.2;
-      text-align: left;
-      font-weight: 500;
+      text-align: right;
+      font-weight: 600;
+      letter-spacing: 0.01em;
     }
 
     .landing-nav-links button:hover {
-      background: #1f2937;
-      color: #f8fafc;
+      background: transparent;
+      color: #ffffff;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 2px;
     }
 
     .landing-nav-links button.active {
-      background: #1f2937;
-      color: #f8fafc;
-      border: 1px solid #4b5563;
+      background: transparent;
+      color: #ffffff;
+      border: none;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 2px;
     }
 
     .landing-nav.disabled .landing-nav-links button {
@@ -850,8 +933,37 @@
       cursor: default;
     }
 
-    .landing-nav-footer .sidebar-auth-btn {
-      text-align: center;
+    .landing-nav-links .sidebar-auth-btn {
+      width: 100%;
+      margin: 0;
+      padding: 10px 8px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: #ffffff;
+      font-size: 0.88rem;
+      line-height: 1.2;
+      font-weight: 600;
+      text-align: right;
+    }
+
+    .landing-nav-links .sidebar-auth-stack {
+      display: grid;
+      gap: 2px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .landing-nav-links .sidebar-auth-btn:hover {
+      color: #ffffff;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-thickness: 2px;
+    }
+
+    .landing-nav-links .sidebar-auth-btn.primary {
+      color: #ffffff;
+      font-weight: 700;
     }
 
     .table {
@@ -1018,6 +1130,79 @@
       margin-bottom: 14px;
     }
 
+    /* Title / Location / Game / Stake: shared label row + shared control row (subgrid) for alignment */
+    .add-session-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: auto auto;
+      column-gap: 14px;
+      row-gap: 8px;
+      margin-bottom: 14px;
+      align-items: start;
+    }
+
+    .add-session-meta-col {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    @supports (grid-template-rows: subgrid) {
+      .add-session-meta-grid {
+        column-gap: 16px;
+        row-gap: 8px;
+      }
+
+      .add-session-meta-col {
+        display: grid;
+        grid-template-rows: subgrid;
+        grid-row: span 2;
+        gap: 0;
+      }
+
+      .add-session-meta-col > label {
+        margin-bottom: 0;
+      }
+    }
+
+    .add-session-meta-col > label {
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      line-height: 1.25;
+    }
+
+    .add-session-meta-col > .field {
+      margin-bottom: 0;
+    }
+
+    .add-session-meta-grid .location-picker {
+      max-width: none;
+    }
+
+    /* Match native input / select height (global button padding would otherwise differ) */
+    .add-session-meta-grid .location-picker-trigger.secondary-btn {
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      margin-top: 0 !important;
+      padding: 0 12px;
+      box-sizing: border-box;
+      line-height: calc(var(--control-height) - 2px);
+    }
+
+    @media (max-width: 900px) {
+      .add-session-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .add-session-meta-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .save-message {
       margin: 8px 0 0;
       font-size: 0.9rem;
@@ -1030,13 +1215,962 @@
       margin-bottom: 14px;
     }
 
+    .history-toolbar-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      align-items: end;
+      margin-bottom: 10px;
+    }
+
+    .history-toolbar-grid > .field {
+      margin-bottom: 0;
+    }
+
+    .history-toolbar-col--search {
+      min-width: 0;
+    }
+
+    .history-toolbar-col--sort {
+      min-width: 0;
+      margin: 0;
+    }
+
+    .history-toolbar-col--sort select {
+      width: 180px;
+      min-width: 140px;
+      margin: 0;
+    }
+
+    .history-mode-toggle-btn {
+      width: 42px;
+      min-width: 42px;
+      height: var(--control-height);
+      min-height: var(--control-height);
+      margin: 0;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 42px;
+      color: #f8fafc;
+      border: 2px solid #60a5fa;
+      background: #111827;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.45);
+    }
+
+    .history-mode-toggle-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: #93c5fd;
+    }
+
+    .history-mode-toggle-btn::after {
+      content: "🗂";
+      font-size: 14px;
+      line-height: 1;
+      display: none;
+    }
+
+    .history-mode-toggle-btn:empty::after {
+      display: block;
+    }
+
+    .history-toolbar-grid .history-sort-field {
+      max-width: none;
+    }
+
+    .history-search-inline-row {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .history-search-inline-row .history-search-composite {
+      flex: 1 1 auto;
+      max-width: none;
+      min-width: 220px;
+    }
+
+    .history-search-inline-row .history-search-btn {
+      flex: 0 0 auto;
+      min-width: 74px;
+    }
+
+    .history-search-inline-row .history-toolbar-col--sort {
+      flex: 0 0 auto;
+      margin: 0;
+    }
+
+    @media (max-width: 1280px) {
+      .history-search-inline-row {
+        flex-wrap: wrap;
+      }
+
+      .history-search-inline-row .history-toolbar-col--sort {
+        width: 100%;
+      }
+
+      .history-toolbar-col--sort select {
+        width: 100%;
+        min-width: 0;
+      }
+    }
+
+    .hist-adv-location-select {
+      min-width: 0;
+    }
+
+    .location-picker {
+      position: relative;
+      width: 100%;
+      max-width: 22rem;
+    }
+
+    .location-picker-trigger {
+      width: 100%;
+      margin-top: 0 !important;
+      text-align: left;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    #sessionLocationTriggerLabel {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+    }
+
+    .location-picker-trigger .location-picker-chevron {
+      flex-shrink: 0;
+      opacity: 0.7;
+      font-size: 0.7rem;
+    }
+
+    .location-picker-panel {
+      position: absolute;
+      z-index: 40;
+      left: 0;
+      right: 0;
+      top: calc(100% + 4px);
+      max-height: 260px;
+      overflow: auto;
+      padding: 8px;
+      border-radius: 10px;
+      border: 1px solid #4b5563;
+      background: #0f172a;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    .location-picker-add-block {
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #374151;
+    }
+
+    .location-picker-add-fields {
+      margin-top: 6px;
+      gap: 8px;
+    }
+
+    .location-picker-add-fields input {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .location-picker-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .location-picker-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .location-picker-choose {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin: 0 !important;
+      padding: 8px 10px !important;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: left;
+      background: #1f2937 !important;
+      color: #e5e7eb !important;
+      border: 1px solid #4b5563 !important;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .location-picker-choose:hover {
+      background: #374151 !important;
+    }
+
+    .location-picker-delete {
+      flex-shrink: 0;
+      width: 34px;
+      height: 34px;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      border-radius: 8px;
+      background: transparent !important;
+      color: #ef4444;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .location-picker-delete:hover {
+      background: rgba(239, 68, 68, 0.15) !important;
+    }
+
+    .history-search-composite {
+      display: flex;
+      flex: 1 1 auto;
+      max-width: none;
+      min-width: 0;
+      align-items: stretch;
+      height: var(--control-height);
+      box-sizing: border-box;
+      border: 1px solid #4b5563;
+      border-radius: 10px;
+      background: #0f172a;
+      overflow: hidden;
+    }
+
+    .history-search-composite:focus-within {
+      outline: 2px solid var(--accent);
+      outline-offset: 1px;
+    }
+
+    /*
+      Global input rules use :not(...) chains with high specificity and were still
+      applying border/radius here, which made the field look like a short inner pill
+      with the chevron oddly “stuck” on the outside.
+    */
+    .history-search-composite input.history-search-input {
+      flex: 1 1 auto;
+      width: auto;
+      min-width: 0;
+      height: 100%;
+      min-height: 0;
+      max-height: none;
+      margin: 0;
+      padding-right: 8px;
+      border: none !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      appearance: none;
+      -webkit-appearance: none;
+      line-height: 1.35;
+      outline: none;
+    }
+
+    .history-search-composite input.history-search-input:focus,
+    .history-search-composite input.history-search-input:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Edge / autofill overlays can redraw a second “box”; keep flush with chrome. */
+    .history-search-composite input.history-search-input:-webkit-autofill,
+    .history-search-composite input.history-search-input:-webkit-autofill:focus {
+      transition: background-color 99999s ease-out 0s;
+      -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+      box-shadow: 0 0 0 1000px #0f172a inset !important;
+      -webkit-text-fill-color: var(--text) !important;
+      caret-color: var(--text);
+    }
+
+    .history-search-btn {
+      width: auto;
+      margin-top: 0;
+      flex: 0 0 auto;
+      align-self: stretch;
+      min-height: var(--control-height);
+      padding: 0 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .history-search-advanced-chevron {
+      width: 44px;
+      min-width: 44px;
+      margin: 0;
+      padding: 0;
+      flex-shrink: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+
+    .history-search-advanced-chevron:hover {
+      background: rgba(148, 163, 184, 0.12);
+      color: #e5e7eb;
+    }
+
+    .history-search-advanced-chevron svg {
+      display: block;
+      pointer-events: none;
+    }
+
+    .history-advanced-hover-tooltip {
+      position: fixed;
+      z-index: 10050;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: #1f2937;
+      border: 1px solid #4b5563;
+      border-radius: 6px;
+      color: #f3f4f6;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .history-title-search-hit {
+      background: rgba(250, 204, 21, 0.35);
+      color: inherit;
+      padding: 0 0.06em;
+      border-radius: 3px;
+    }
+
+    .history-advanced-dropdown {
+      --hist-adv-gap: 12px;
+      /* Tight vertical space inside a field: label → control, stacked controls (matches label margin-bottom). */
+      --hist-adv-stack-gap: 3px;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      border: 1px solid #374151;
+      border-radius: 10px;
+      background: rgba(17, 24, 39, 0.72);
+    }
+
+    .history-advanced-dropdown .hint {
+      margin: 0;
+    }
+
+    .history-advanced-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--hist-adv-gap);
+      align-items: end;
+      width: 100%;
+    }
+
+    @media (max-width: 640px) {
+      .history-advanced-filters-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .hist-adv-span-2 {
+      grid-column: span 2;
+    }
+
+    .hist-adv-span-4 {
+      grid-column: span 4;
+    }
+
+    @media (max-width: 640px) {
+      .hist-adv-span-4 {
+        grid-column: span 2;
+      }
+    }
+
+    .history-advanced-filters-grid .field {
+      margin-bottom: 0;
+      min-width: 0;
+    }
+
+    .history-advanced-filters-grid label {
+      font-size: 0.75rem;
+      margin-bottom: var(--hist-adv-stack-gap);
+    }
+
+    .history-advanced-filters-grid .field.hist-adv-align-start {
+      text-align: left;
+      justify-self: stretch;
+    }
+
+    .history-advanced-filters-grid .field.hist-adv-align-end {
+      text-align: left;
+      justify-self: stretch;
+    }
+
+    .history-advanced-filters-grid .field.hist-adv-align-end .hist-adv-minmax-inline {
+      justify-content: flex-start;
+    }
+
+    .history-advanced-filters-grid .field.hist-adv-align-start select,
+    .history-advanced-filters-grid .field.hist-adv-align-end select,
+    .history-advanced-filters-grid .field.hist-adv-align-start input:not([type="date"]),
+    .history-advanced-filters-grid .field.hist-adv-align-end input:not([type="date"]) {
+      width: 100%;
+    }
+
+    .hist-adv-input-tight {
+      width: 100%;
+      max-width: none;
+    }
+
+    .hist-adv-num {
+      width: 100% !important;
+      max-width: none;
+      min-width: 0;
+      padding-left: 8px;
+      padding-right: 8px;
+    }
+
+    .hist-adv-minmax-inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: calc(var(--hist-adv-gap) / 2);
+      align-items: center;
+    }
+
+    .hist-adv-minmax-inline .hist-adv-num {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+
+    .hist-adv-dates {
+      gap: var(--hist-adv-gap);
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .hist-adv-dates input[type="date"] {
+      flex: 1 1 0;
+      min-width: 0;
+      max-width: none;
+    }
+
+    .hist-adv-time-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--hist-adv-gap);
+      align-items: start;
+    }
+
+    @media (max-width: 640px) {
+      .hist-adv-time-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hist-adv-time-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      min-width: 0;
+      text-align: left;
+    }
+
+    .hist-adv-time-column #histAdvStartTimeWrap,
+    .hist-adv-time-column #histAdvEndTimeWrap {
+      margin-top: var(--hist-adv-stack-gap);
+    }
+
+    .hist-adv-time-column select,
+    .hist-adv-time-column input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .hist-adv-date-dur-combo {
+      display: flex;
+      flex-direction: column;
+      gap: var(--hist-adv-gap);
+      min-width: 0;
+      width: 100%;
+    }
+
+    .hist-adv-date-dur-line {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--hist-adv-gap);
+      align-items: end;
+    }
+
+    @media (max-width: 640px) {
+      .hist-adv-date-dur-line {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hist-adv-date-block {
+      justify-self: start;
+      text-align: left;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .hist-adv-dur-col {
+      justify-self: stretch;
+      text-align: left;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .hist-adv-dur-col select {
+      width: 100%;
+    }
+
+    .hist-adv-dur-extras-line {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--hist-adv-gap);
+      align-items: start;
+    }
+
+    @media (max-width: 640px) {
+      .hist-adv-dur-extras-line {
+        grid-template-columns: 1fr;
+      }
+
+      .hist-adv-dur-extras-spacer {
+        display: none;
+      }
+    }
+
+    .hist-adv-dur-extras {
+      display: flex;
+      flex-direction: column;
+      gap: var(--hist-adv-stack-gap);
+      min-width: 0;
+      width: 100%;
+      justify-self: start;
+    }
+
+    .hist-adv-dur-extras input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .hist-adv-dur-extras .hist-adv-num {
+      max-width: none;
+    }
+
+    .hist-adv-date-sep {
+      color: var(--muted);
+      font-size: 0.85rem;
+      align-self: center;
+      padding: 0 2px;
+    }
+
+    .history-advanced-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--hist-adv-gap);
+      margin-top: var(--hist-adv-gap);
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .history-advanced-actions__cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--hist-adv-gap);
+      align-items: center;
+    }
+
+    .history-advanced-actions button {
+      width: auto;
+      margin-top: 0;
+    }
+
+    .hist-adv-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    @media (max-width: 480px) {
+      .hist-adv-pair {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .history-sort-field label {
       font-size: 0.88rem;
     }
 
-    .history-list {
+    /* Session history "table" look: one translucent container with flat rows */
+    .history-table {
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(17, 24, 39, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+    }
+
+    .history-grid-wrap {
+      margin-top: 0;
+    }
+
+    .history-grid {
       display: grid;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    /* Session history grid: one grid — Add folder, folders, and sessions share the same tracks, gaps, and tile size */
+    #historyGrid {
+      --history-grid-card-h: 168px;
+      --history-grid-gap: 12px;
+      grid-auto-rows: var(--history-grid-card-h);
+      gap: var(--history-grid-gap);
+      align-items: stretch;
+    }
+
+    #historyGrid .history-grid-card {
+      box-sizing: border-box;
+      width: 100%;
+      min-width: 0;
+      margin: 0;
+      height: var(--history-grid-card-h);
+      min-height: var(--history-grid-card-h);
+      max-height: var(--history-grid-card-h);
+      overflow: hidden;
+    }
+
+    #historyGrid .history-grid-folder-card {
+      overflow: hidden;
+    }
+
+    /* Empty-state message shouldn’t sit in a fixed-height row */
+    #historyGrid:has(> .history-empty) {
+      grid-auto-rows: auto;
+    }
+
+    #historyGrid > .history-empty {
+      grid-column: 1 / -1;
+      margin: 0;
+      padding-top: 6px;
+    }
+
+    .history-grid-card {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 12px;
+      background-color: rgba(15, 23, 42, 0.5);
+      padding: 12px;
+      min-height: 132px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .history-grid-card:hover {
+      background-color: rgba(30, 41, 59, 0.6);
+    }
+
+    .history-grid-card .g-title {
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-grid-card .g-line {
+      color: #cbd5e1;
+      font-size: 0.9rem;
+      line-height: 1.25;
+    }
+
+    .history-grid-add-folder {
+      border-style: dashed;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 700;
+      color: #cbd5e1;
+      gap: 8px;
+    }
+
+    .history-grid-add-folder svg {
+      width: 26px;
+      height: 26px;
+      opacity: 0.9;
+    }
+
+    /*
+      Folder tiles: match session cards’ border box (1px transparent border = same outer size + inner inset).
+      Art lives on ::before inset 1px so uniform-scale folder aligns with neighbors’ inner rounded rect, not the raw cell.
+      #historyGrid button… beats global button / button:hover background shorthand so the graphic isn’t wiped on hover.
+    */
+    #historyGrid button.history-grid-folder-card {
+      background: transparent none;
+      border: 1px solid transparent;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+    }
+
+    #historyGrid button.history-grid-folder-card:hover {
+      background: transparent none;
+      background-color: transparent;
+      color: inherit;
+    }
+
+    .history-grid-folder-card {
+      position: relative;
+      isolation: isolate;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      background: transparent none;
+      padding: 0;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .history-grid-folder-card::before {
+      content: "";
+      position: absolute;
+      inset: 1px;
+      border-radius: 11px;
+      background-color: transparent;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='3 5 18 16' preserveAspectRatio='xMidYMid%20meet'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2322c55e' stop-opacity='0.34'/%3E%3Cstop offset='48%25' stop-color='%230f766e' stop-opacity='0.3'/%3E%3Cstop offset='100%25' stop-color='%23166534' stop-opacity='0.42'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath fill='url(%23g)' stroke='%234ade80' stroke-opacity='0.52' stroke-width='0.42' stroke-linejoin='round' d='M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      pointer-events: none;
+      z-index: 0;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.28));
+    }
+
+    .history-grid-folder-card:hover::before {
+      filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.34)) brightness(1.07) saturate(1.05);
+    }
+
+    .history-grid-folder-card:focus-visible {
+      outline: 2px solid rgba(110, 231, 183, 0.95);
+      outline-offset: 3px;
+    }
+
+    .history-grid-folder-card .g-title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      margin: 0;
+      padding: 10px 12px 12px;
+      font-size: clamp(1.05rem, 2.6vw, 1.45rem);
+      font-weight: 800;
+      line-height: 1.15;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      text-overflow: unset;
+      max-width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      max-height: 46%;
+      color: #ecfdf5;
+      text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.85),
+        0 0 12px rgba(0, 0, 0, 0.55);
+    }
+
+    .folder-builder-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: rgba(2, 6, 23, 0.65);
+      backdrop-filter: blur(2px);
+      -webkit-backdrop-filter: blur(2px);
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .folder-builder-panel {
+      width: min(1100px, 100%);
+      max-height: min(90vh, 900px);
+      overflow: auto;
+      border: 1px solid #374151;
+      border-radius: 14px;
+      background: #0b1220;
+      padding: 14px;
+    }
+
+    /*
+      Folders auto-save; older cached markup may still contain a Save control.
+      Keep this rule so a stale button cannot appear even if removal JS is skipped.
+    */
+    #folderBuilderSaveBtn,
+    #folderBuilderModal .folder-builder-footer-actions {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      height: 0 !important;
+      width: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: 0 !important;
+      overflow: hidden !important;
+      clip-path: inset(50%) !important;
+    }
+
+    .folder-builder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .folder-builder-title-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .folder-builder-title-text {
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: min(60vw, 520px);
+    }
+
+    .folder-title-edit-btn {
+      position: relative;
+      width: 30px;
+      min-width: 30px;
+      height: 30px;
+      min-height: 30px;
+      margin: 0;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .folder-title-edit-btn svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .folder-builder-title-input {
+      height: var(--control-height);
+      min-height: var(--control-height);
+      max-height: var(--control-height);
+      margin: 0;
+      min-width: min(50vw, 360px);
+    }
+
+    .folder-builder-list-wrap {
+      margin-top: 10px;
+      max-height: 46vh;
+      overflow: auto;
+    }
+
+    .folder-builder-current-wrap {
+      margin-top: 10px;
+    }
+
+    .folder-builder-current-wrap .history-empty {
+      padding: 12px 0;
+    }
+
+    .folder-builder-current-wrap .history-grid-card {
+      position: relative;
+      padding-top: 16px;
+    }
+
+    .folder-card-remove-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      margin: 0;
+      padding: 0;
+      border-radius: 999px;
+      border: 1px solid #f87171;
+      background: rgba(127, 29, 29, 0.45);
+      color: #fca5a5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      font-weight: 800;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .folder-card-remove-btn:hover {
+      background: rgba(185, 28, 28, 0.65);
+      color: #fee2e2;
+    }
+
+    .folder-select-row {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 10px 10px 14px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .folder-select-row:hover {
+      background: rgba(148, 163, 184, 0.08);
+    }
+
+    .folder-select-row:last-child {
+      border-bottom: none;
+    }
+
+    .folder-select-col-head {
+      color: #9ca3af;
+      font-weight: 700;
+      font-size: 0.85rem;
+      min-width: 34px;
+    }
+
+    .history-list {
+      display: block;
     }
 
     .history-empty {
@@ -1045,11 +2179,53 @@
       margin: 0;
     }
 
-    .history-item {
-      border: 1px solid #374151;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #111827;
+    /* Empty-state inside table shouldn't hug the bottom edge. */
+    .history-table .history-empty {
+      padding: 16px 14px 18px;
+    }
+
+    .history-table .history-item {
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      background: transparent;
+    }
+
+    .history-list-example {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      background: rgba(15, 23, 42, 0.42);
+    }
+
+    /* Keep header columns aligned with rows that have a delete button column. */
+    .history-delete-spacer,
+    .history-list-example .history-delete-spacer {
+      width: 34px;
+      height: 34px;
+      display: block;
+      flex-shrink: 0;
+    }
+
+    .history-list-example .history-summary-row:hover {
+      background: transparent;
+    }
+
+    .history-list-example .history-session-link {
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.92;
+    }
+
+    .history-list-example .history-col-date,
+    .history-list-example .history-col-location,
+    .history-list-example .history-col-duration,
+    .history-list-example .history-col-profit {
+      color: #9ca3af;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      font-variant-numeric: normal;
+      white-space: nowrap;
+      text-align: left;
     }
 
     .history-summary-row {
@@ -1060,9 +2236,18 @@
       padding: 10px 10px 10px 14px;
     }
 
+    /* The whole row is clickable via JS; show pointer everywhere, not only over the inner button. */
+    .history-session-row {
+      cursor: pointer;
+    }
+
+    .history-list-example {
+      cursor: default;
+    }
+
     .history-session-link {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 6.25rem 8rem;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 10.5rem);
       gap: 10px;
       align-items: center;
       margin: 0;
@@ -1081,15 +2266,24 @@
       background: transparent;
     }
 
+    .history-summary-row {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .history-table .history-item:last-child .history-summary-row {
+      border-bottom: none;
+    }
+
     .history-summary-row:hover {
-      background: #1f2937;
+      background: rgba(148, 163, 184, 0.08);
     }
 
     .history-col-duration,
+    .history-col-location,
     .history-col-profit {
-      text-align: right;
+      text-align: left;
       font-variant-numeric: tabular-nums;
-      white-space: nowrap;
+      white-space: normal;
     }
 
     .history-col-date {
@@ -1099,9 +2293,49 @@
       text-overflow: ellipsis;
     }
 
+    .history-col-location,
     .history-col-duration {
       color: #cbd5e1;
-      font-size: 0.9rem;
+    }
+
+    .history-col-location {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .history-col-profit {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 820px) {
+      .history-session-link {
+        grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+        grid-template-areas:
+          "title profit"
+          "location location"
+          "length length";
+        row-gap: 4px;
+      }
+
+      .history-col-date {
+        grid-area: title;
+      }
+
+      .history-col-profit {
+        grid-area: profit;
+      }
+
+      .history-col-location {
+        grid-area: location;
+        text-align: left;
+      }
+
+      .history-col-duration {
+        grid-area: length;
+        text-align: left;
+      }
     }
 
     .history-delete-btn {
@@ -1482,12 +2716,14 @@
     .add-hand-premium-inner {
       display: grid;
       gap: 6px;
-      justify-items: start;
+      justify-items: stretch;
+      width: 100%;
     }
 
     .add-hand-primary-btn {
-      width: auto;
+      width: 100%;
       margin: 0;
+      box-sizing: border-box;
     }
 
     .add-hand-page {
@@ -2282,7 +3518,7 @@
     <button type="button" id="sidebarToggleBtn" class="sidebar-peek-tab hidden" aria-label="Open navigation menu" aria-expanded="false" aria-controls="leftPanel">☰</button>
     <div class="sidebar-header">
       <div class="brand-wrap">
-        <p class="sidebar-brand-title">Poker Tracker</p>
+        <p class="sidebar-brand-title">Chip Logger</p>
         <div class="sidebar-mini-logo" aria-hidden="true">
           <img class="sidebar-chip-logo" src="poker-chip-logo.png" alt="" />
           <div class="sidebar-chip-fallback">●</div>
@@ -2303,7 +3539,7 @@
     <div class="landing-table-bg-fixed" aria-hidden="true">
       <div class="landing-hero-table-wrap table-wrap" style="width: min(980px, 100%);">
         <div class="table">
-          <h1 class="table-title">Poker Tracker</h1>
+          <h1 class="table-title">Chip Logger</h1>
           <div class="seat-stack s-seat-1">
             <div class="seat-hole-card bottom"></div>
             <div class="seat-hole-card top"></div>
@@ -2338,23 +3574,15 @@
         </div>
       </div>
     </div>
+    <div class="landing-features-bg-fixed" aria-hidden="true">
+      <div id="landingFeaturesBgPanel" class="landing-features-bg-panel"></div>
+    </div>
     <aside id="landingNav" class="landing-nav" style="display: none;">
-      <div class="sidebar-header">
-        <div class="brand-wrap">
-          <p class="sidebar-brand-title">Poker Tracker</p>
-          <div class="sidebar-mini-logo" aria-hidden="true">
-            <img class="sidebar-chip-logo" src="poker-chip-logo.png" alt="" />
-            <div class="sidebar-chip-fallback">●</div>
-          </div>
-        </div>
-      </div>
       <div class="landing-nav-links">
         <button class="landing-nav-btn" data-target="top" type="button">Home</button>
         <button class="landing-nav-btn" data-target="landingFeaturesSection" type="button">Features</button>
         <button class="landing-nav-btn" data-target="landingSubscriptionSection" type="button">Plans</button>
-      </div>
-      <div class="landing-nav-footer">
-        <div id="authTopActions" class="sidebar-auth-stack hidden">
+        <div id="authTopActions" class="sidebar-auth-stack">
           <button id="topSignInBtn" class="sidebar-auth-btn secondary-btn" type="button">Sign in</button>
           <button id="topCreateAccountBtn" class="sidebar-auth-btn primary" type="button">Join now</button>
         </div>
@@ -2363,16 +3591,15 @@
     <div id="landingScroll" class="landing-scroll">
       <section id="landingHeroSection" class="landing-section landing-section--hero">
         <div class="landing-hero-cta">
-          <h2>Poker Tracker</h2>
-          <p class="landing-hero-slogan">Tracking your poker winnings made easy.</p>
-          <div class="hero-actions">
-            <button id="heroSignInBtn" class="btn-signin secondary-btn" type="button">Sign in</button>
-            <button id="heroJoinNowBtn" class="btn-join" type="button">Join now</button>
-            <button id="heroDevQuickBtn" class="btn-signin secondary-btn" type="button">Developer</button>
-          </div>
+          <h2 class="landing-intro-title">Chip Logger</h2>
+          <ul class="landing-intro-points">
+            <li>Keep track of your bankroll</li>
+            <li>Remember important hands</li>
+            <li>Analyze your strengths and weaknesses</li>
+          </ul>
         </div>
       </section>
-      <section id="landingFeaturesSection" class="landing-section">
+      <section id="landingFeaturesSection" class="landing-section landing-section--features">
         <div class="landing-features-wrap">
           <h3 class="landing-section-title">What You Can Do</h3>
           <div class="landing-features-grid">
@@ -2403,7 +3630,7 @@
           </div>
         </div>
       </section>
-      <section id="landingSubscriptionSection" class="landing-section">
+      <section id="landingSubscriptionSection" class="landing-section landing-section--plans">
         <div class="landing-subscription-wrap">
           <h3 class="landing-section-title">Subscription Plans</h3>
           <div class="landing-plan-grid">
@@ -2434,7 +3661,7 @@
   <div id="appStage" class="app-stage hidden">
     <main id="authScreen" class="screen hidden">
       <div class="auth-wrap">
-        <h1 class="title">Poker Tracker</h1>
+        <h1 class="title">Chip Logger</h1>
         <p class="subtitle">Sign in to view sessions, hands, and analytics. This is a prototype flow for now.</p>
 
         <div class="field">
@@ -2527,7 +3754,7 @@
       <div class="landing-table-bg-fixed" aria-hidden="true">
         <div class="landing-hero-table-wrap table-wrap" style="width: min(980px, 100%);">
           <div class="table">
-            <h1 class="table-title">Poker Tracker</h1>
+            <h1 class="table-title">Chip Logger</h1>
             <div class="seat-stack s-seat-1">
               <div class="seat-hole-card bottom"></div>
               <div class="seat-hole-card top"></div>
@@ -2566,7 +3793,7 @@
       <section id="homeView" class="view active app-home-view">
         <div class="app-home-center">
           <div class="landing-hero-cta app-home-welcome-card">
-            <h2>Poker Tracker</h2>
+            <h2>Chip Logger</h2>
             <p class="landing-hero-slogan">Tracking your poker winnings made easy.</p>
             <div class="hero-actions">
               <button id="homeAddSessionBtn" type="button" class="btn-join">Add session</button>
@@ -2580,7 +3807,10 @@
 
       <section id="profileView" class="view">
         <div class="app-panel-card profile-page">
-          <h3 class="session-title">Profile</h3>
+          <div class="inline-row" style="margin-bottom: 12px; align-items: center; gap: 10px;">
+            <button type="button" id="profileBackBtn" class="secondary-btn" style="width: auto; margin: 0;">← Back</button>
+            <h3 class="session-title" style="margin: 0;">Profile</h3>
+          </div>
           <div class="field">
             <label>Name</label>
             <div class="inline-row">
@@ -2607,7 +3837,10 @@
 
       <section id="settingsView" class="view">
         <div class="settings-page">
-          <h3 class="session-title">Settings</h3>
+          <div class="inline-row" style="margin-bottom: 12px; align-items: center; gap: 10px;">
+            <button type="button" id="settingsBackBtn" class="secondary-btn" style="width: auto; margin: 0;">← Back</button>
+            <h3 class="session-title" style="margin: 0;">Settings</h3>
+          </div>
           <div class="settings-nav">
             <button class="settings-tab active" type="button" data-settings-panel="generalPanel">General</button>
             <button class="settings-tab" type="button" data-settings-panel="paymentPanel">Payment Plan</button>
@@ -2652,7 +3885,7 @@
                 Premium enabled
               </label>
             </div>
-            <p class="hint">Adds 100 sample sessions (mixed dates, stakes, NLHE and PLO) for charts and history.</p>
+            <p class="hint">Adds 100 sample sessions (dates, times, titles, locations, stakes, NLHE/PLO, profit, and random saved hands) for charts, history, and filters. This browser keeps the bundle after you add it once so reloads pick it up again (skipped if you already have sessions from the server).</p>
             <button type="button" id="devAddDataBtn" class="secondary-btn">Add data</button>
           </div>
         </div>
@@ -2662,9 +3895,45 @@
         <form id="addSessionForm" class="session-form">
         <h3 id="addSessionFormTitle" class="session-title">Add Session</h3>
 
-        <label for="sessionTitle">Session title</label>
-        <div class="field">
-          <input id="sessionTitle" type="text" maxlength="80" placeholder="e.g. Friday Bellagio 2/5" />
+        <div class="add-session-meta-grid">
+          <div class="add-session-meta-col">
+            <label for="sessionTitle">Session title</label>
+            <div class="field">
+              <input id="sessionTitle" type="text" maxlength="80" placeholder="e.g. Friday Bellagio 2/5" />
+            </div>
+          </div>
+          <div class="add-session-meta-col">
+            <label for="sessionLocationTriggerBtn">Location</label>
+            <div class="field location-picker" id="sessionLocationPickerWrap">
+              <input type="hidden" id="sessionLocationValue" value="" />
+              <button type="button" id="sessionLocationTriggerBtn" class="secondary-btn location-picker-trigger" aria-expanded="false" aria-haspopup="listbox">
+                <span id="sessionLocationTriggerLabel">Location</span>
+                <span class="location-picker-chevron" aria-hidden="true">▼</span>
+              </button>
+              <div id="sessionLocationPanel" class="location-picker-panel hidden" role="listbox" aria-label="Choose location">
+                <div class="location-picker-add-block">
+                  <button type="button" id="sessionLocationAddToggle" class="inline-btn">+ Add new location</button>
+                  <div id="sessionLocationAddFields" class="inline-row location-picker-add-fields hidden">
+                    <input id="sessionLocationNewInput" type="text" maxlength="120" placeholder="New location name" autocomplete="off" />
+                    <button type="button" id="sessionLocationSaveNewBtn" class="inline-btn">Save</button>
+                  </div>
+                </div>
+                <ul id="sessionLocationOptionsList" class="location-picker-list"></ul>
+              </div>
+            </div>
+          </div>
+          <div class="add-session-meta-col">
+            <label for="gameType">Game type</label>
+            <div class="field">
+              <select id="gameType"></select>
+            </div>
+          </div>
+          <div class="add-session-meta-col">
+            <label for="stakeType">Stake</label>
+            <div class="field">
+              <select id="stakeType"></select>
+            </div>
+          </div>
         </div>
 
         <label for="sessionDate">Date</label>
@@ -2686,16 +3955,6 @@
           <select id="endMeridiem"></select>
         </div>
 
-        <label for="gameType">Game type</label>
-        <div class="field">
-          <select id="gameType"></select>
-        </div>
-
-        <label for="stakeType">Stake</label>
-        <div class="field">
-          <select id="stakeType"></select>
-        </div>
-
         <div id="customStakeWrap" class="field">
           <label for="customStake">Custom stake (blind/blind)</label>
           <input id="customStake" type="text" placeholder="1/1" />
@@ -2714,7 +3973,6 @@
         <div id="addHandPremiumLocked" class="locked-premium add-hand-premium-block">
           <div id="addHandPremiumBlurTarget" class="blur-content add-hand-premium-inner">
             <button type="button" id="addHandBtn" class="secondary-btn add-hand-primary-btn">Add hand</button>
-            <p class="hint" style="margin: 0;">Map stacks to each seat on the table (premium).</p>
           </div>
           <div id="addHandPremiumUpgradeOverlay" class="upgrade-overlay">
             <button type="button" id="addHandUpgradeToPremiumBtn">Upgrade to premium to add hands</button>
@@ -2857,23 +4115,343 @@
       <section id="historyView" class="view">
         <div class="history-page">
           <h3 class="session-title">Session history</h3>
-          <div class="field history-sort-field">
-            <label for="historySortSelect">Sort sessions</label>
-            <select id="historySortSelect" aria-label="Sort session list">
-              <option value="date-desc" selected>Date · newest first</option>
-              <option value="date-asc">Date · oldest first</option>
-              <option value="profit-desc">Profit · high to low</option>
-              <option value="profit-asc">Profit · low to high</option>
-              <option value="duration-desc">Session length · longest first</option>
-              <option value="duration-asc">Session length · shortest first</option>
-            </select>
+          <div class="history-toolbar-grid">
+            <div class="field history-toolbar-col--search" style="margin: 0;">
+              <div class="history-search-inline-row">
+                <div class="history-search-composite">
+                  <input
+                    id="historySearchInput"
+                    class="history-search-input"
+                    type="text"
+                    placeholder="Session title"
+                    autocomplete="off"
+                    aria-label="Search sessions by title"
+                  />
+                  <button
+                    type="button"
+                    id="historyAdvancedToggleBtn"
+                    class="history-search-advanced-chevron"
+                    aria-label="Advanced search options"
+                    aria-expanded="false"
+                    aria-controls="historyAdvancedDropdown"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                </div>
+                <button type="button" id="historySearchBtn" class="history-search-btn">Search</button>
+                <button type="button" id="historyModeToggleBtn" class="history-mode-toggle-btn secondary-btn" aria-label="Switch to folders/grid view">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                </button>
+                <div class="history-toolbar-col--sort history-sort-field">
+                  <select id="historySortSelect" aria-label="Sort session list">
+                    <option value="date-desc" selected>Date · newest first</option>
+                    <option value="date-asc">Date · oldest first</option>
+                    <option value="profit-desc">Profit · high to low</option>
+                    <option value="profit-asc">Profit · low to high</option>
+                    <option value="duration-desc">Session length · longest first</option>
+                    <option value="duration-asc">Session length · shortest first</option>
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
-          <div id="historyList" class="history-list"></div>
+          <div id="historyAdvancedHoverTooltip" class="history-advanced-hover-tooltip hidden" role="tooltip" aria-hidden="true">Advanced</div>
+          <div id="historyModeHoverTooltip" class="history-advanced-hover-tooltip hidden" role="tooltip" aria-hidden="true">Show folders</div>
+          <div id="historyAdvancedDropdown" class="history-advanced-dropdown hidden">
+            <div class="history-advanced-filters-grid">
+              <div class="field hist-adv-align-start">
+                <label for="histAdvTitle">Title contains</label>
+                <input id="histAdvTitle" type="text" class="hist-adv-input-tight" placeholder="Text…" autocomplete="off" />
+              </div>
+              <div class="field hist-adv-align-start">
+                <label for="historyToolbarLocation">Location</label>
+                <select id="historyToolbarLocation" class="hist-adv-location-select" aria-label="Filter by location">
+                  <option value="">Any location</option>
+                </select>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label for="histAdvGameType">Game</label>
+                <select id="histAdvGameType" aria-label="Filter by game type">
+                  <option value="">Any</option>
+                </select>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label for="histAdvStake">Stake</label>
+                <select id="histAdvStake" aria-label="Filter by stake">
+                  <option value="">Any</option>
+                </select>
+              </div>
+              <div class="field hist-adv-span-4 hist-adv-date-dur-combo">
+                <div class="hist-adv-date-dur-line">
+                  <div class="hist-adv-date-block">
+                    <label for="histAdvDateFrom">Session date (inclusive)</label>
+                    <div class="inline-row hist-adv-dates">
+                      <input id="histAdvDateFrom" type="date" aria-label="From date" />
+                      <span class="hist-adv-date-sep" aria-hidden="true">–</span>
+                      <input id="histAdvDateTo" type="date" aria-label="To date" />
+                    </div>
+                  </div>
+                  <div class="hist-adv-dur-col">
+                    <label for="histAdvDurMode">Session length</label>
+                    <select id="histAdvDurMode" aria-label="Compare session length in minutes">
+                      <option value="">No filter</option>
+                      <option value="longer">Longer than</option>
+                      <option value="shorter">Shorter than</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="histAdvDurExtrasLine" class="hist-adv-dur-extras-line hidden">
+                  <span class="hist-adv-dur-extras-spacer" aria-hidden="true"></span>
+                  <div class="hist-adv-dur-extras">
+                    <input id="histAdvDurValue" type="number" step="1" min="0" class="hist-adv-num" placeholder="Minutes" autocomplete="off" aria-label="Session length minutes" />
+                    <input id="histAdvDurationText" type="text" placeholder="e.g. 2h 30m" autocomplete="off" aria-label="Filter by duration label text" />
+                  </div>
+                </div>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label>Profit ($)</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="histAdvProfitMin" type="number" step="0.01" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="histAdvProfitMax" type="number" step="0.01" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label>Buy-in ($)</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="histAdvBuyInMin" type="number" step="0.01" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="histAdvBuyInMax" type="number" step="0.01" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-align-end">
+                <label>Cash-out ($)</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="histAdvCashOutMin" type="number" step="0.01" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="histAdvCashOutMax" type="number" step="0.01" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-align-end">
+                <label>Hands</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="histAdvHandsMin" type="number" step="1" min="0" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="histAdvHandsMax" type="number" step="1" min="0" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-span-4">
+                <div class="hist-adv-time-columns">
+                  <div class="hist-adv-time-column">
+                    <label for="histAdvStartMode">Time started — before/after, enter time</label>
+                    <select id="histAdvStartMode" aria-label="Time started before or after">
+                      <option value="">Time started — no filter</option>
+                      <option value="before">Time started before</option>
+                      <option value="after">Time started after</option>
+                    </select>
+                    <div id="histAdvStartTimeWrap" class="hidden">
+                      <input id="histAdvStartTime" type="text" placeholder="7:30 PM" autocomplete="off" aria-label="Time started reference" />
+                    </div>
+                  </div>
+                  <div class="hist-adv-time-column">
+                    <label for="histAdvEndMode">Time ended — before/after, enter time</label>
+                    <select id="histAdvEndMode" aria-label="Time ended before or after">
+                      <option value="">Time ended — no filter</option>
+                      <option value="before">Time ended before</option>
+                      <option value="after">Time ended after</option>
+                    </select>
+                    <div id="histAdvEndTimeWrap" class="hidden">
+                      <input id="histAdvEndTime" type="text" placeholder="11:00 PM" autocomplete="off" aria-label="Time ended reference" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="history-advanced-actions">
+              <div class="history-advanced-actions__cluster">
+                <button type="button" id="histAdvApplyBtn">Apply filters</button>
+                <button type="button" id="histAdvClearBtn" class="secondary-btn">Clear advanced filters</button>
+              </div>
+              <button type="button" id="histAdvCancelBtn" class="secondary-btn">Cancel</button>
+            </div>
+          </div>
+          <div id="historyTableWrap" class="history-table" role="table" aria-label="Session history table">
+            <article class="history-item history-list-example" aria-hidden="true">
+              <div class="history-summary-row">
+                <div class="history-session-link">
+                  <span class="history-col-date">Title</span>
+                  <span class="history-col-location">Location</span>
+                  <span class="history-col-duration">Length of Session</span>
+                  <span class="history-col-profit">Profit</span>
+                </div>
+                <span class="history-delete-spacer" aria-hidden="true"></span>
+              </div>
+            </article>
+            <div id="historyList" class="history-list" role="rowgroup"></div>
+          </div>
+          <div id="historyGridWrap" class="history-grid-wrap hidden">
+            <div id="historyGrid" class="history-grid" aria-label="Session grid view"></div>
+          </div>
           <div class="history-add-session-wrap">
             <button id="historyAddSessionBtn" type="button" class="btn-join">Add session</button>
           </div>
         </div>
       </section>
+
+      <div id="folderBuilderModal" class="folder-builder-modal hidden" role="dialog" aria-modal="true" aria-labelledby="folderBuilderTitle">
+        <div class="folder-builder-panel">
+          <div class="folder-builder-header">
+            <div class="folder-builder-title-row">
+              <h3 id="folderBuilderTitle" class="session-title folder-builder-title-text" style="margin: 0;">Untitled Folder</h3>
+              <input id="folderBuilderTitleInput" class="folder-builder-title-input hidden" type="text" maxlength="60" aria-label="Folder title" />
+              <button type="button" id="folderBuilderTitleEditBtn" class="secondary-btn folder-title-edit-btn" aria-label="Edit title" title="Edit title">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              </button>
+            </div>
+            <button type="button" id="folderBuilderCloseBtn" class="secondary-btn" style="width:auto;margin:0;">Close</button>
+          </div>
+          <div class="history-toolbar-grid">
+            <div class="field history-toolbar-col--search" style="margin: 0;">
+              <div class="history-search-inline-row">
+                <div class="history-search-composite">
+                  <input id="folderSearchInput" class="history-search-input" type="text" placeholder="Session title" autocomplete="off" aria-label="Search sessions by title" />
+                  <button type="button" id="folderAdvancedToggleBtn" class="history-search-advanced-chevron" aria-label="Advanced folder search options" aria-expanded="false" aria-controls="folderAdvancedDropdown">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+                  </button>
+                </div>
+                <button type="button" id="folderSearchBtn" class="history-search-btn">Search</button>
+                <button type="button" id="folderAddToFolderBtn" class="history-search-btn secondary-btn">Add to folder</button>
+                <button type="button" id="folderSearchCancelBtn" class="history-search-btn secondary-btn hidden">Cancel</button>
+              </div>
+            </div>
+          </div>
+          <div id="folderAdvancedDropdown" class="history-advanced-dropdown hidden">
+            <div class="history-advanced-filters-grid">
+              <div class="field hist-adv-align-start">
+                <label for="folderAdvTitle">Title contains</label>
+                <input id="folderAdvTitle" type="text" class="hist-adv-input-tight" placeholder="Text…" autocomplete="off" />
+              </div>
+              <div class="field hist-adv-align-start">
+                <label for="folderAdvLocation">Location</label>
+                <select id="folderAdvLocation"><option value="">Any location</option></select>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label for="folderAdvGameType">Game</label>
+                <select id="folderAdvGameType"><option value="">Any</option></select>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label for="folderAdvStake">Stake</label>
+                <select id="folderAdvStake"><option value="">Any</option></select>
+              </div>
+              <div class="field hist-adv-span-4 hist-adv-date-dur-combo">
+                <div class="hist-adv-date-dur-line">
+                  <div class="hist-adv-date-block">
+                    <label for="folderAdvDateFrom">Session date (inclusive)</label>
+                    <div class="inline-row hist-adv-dates">
+                      <input id="folderAdvDateFrom" type="date" aria-label="From date" />
+                      <span class="hist-adv-date-sep" aria-hidden="true">–</span>
+                      <input id="folderAdvDateTo" type="date" aria-label="To date" />
+                    </div>
+                  </div>
+                  <div class="hist-adv-dur-col">
+                    <label for="folderAdvDurMode">Session length</label>
+                    <select id="folderAdvDurMode" aria-label="Compare session length in minutes">
+                      <option value="">No filter</option>
+                      <option value="longer">Longer than</option>
+                      <option value="shorter">Shorter than</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="folderAdvDurExtrasLine" class="hist-adv-dur-extras-line hidden">
+                  <span class="hist-adv-dur-extras-spacer" aria-hidden="true"></span>
+                  <div class="hist-adv-dur-extras">
+                    <input id="folderAdvDurValue" type="number" step="1" min="0" class="hist-adv-num" placeholder="Minutes" autocomplete="off" aria-label="Session length minutes" />
+                    <input id="folderAdvDurationText" type="text" placeholder="e.g. 2h 30m" autocomplete="off" aria-label="Filter by duration label text" />
+                  </div>
+                </div>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label>Profit ($)</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="folderAdvProfitMin" type="number" step="0.01" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="folderAdvProfitMax" type="number" step="0.01" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-align-start">
+                <label>Buy-in ($)</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="folderAdvBuyInMin" type="number" step="0.01" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="folderAdvBuyInMax" type="number" step="0.01" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-align-end">
+                <label>Cash-out ($)</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="folderAdvCashOutMin" type="number" step="0.01" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="folderAdvCashOutMax" type="number" step="0.01" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-align-end">
+                <label>Hands</label>
+                <div class="hist-adv-minmax-inline">
+                  <input id="folderAdvHandsMin" type="number" step="1" min="0" class="hist-adv-num" placeholder="Min" autocomplete="off" />
+                  <input id="folderAdvHandsMax" type="number" step="1" min="0" class="hist-adv-num" placeholder="Max" autocomplete="off" />
+                </div>
+              </div>
+              <div class="field hist-adv-span-4">
+                <div class="hist-adv-time-columns">
+                  <div class="hist-adv-time-column">
+                    <label for="folderAdvStartMode">Time started — before/after, enter time</label>
+                    <select id="folderAdvStartMode" aria-label="Time started before or after">
+                      <option value="">Time started — no filter</option>
+                      <option value="before">Time started before</option>
+                      <option value="after">Time started after</option>
+                    </select>
+                    <div id="folderAdvStartTimeWrap" class="hidden">
+                      <input id="folderAdvStartTime" type="text" placeholder="7:30 PM" autocomplete="off" aria-label="Time started reference" />
+                    </div>
+                  </div>
+                  <div class="hist-adv-time-column">
+                    <label for="folderAdvEndMode">Time ended — before/after, enter time</label>
+                    <select id="folderAdvEndMode" aria-label="Time ended before or after">
+                      <option value="">Time ended — no filter</option>
+                      <option value="before">Time ended before</option>
+                      <option value="after">Time ended after</option>
+                    </select>
+                    <div id="folderAdvEndTimeWrap" class="hidden">
+                      <input id="folderAdvEndTime" type="text" placeholder="11:00 PM" autocomplete="off" aria-label="Time ended reference" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="history-advanced-actions">
+              <div class="history-advanced-actions__cluster">
+                <button type="button" id="folderAdvApplyBtn">Apply filters</button>
+                <button type="button" id="folderAdvClearBtn" class="secondary-btn">Clear advanced filters</button>
+              </div>
+              <button type="button" id="folderAdvCancelBtn" class="secondary-btn">Cancel</button>
+            </div>
+          </div>
+          <div id="folderBuilderCurrentWrap" class="folder-builder-current-wrap">
+            <div id="folderBuilderCurrentGrid" class="history-grid"></div>
+          </div>
+          <div id="folderBuilderListWrap" class="folder-builder-list-wrap hidden">
+            <div class="history-table" role="table" aria-label="Select sessions for folder">
+              <article class="history-item history-list-example" aria-hidden="true">
+                <div class="history-summary-row">
+                  <span class="folder-select-col-head">Add</span>
+                  <div class="history-session-link">
+                    <span class="history-col-date">Title</span>
+                    <span class="history-col-location">Location</span>
+                    <span class="history-col-duration">Length of Session</span>
+                    <span class="history-col-profit">Profit</span>
+                  </div>
+                </div>
+              </article>
+              <div id="folderBuilderList" class="history-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <section id="handHistoryView" class="view">
         <div class="history-page">
@@ -2986,6 +4564,8 @@
     const landingFeaturesSection = document.getElementById("landingFeaturesSection");
     const landingSubscriptionSection = document.getElementById("landingSubscriptionSection");
     const landingHeroSection = document.getElementById("landingHeroSection");
+    const landingParallaxTableWrap = document.querySelector("#landingScreen .landing-table-bg-fixed .landing-hero-table-wrap");
+    const landingFeaturesBgPanel = document.getElementById("landingFeaturesBgPanel");
     const scrollProgressWrap = document.getElementById("scrollProgressWrap");
     const scrollProgressBar = document.getElementById("scrollProgressBar");
     const authTopActions = document.getElementById("authTopActions");
@@ -3045,12 +4625,92 @@
     const buyIn = document.getElementById("buyIn");
     const cashOut = document.getElementById("cashOut");
     const historyList = document.getElementById("historyList");
+    const historySearchInput = document.getElementById("historySearchInput");
+    const historySearchBtn = document.getElementById("historySearchBtn");
+    const historyAdvancedToggleBtn = document.getElementById("historyAdvancedToggleBtn");
+    const historyAdvancedDropdown = document.getElementById("historyAdvancedDropdown");
+    const historyAdvancedHoverTooltip = document.getElementById("historyAdvancedHoverTooltip");
+    const historyModeHoverTooltip = document.getElementById("historyModeHoverTooltip");
     const historySortSelect = document.getElementById("historySortSelect");
+    let historyModeToggleBtn = document.getElementById("historyModeToggleBtn");
+    const historyTableWrap = document.getElementById("historyTableWrap");
+    const historyGridWrap = document.getElementById("historyGridWrap");
+    const historyGrid = document.getElementById("historyGrid");
+    const historyToolbarLocation = document.getElementById("historyToolbarLocation");
+    const sessionLocationTriggerBtn = document.getElementById("sessionLocationTriggerBtn");
+    const sessionLocationTriggerLabel = document.getElementById("sessionLocationTriggerLabel");
+    const sessionLocationPanel = document.getElementById("sessionLocationPanel");
+    const sessionLocationValue = document.getElementById("sessionLocationValue");
+    const sessionLocationAddToggle = document.getElementById("sessionLocationAddToggle");
+    const sessionLocationAddFields = document.getElementById("sessionLocationAddFields");
+    const sessionLocationNewInput = document.getElementById("sessionLocationNewInput");
+    const sessionLocationSaveNewBtn = document.getElementById("sessionLocationSaveNewBtn");
+    const sessionLocationOptionsList = document.getElementById("sessionLocationOptionsList");
+    const sessionLocationPickerWrap = document.getElementById("sessionLocationPickerWrap");
+    const settingsBackBtn = document.getElementById("settingsBackBtn");
+    const profileBackBtn = document.getElementById("profileBackBtn");
     const settingsTabs = document.querySelectorAll(".settings-tab");
     const settingsPanels = document.querySelectorAll(".settings-panel");
     const themeSelect = document.getElementById("themeSelect");
     const planToggle = document.getElementById("planToggle");
     const devAddDataBtn = document.getElementById("devAddDataBtn");
+    const folderBuilderModal = document.getElementById("folderBuilderModal");
+    const folderBuilderCloseBtn = document.getElementById("folderBuilderCloseBtn");
+    const folderBuilderTitle = document.getElementById("folderBuilderTitle");
+    const folderBuilderTitleInput = document.getElementById("folderBuilderTitleInput");
+    const folderBuilderTitleEditBtn = document.getElementById("folderBuilderTitleEditBtn");
+    const folderBuilderCurrentWrap = document.getElementById("folderBuilderCurrentWrap");
+    const folderBuilderCurrentGrid = document.getElementById("folderBuilderCurrentGrid");
+    const folderBuilderListWrap = document.getElementById("folderBuilderListWrap");
+    const folderBuilderList = document.getElementById("folderBuilderList");
+    const folderSearchInput = document.getElementById("folderSearchInput");
+    const folderSearchBtn = document.getElementById("folderSearchBtn");
+    const folderAddToFolderBtn = document.getElementById("folderAddToFolderBtn");
+    const folderSearchCancelBtn = document.getElementById("folderSearchCancelBtn");
+    const folderAdvancedToggleBtn = document.getElementById("folderAdvancedToggleBtn");
+    const folderAdvancedDropdown = document.getElementById("folderAdvancedDropdown");
+
+    const ALLOWED_FOLDER_MODAL_BUTTON_IDS = new Set([
+      "folderBuilderCloseBtn",
+      "folderBuilderTitleEditBtn",
+      "folderAdvancedToggleBtn",
+      "folderSearchBtn",
+      "folderAddToFolderBtn",
+      "folderSearchCancelBtn",
+      "folderAdvApplyBtn",
+      "folderAdvClearBtn",
+      "folderAdvCancelBtn"
+    ]);
+
+    function stripLegacyFolderBuilderSaveUi() {
+      const modal = document.getElementById("folderBuilderModal");
+      if (!modal) return;
+      try {
+        document.getElementById("folderBuilderSaveBtn")?.remove();
+        Array.from(modal.querySelectorAll(".folder-builder-footer-actions")).forEach((el) => el.remove());
+
+        Array.from(
+          modal.querySelectorAll("input[type='submit'], input[type='button'], input[type='reset']")
+        ).forEach((inp) => {
+          const v = (inp.getAttribute("value") || inp.value || "")
+            .replace(/\s+/g, " ")
+            .trim()
+            .toLowerCase();
+          if (v.includes("save") && v.includes("folder")) inp.remove();
+        });
+
+        Array.from(modal.querySelectorAll("button, [role='button']")).forEach((el) => {
+          if (el.classList.contains("folder-card-remove-btn")) return;
+          if (el.id && ALLOWED_FOLDER_MODAL_BUTTON_IDS.has(el.id)) return;
+          el.remove();
+        });
+      } catch (err) {
+        console.warn("[Chip Logger] stripLegacyFolderBuilderSaveUi:", err);
+      }
+    }
+
+    stripLegacyFolderBuilderSaveUi();
+
     const bankrollValue = document.getElementById("bankrollValue");
     const openManualBankrollBtn = document.getElementById("openManualBankrollBtn");
     const manualBankrollWrap = document.getElementById("manualBankrollWrap");
@@ -3241,6 +4901,21 @@
     }
 
     const sessions = [];
+    /** User-defined location names (persisted in profile.saved_locations). */
+    let savedLocations = [];
+    /** History surface mode: "list" (default) or "grid" (folders). */
+    let historyDisplayMode = "list";
+    /** User-created folder groupings for sessions (local storage). */
+    let sessionFolders = [];
+    const folderBuilderState = {
+      editingFolderId: null,
+      isNewFolder: false,
+      folderName: "",
+      selectedSessionIds: new Set(),
+      activeTitleSearch: "",
+      showSearchResults: false,
+      criteria: null
+    };
     const bankrollChanges = [];
     const bankrollTimeline = [
       { label: "Start", amount: 0, chartDate: null, sessionId: null, changeKind: "start" }
@@ -3252,9 +4927,43 @@
     let currentUserId = null;
     let nextSessionId = 1;
     let nextChangeId = 1;
+    /** Persists Add data / dev sample sessions across reloads for local testing. */
+    const DEV_SAMPLE_BUNDLE_STORAGE_KEY = "chiplogger_dev_sample_bundle_v1";
     let editingSessionIndex = null;
     let lastViewBeforeAddSession = "homeView";
+    let lastViewBeforeSettings = "homeView";
+    let lastViewBeforeProfile = "homeView";
     let sessionDetailReturnViewId = "analyticsView";
+    /** Applied title-only filter after user clicks Search (not live while typing). */
+    let historyActiveTitleSearch = "";
+
+    function emptyHistoryAdvancedCriteria() {
+      return {
+        titleSub: "",
+        dateFromIso: "",
+        dateToIso: "",
+        gameType: "",
+        stake: "",
+        durationFilter: null,
+        profitMin: null,
+        profitMax: null,
+        buyInMin: null,
+        buyInMax: null,
+        cashOutMin: null,
+        cashOutMax: null,
+        timeStartedFilter: null,
+        timeEndedFilter: null,
+        durationLabelSub: "",
+        handsMin: null,
+        handsMax: null,
+        /** Exact session.location match when advanced filters are applied, or "" for any. */
+        location: ""
+      };
+    }
+
+    /** Filters applied via Advanced ▸ Apply filters (AND-ed with title search). */
+    let historyAdvancedCriteria = emptyHistoryAdvancedCriteria();
+    folderBuilderState.criteria = emptyHistoryAdvancedCriteria();
     const VIEW_ROUTE_MAP = {
       homeView: "/home",
       profileView: "/profile",
@@ -3273,6 +4982,7 @@
     const supabaseClient = window.supabase && window.supabase.createClient
       ? window.supabase.createClient(supabaseProjectUrl, supabaseAnonKey)
       : null;
+    const LANDING_TABLE_SCALE = 1.16;
 
     function closeProfileMenu() {
       profileMenu.classList.remove("open");
@@ -3443,6 +5153,7 @@
       };
       if (Number.isNaN(sessionData.buyIn) || Number.isNaN(sessionData.cashOut)) return null;
       sessionData.profit = sessionData.cashOut - sessionData.buyIn;
+      sessionData.location = sessionLocationValue ? sessionLocationValue.value.trim() : "";
       if (
         isTimeComplete(startHour, startMinute, startMeridiem) &&
         isTimeComplete(endHour, endMinute, endMeridiem)
@@ -3465,6 +5176,14 @@
       const match = value.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
       if (!match) return null;
       return { hour: match[1], minute: match[2], meridiem: match[3].toUpperCase() };
+    }
+
+    /** Minutes since midnight (12h clock), or null if not like "7:30 PM". */
+    function parseClockMinutesFromUserTimeString(raw) {
+      if (raw == null || String(raw).trim() === "") return null;
+      const p = parseTimeString(String(raw).trim());
+      if (!p) return null;
+      return convertToMinutes(p.hour, p.minute, p.meridiem);
     }
 
     function clearSessionDateInput() {
@@ -3537,6 +5256,10 @@
       toggleCustomStakeField();
       buyIn.value = session.buyIn;
       cashOut.value = session.cashOut;
+      setSessionLocationPickerSelection(session.location);
+      setSessionLocationPanelOpen(false);
+      if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
+      if (sessionLocationNewInput) sessionLocationNewInput.value = "";
     }
 
     function resetAddSessionForm() {
@@ -3549,6 +5272,10 @@
         gameType, stakeType
       ].forEach((selectElement) => updateSelectPlaceholderStyle(selectElement));
       toggleCustomStakeField();
+      setSessionLocationPickerSelection("");
+      setSessionLocationPanelOpen(false);
+      if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
+      if (sessionLocationNewInput) sessionLocationNewInput.value = "";
       saveMessage.textContent = "";
     }
 
@@ -3604,7 +5331,20 @@
     }
 
     function showView(viewId, options = {}) {
+      if (folderBuilderModal && !folderBuilderModal.classList.contains("hidden")) {
+        closeFolderBuilder();
+      }
       const prevActive = document.querySelector("#homeScreen .view.active");
+      if (viewId === "settingsView" && prevActive && prevActive.id && prevActive.id !== "settingsView") {
+        const p = prevActive.id;
+        lastViewBeforeSettings =
+          p === "profileView" ? lastViewBeforeProfile || "homeView" : p;
+      }
+      if (viewId === "profileView" && prevActive && prevActive.id && prevActive.id !== "profileView") {
+        const p = prevActive.id;
+        lastViewBeforeProfile =
+          p === "settingsView" ? lastViewBeforeSettings || "homeView" : p;
+      }
       if (viewId === "addSessionView" && prevActive && prevActive.id !== "addSessionView") {
         if (prevActive.id !== "addHandView") {
           lastViewBeforeAddSession = prevActive.id;
@@ -3681,6 +5421,8 @@
       }
     }
 
+    let landingIntroTimerId = null;
+
     function playLandingIntroAnimation() {
       if (isSignedIn) return;
       const tableWrap = document.querySelector("#landingScreen .landing-table-bg-fixed .landing-hero-table-wrap");
@@ -3690,11 +5432,12 @@
 
       // Promote animated layers to reduce paint jank.
       tableWrap.style.willChange = "filter, transform";
-      tableWrap.style.transform = "translateZ(0)";
+      tableWrap.style.transform = `translate3d(0, 0, 0) scale(${LANDING_TABLE_SCALE})`;
       heroCard.style.willChange = "transform, opacity";
-      heroCard.style.transform = "translate3d(0, -120px, 0)";
+      heroCard.style.transform = "translate3d(0, 120px, 0)";
       heroCard.style.opacity = "0";
       if (prefersReducedMotion) {
+        tableWrap.style.transform = `translate3d(0, 0, 0) scale(${LANDING_TABLE_SCALE})`;
         tableWrap.style.filter = "blur(6px)";
         heroCard.style.transform = "translate3d(0, 0, 0)";
         heroCard.style.opacity = "1";
@@ -3703,11 +5446,11 @@
         return;
       }
 
-      // Start state: table/cards sharp, CTA off-screen top.
+      // Start state: table/cards sharp, CTA off-screen bottom.
       tableWrap.style.transition = "none";
       heroCard.style.transition = "none";
       tableWrap.style.filter = "blur(0px)";
-      heroCard.style.transform = "translate3d(0, -120px, 0)";
+      heroCard.style.transform = "translate3d(0, 120px, 0)";
 
       // Force start styles to apply before animating to final state.
       void tableWrap.offsetHeight;
@@ -3725,6 +5468,28 @@
       }, 5200);
     }
 
+    function playLandingIntroAnimationWithDelay(delayMs = 1000) {
+      if (isSignedIn) return;
+      const tableWrap = document.querySelector("#landingScreen .landing-table-bg-fixed .landing-hero-table-wrap");
+      const heroCard = document.querySelector("#landingHeroSection .landing-hero-cta");
+      if (!tableWrap || !heroCard) return;
+      // Explicit pre-animation hold: sharp board visible, CTA hidden/offscreen.
+      tableWrap.style.transition = "none";
+      tableWrap.style.filter = "blur(0px)";
+      tableWrap.style.transform = `translate3d(0, 0, 0) scale(${LANDING_TABLE_SCALE})`;
+      heroCard.style.transition = "none";
+      heroCard.style.transform = "translate3d(0, 120px, 0)";
+      heroCard.style.opacity = "0";
+      if (landingIntroTimerId != null) {
+        window.clearTimeout(landingIntroTimerId);
+      }
+      landingIntroTimerId = window.setTimeout(() => {
+        landingIntroTimerId = null;
+        if (isSignedIn) return;
+        playLandingIntroAnimation();
+      }, Math.max(0, Number(delayMs) || 0));
+    }
+
     function toDbSession(session) {
       return {
         title: session.title || "",
@@ -3738,7 +5503,8 @@
         buy_in: Number(session.buyIn || 0),
         cash_out: Number(session.cashOut || 0),
         profit: Number(session.profit || 0),
-        bankroll_change_id: session.bankrollChangeId || null
+        bankroll_change_id: session.bankrollChangeId || null,
+        location: session.location ? String(session.location).trim() : ""
       };
     }
 
@@ -3757,8 +5523,165 @@
         cashOut: Number(row.cash_out || 0),
         profit: Number(row.profit || 0),
         bankrollChangeId: row.bankroll_change_id || null,
+        location: row.location != null && row.location !== "" ? String(row.location).trim() : "",
         hands: []
       };
+    }
+
+    function normalizeSavedLocationList(arr) {
+      if (!Array.isArray(arr)) return [];
+      return [...new Set(arr.map((s) => String(s).trim()).filter(Boolean))]
+        .sort((a, b) => a.localeCompare(b));
+    }
+
+    function getAllDistinctSessionLocations() {
+      const fromSessions = sessions.map((s) => (s.location || "").trim()).filter(Boolean);
+      return normalizeSavedLocationList([...savedLocations, ...fromSessions]);
+    }
+
+    function populateHistoryToolbarLocationSelect() {
+      if (!historyToolbarLocation) return;
+      const opts = getAllDistinctSessionLocations();
+      const keep = historyToolbarLocation.value;
+      historyToolbarLocation.innerHTML = "";
+      const anyOpt = document.createElement("option");
+      anyOpt.value = "";
+      anyOpt.textContent = "Any location";
+      historyToolbarLocation.appendChild(anyOpt);
+      for (const loc of opts) {
+        const o = document.createElement("option");
+        o.value = loc;
+        o.textContent = loc;
+        historyToolbarLocation.appendChild(o);
+      }
+      if (keep && opts.includes(keep)) {
+        historyToolbarLocation.value = keep;
+      } else {
+        historyToolbarLocation.value = "";
+      }
+    }
+
+    function setSessionLocationPickerSelection(value) {
+      const v = (value || "").trim();
+      if (sessionLocationValue) sessionLocationValue.value = v;
+      if (sessionLocationTriggerLabel) {
+        sessionLocationTriggerLabel.textContent = v || "Location";
+      }
+    }
+
+    function setSessionLocationPanelOpen(open) {
+      if (!sessionLocationPanel || !sessionLocationTriggerBtn) return;
+      sessionLocationPanel.classList.toggle("hidden", !open);
+      sessionLocationTriggerBtn.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    function renderSessionLocationPickerList() {
+      if (!sessionLocationOptionsList) return;
+      sessionLocationOptionsList.innerHTML = "";
+      const noneLi = document.createElement("li");
+      noneLi.className = "location-picker-item";
+      const noneBtn = document.createElement("button");
+      noneBtn.type = "button";
+      noneBtn.className = "location-picker-choose location-picker-clear";
+      noneBtn.setAttribute("data-location", "");
+      noneBtn.textContent = "No location";
+      noneLi.appendChild(noneBtn);
+      sessionLocationOptionsList.appendChild(noneLi);
+      const trashSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>`;
+      normalizeSavedLocationList(savedLocations).forEach((loc) => {
+        const li = document.createElement("li");
+        li.className = "location-picker-item";
+        const choose = document.createElement("button");
+        choose.type = "button";
+        choose.className = "location-picker-choose";
+        choose.setAttribute("data-location", loc);
+        choose.textContent = loc;
+        const del = document.createElement("button");
+        del.type = "button";
+        del.className = "location-picker-delete";
+        del.setAttribute("data-delete-location", loc);
+        del.setAttribute("aria-label", `Delete location ${loc}`);
+        del.innerHTML = trashSvg;
+        li.appendChild(choose);
+        li.appendChild(del);
+        sessionLocationOptionsList.appendChild(li);
+      });
+    }
+
+    async function persistSavedLocationsToSupabase() {
+      if (!supabaseClient || !currentUserId) return;
+      const { error } = await supabaseClient.from("profiles").update({
+        saved_locations: normalizeSavedLocationList(savedLocations)
+      }).eq("user_id", currentUserId);
+      if (error) console.warn("persistSavedLocationsToSupabase", error);
+    }
+
+    function folderStorageKey() {
+      return `chiplogger_session_folders_${currentUserId || "guest"}`;
+    }
+
+    function loadSessionFoldersFromStorage() {
+      try {
+        const raw = window.localStorage.getItem(folderStorageKey());
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed
+          .map((f) => ({
+            id: f && f.id ? String(f.id) : `folder-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            name: f && f.name ? String(f.name).trim() : "Untitled folder",
+            sessionIds: Array.isArray(f && f.sessionIds)
+              ? [...new Set(f.sessionIds.map((id) => String(id)))]
+              : []
+          }))
+          .filter((f) => f.name);
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function persistSessionFoldersToStorage() {
+      try {
+        window.localStorage.setItem(folderStorageKey(), JSON.stringify(sessionFolders));
+      } catch (_) {
+        // ignore storage write errors
+      }
+    }
+
+    function ensureHistoryToolbarModeToggle() {
+      const historyView = document.getElementById("historyView");
+      const row = historyView ? historyView.querySelector(".history-search-inline-row") : null;
+      const searchBtn = document.getElementById("historySearchBtn");
+      const sortWrap = historyView ? historyView.querySelector(".history-toolbar-col--sort.history-sort-field") : null;
+      if (!row || !searchBtn) return null;
+      if (sortWrap && sortWrap.parentElement !== row) {
+        row.appendChild(sortWrap);
+      }
+      let btn = document.getElementById("historyModeToggleBtn");
+      if (!btn) {
+        btn = document.createElement("button");
+        btn.type = "button";
+        btn.id = "historyModeToggleBtn";
+        btn.className = "history-mode-toggle-btn secondary-btn";
+        btn.setAttribute("aria-label", "Switch to folders/grid view");
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`;
+      }
+      if (btn.parentElement !== row) {
+        row.insertBefore(btn, searchBtn.nextSibling);
+      }
+      historyModeToggleBtn = btn;
+      return btn;
+    }
+
+    function updateHistoryModeToggleButton() {
+      const btn = ensureHistoryToolbarModeToggle();
+      if (!btn) return;
+      const showingGrid = historyDisplayMode === "grid";
+      const listSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>`;
+      const folderSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>`;
+      btn.innerHTML = showingGrid ? listSvg : folderSvg;
+      btn.setAttribute("aria-label", showingGrid ? "Switch to list view" : "Switch to folders/grid view");
+      btn.title = showingGrid ? "Show list" : "Show folders";
     }
 
     function fromDbBankrollChange(row) {
@@ -3774,6 +5697,7 @@
 
     async function loadDataFromSupabase() {
       if (!supabaseClient || !currentUserId) return;
+      savedLocations = [];
       const { data: profileData } = await supabaseClient
         .from("profiles")
         .select("*")
@@ -3789,6 +5713,23 @@
         currentPlan = profileData.premium ? "premium" : "free";
         if (profileData.theme) {
           themeSelect.value = profileData.theme;
+        }
+        if (profileData.saved_locations != null) {
+          const raw = profileData.saved_locations;
+          if (Array.isArray(raw)) {
+            savedLocations = normalizeSavedLocationList(raw);
+          } else if (typeof raw === "string") {
+            try {
+              const parsed = JSON.parse(raw);
+              savedLocations = normalizeSavedLocationList(Array.isArray(parsed) ? parsed : []);
+            } catch (_) {
+              savedLocations = [];
+            }
+          } else {
+            savedLocations = [];
+          }
+        } else {
+          savedLocations = [];
         }
       }
 
@@ -3812,7 +5753,10 @@
 
       bankrollChanges.length = 0;
       (changeRows || []).forEach((row) => bankrollChanges.push(fromDbBankrollChange(row)));
+      sessionFolders = loadSessionFoldersFromStorage();
       recomputeBankroll();
+      populateHistoryToolbarLocationSelect();
+      renderSessionLocationPickerList();
       applyTheme();
       renderAll();
     }
@@ -3960,11 +5904,28 @@
       const initialView = requestedView || "homeView";
       showView(initialView, { syncRoute: options.syncRoute !== false, replaceRoute: Boolean(options.replaceRoute) });
       await loadDataFromSupabase();
+      restoreDeveloperSampleBundleIfNeeded();
+      recomputeBankroll();
       renderAll();
     }
 
     function updateLandingScrollUI() {
       const maxScroll = landingScroll.scrollHeight - landingScroll.clientHeight;
+      if (landingParallaxTableWrap && !landingScreen.classList.contains("hidden")) {
+        const y = Math.round(-landingScroll.scrollTop * 0.62);
+        landingParallaxTableWrap.style.transform = `translate3d(0, ${y}px, 0) scale(${LANDING_TABLE_SCALE})`;
+      }
+      if (landingFeaturesBgPanel && landingFeaturesSection && !landingScreen.classList.contains("hidden")) {
+        const start = landingFeaturesSection.offsetTop;
+        const height = landingFeaturesSection.offsetHeight;
+        landingFeaturesBgPanel.style.height = `${height}px`;
+        const baseY = (start - landingScroll.scrollTop) * 0.62 + 120;
+        const startHiddenY = window.innerHeight + 18;
+        const baseAtTop = (start * 0.62) + 120;
+        const offsetAdjust = startHiddenY - baseAtTop;
+        const yBg = Math.round(baseY + offsetAdjust);
+        landingFeaturesBgPanel.style.transform = `translate3d(0, ${yBg}px, 0)`;
+      }
       if (maxScroll <= 0) {
         scrollProgressBar.style.height = "0%";
         updateLandingNavActiveState();
@@ -3976,7 +5937,7 @@
     }
 
     function setLandingSnap(enabled) {
-      landingScroll.style.scrollSnapType = enabled ? "y mandatory" : "none";
+      landingScroll.style.scrollSnapType = "none";
     }
 
     const landingChromePointer = { x: -1, y: -1 };
@@ -4031,7 +5992,7 @@
       });
     }
 
-    function animateLandingScrollTo(targetTop) {
+    function animateLandingScrollTo(targetTop, onComplete = null, options = {}) {
       const finalTargetTop = Math.round(targetTop);
       const startTop = landingScroll.scrollTop;
       const delta = finalTargetTop - startTop;
@@ -4042,9 +6003,11 @@
       }
 
       const previousBehavior = landingScroll.style.scrollBehavior || "smooth";
-      const durationMs = 520;
+      const durationMs = typeof options.durationMs === "number" ? options.durationMs : 520;
       const startTime = performance.now();
-      const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2);
+      const easingFn = options.easing === "easeOutCubic"
+        ? (t) => 1 - ((1 - t) ** 3)
+        : (t) => (t < 0.5 ? 4 * t * t * t : 1 - ((-2 * t + 2) ** 3) / 2);
 
       setLandingSnap(false);
       landingScroll.style.scrollBehavior = "auto";
@@ -4052,7 +6015,7 @@
       const tick = (timestamp) => {
         const elapsed = timestamp - startTime;
         const progress = Math.min(1, elapsed / durationMs);
-        const eased = easeInOutCubic(progress);
+        const eased = easingFn(progress);
         landingScroll.scrollTop = startTop + (delta * eased);
         updateLandingScrollUI();
 
@@ -4064,6 +6027,7 @@
         landingScroll.scrollTop = finalTargetTop;
         updateLandingScrollUI();
         landingScroll.style.scrollBehavior = previousBehavior;
+        if (typeof onComplete === "function") onComplete();
       };
 
       requestAnimationFrame(tick);
@@ -5767,6 +7731,23 @@
 
     const DEV_SAMPLE_STAKES = ["1/2", "1/3", "2/5", "5/5", "5/10", "10/20", "25/50"];
     const DEV_SAMPLE_GAMES = ["No-Limit Texas Hold'em", "Pot-Limit Omaha"];
+    const DEV_SAMPLE_LOCATIONS = [
+      "Bellagio",
+      "ARIA",
+      "Wynn Las Vegas",
+      "Caesars Palace",
+      "Borgata",
+      "Choctaw Durant",
+      "Local card room",
+      "Home game",
+      "Friend's basement",
+      "Online — PokerStars",
+      "Encore",
+      "MGM Grand",
+      "Commerce Casino",
+      "Jack Cincinnati",
+      "Parx Casino"
+    ];
 
     function randomIntInclusive(min, max) {
       return min + Math.floor(Math.random() * (max - min + 1));
@@ -5780,6 +7761,46 @@
       let h12 = h24 % 12;
       if (h12 === 0) h12 = 12;
       return { hour: String(h12), minute: pad(m), meridiem };
+    }
+
+    function randomDeveloperSessionHands() {
+      const n = randomIntInclusive(0, 4);
+      const phases = ["Preflop", "Flop", "Turn", "River", "Showdown"];
+      const summaries = [
+        "Won big in 4-bet pot",
+        "SB defend — folded river",
+        "Set over set — cooler",
+        "-$60 hero call",
+        "Nut flush holds vs two pair",
+        "Bluff picked off",
+        "Rivered flush — stacked villain"
+      ];
+      const hands = [];
+      for (let i = 0; i < n; i++) {
+        hands.push({
+          name: `${phases[randomIntInclusive(0, phases.length - 1)]} · Hand ${i + 1}`,
+          summary: summaries[randomIntInclusive(0, summaries.length - 1)]
+        });
+      }
+      return hands;
+    }
+
+    function pickDeveloperSessionTitle(gameTypeVal, stake, location, dateStr) {
+      if (Math.random() < 0.14) return "";
+      const shortGame = gameTypeVal.includes("Omaha") ? "PLO" : "NLHE";
+      const locShort = location ? String(location).split(/[\s,·|—]+/)[0].trim() : "";
+      const monthWord = (dateStr || "").split(" ")[0] || "Session";
+      const templates = [
+        () => (locShort ? `${locShort} · ${stake}` : `${stake} ${shortGame}`),
+        () => `${shortGame} @ ${stake}`,
+        () => (locShort ? `${locShort} night` : `${monthWord} ${stake}`),
+        () => `${stake} live`,
+        () => (locShort ? `${locShort} — ${shortGame}` : `Live ${shortGame} ${stake}`),
+        () => `Deep stack ${stake}`,
+        () => `Weekend ${shortGame}`,
+        () => `${stake} · ${shortGame} grind`
+      ];
+      return templates[randomIntInclusive(0, templates.length - 1)]();
     }
 
     function buildRandomDeveloperSessionPayload() {
@@ -5812,7 +7833,14 @@
       const profit = Math.round((Math.random() * 900 - 400) * 100) / 100;
       const cashOut = Math.round((buyIn + profit) * 100) / 100;
 
+      const location = Math.random() < 0.1
+        ? ""
+        : DEV_SAMPLE_LOCATIONS[randomIntInclusive(0, DEV_SAMPLE_LOCATIONS.length - 1)];
+      const title = pickDeveloperSessionTitle(gameTypeVal, stake, location, date);
+      const hands = randomDeveloperSessionHands();
+
       return {
+        title,
         date,
         timeStarted: `${st.hour}:${st.minute} ${st.meridiem}`,
         timeEnded: `${et.hour}:${et.minute} ${et.meridiem}`,
@@ -5822,12 +7850,15 @@
         stake,
         buyIn,
         cashOut,
-        profit: Math.round((cashOut - buyIn) * 100) / 100
+        profit: Math.round((cashOut - buyIn) * 100) / 100,
+        location: location || "",
+        hands
       };
     }
 
     function addDeveloperSampleSessions() {
       const payloads = Array.from({ length: 100 }, () => buildRandomDeveloperSessionPayload());
+      const locationSamplesForProfile = [];
       payloads.sort((a, b) => {
         const da = parseSessionDate(a);
         const db = parseSessionDate(b);
@@ -5837,11 +7868,16 @@
         return da - db;
       });
       for (const payload of payloads) {
+        const ph = payload.hands;
         const sessionRecord = {
           id: nextSessionId++,
-          title: "",
-          ...payload
+          ...payload,
+          hands: Array.isArray(ph)
+            ? ph.map((h) => ({ name: h.name || "Hand", summary: h.summary || "" }))
+            : []
         };
+        const lu = String(sessionRecord.location || "").trim();
+        if (lu) locationSamplesForProfile.push(lu);
         sessions.push(sessionRecord);
         const change = {
           id: nextChangeId++,
@@ -5853,9 +7889,55 @@
         sessionRecord.bankrollChangeId = change.id;
         bankrollChanges.push(change);
       }
+      savedLocations = normalizeSavedLocationList([...savedLocations, ...locationSamplesForProfile]);
+      void persistSavedLocationsToSupabase();
       recomputeBankroll();
+      persistDeveloperSampleBundle();
       renderAll();
-      console.log("Developer sample data: added 100 sessions");
+      console.log("Developer sample data: added 100 sessions with titles, locations, and sample hands");
+    }
+
+    function persistDeveloperSampleBundle() {
+      try {
+        const bundle = {
+          v: 1,
+          sessions: JSON.parse(JSON.stringify(sessions)),
+          bankrollChanges: JSON.parse(JSON.stringify(bankrollChanges)),
+          nextSessionId,
+          nextChangeId,
+          savedLocations: [...savedLocations]
+        };
+        window.localStorage.setItem(DEV_SAMPLE_BUNDLE_STORAGE_KEY, JSON.stringify(bundle));
+      } catch (err) {
+        console.warn("[Chip Logger] persistDeveloperSampleBundle:", err);
+      }
+    }
+
+    function restoreDeveloperSampleBundleIfNeeded() {
+      try {
+        const raw = window.localStorage.getItem(DEV_SAMPLE_BUNDLE_STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (!data || !Array.isArray(data.sessions)) return;
+        if (sessions.length > 0) return;
+        sessions.length = 0;
+        data.sessions.forEach((s) => sessions.push(s));
+        bankrollChanges.length = 0;
+        (data.bankrollChanges || []).forEach((c) => bankrollChanges.push(c));
+        if (typeof data.nextSessionId === "number" && data.nextSessionId >= 1) {
+          nextSessionId = data.nextSessionId;
+        }
+        if (typeof data.nextChangeId === "number" && data.nextChangeId >= 1) {
+          nextChangeId = data.nextChangeId;
+        }
+        if (Array.isArray(data.savedLocations) && data.savedLocations.length) {
+          savedLocations = normalizeSavedLocationList(data.savedLocations);
+        }
+        populateHistoryToolbarLocationSelect();
+        renderSessionLocationPickerList();
+      } catch (err) {
+        console.warn("[Chip Logger] restoreDeveloperSampleBundleIfNeeded:", err);
+      }
     }
 
     function sessionDurationMinutesForSort(session) {
@@ -5907,13 +7989,835 @@
       return list;
     }
 
+    function applyHistoryTitleSearch() {
+      historyActiveTitleSearch = historySearchInput && historySearchInput.value
+        ? historySearchInput.value.trim()
+        : "";
+      renderHistory();
+    }
+
+    function sessionTitleMatchesActiveHistorySearch(session) {
+      const q = historyActiveTitleSearch.trim().toLowerCase();
+      if (!q) return true;
+      const hasTitle = session && session.title && String(session.title).trim();
+      const shown = hasTitle
+        ? String(session.title).trim().toLowerCase()
+        : "untitled";
+      const t = shown;
+      return t.includes(q);
+    }
+
+    function historyAdvancedCriteriaHasAny(c = historyAdvancedCriteria) {
+      return !!(
+        (c.titleSub && c.titleSub.trim()) ||
+        c.dateFromIso ||
+        c.dateToIso ||
+        c.gameType ||
+        c.stake ||
+        c.durationFilter != null ||
+        c.profitMin != null ||
+        c.profitMax != null ||
+        c.buyInMin != null ||
+        c.buyInMax != null ||
+        c.cashOutMin != null ||
+        c.cashOutMax != null ||
+        c.timeStartedFilter != null ||
+        c.timeEndedFilter != null ||
+        (c.durationLabelSub && c.durationLabelSub.trim()) ||
+        c.handsMin != null ||
+        c.handsMax != null ||
+        (c.location && c.location.trim())
+      );
+    }
+
+    function historyAdvParseOptionalFloat(raw) {
+      if (raw == null || String(raw).trim() === "") return null;
+      const n = Number.parseFloat(String(raw).trim());
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function historyAdvParseOptionalInt(raw) {
+      if (raw == null || String(raw).trim() === "") return null;
+      const n = Number.parseInt(String(raw).trim(), 10);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function sessionLegacyDateIso(session) {
+      if (!session || !session.date || session.date === UNKNOWN) return "";
+      return legacySessionDateToIsoDateString(session.date) || "";
+    }
+
+    function fillHistoryAdvEnumSelect(sel, items, selectedValue, emptyLabelText) {
+      if (!sel) return;
+      sel.innerHTML = "";
+      const blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = emptyLabelText;
+      sel.appendChild(blank);
+      for (const it of items) {
+        const opt = document.createElement("option");
+        opt.value = it;
+        opt.textContent = it;
+        sel.appendChild(opt);
+      }
+      sel.value = items.some((it) => it === selectedValue) ? selectedValue : "";
+    }
+
+    function populateHistoryAdvancedGameStakeSelects() {
+      const gameSel = document.getElementById("histAdvGameType");
+      const stakeSel = document.getElementById("histAdvStake");
+      const wantG = historyAdvancedCriteria.gameType || "";
+      const wantS = historyAdvancedCriteria.stake || "";
+      const games = [...new Set(sessions.map((s) => s.gameType).filter((gt) => gt && gt !== UNKNOWN))]
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      const stakes = [...new Set(sessions.map((s) => s.stake).filter((st) => st && st !== UNKNOWN))]
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      fillHistoryAdvEnumSelect(gameSel, games, wantG, "Any");
+      fillHistoryAdvEnumSelect(stakeSel, stakes, wantS, "Any");
+    }
+
+    function snapshotHistoryAdvancedCriteriaFromInputs() {
+      const c = emptyHistoryAdvancedCriteria();
+      const el = (id) => document.getElementById(id);
+      const str = (id) => ((el(id)?.value ?? "").trim());
+      const numF = (id) => historyAdvParseOptionalFloat(el(id)?.value);
+      const numI = (id) => historyAdvParseOptionalInt(el(id)?.value);
+      c.titleSub = str("histAdvTitle");
+      c.dateFromIso = (el("histAdvDateFrom")?.value ?? "").trim();
+      c.dateToIso = (el("histAdvDateTo")?.value ?? "").trim();
+      c.gameType = (el("histAdvGameType")?.value ?? "").trim();
+      c.stake = (el("histAdvStake")?.value ?? "").trim();
+      const durMode = (el("histAdvDurMode")?.value ?? "").trim();
+      const durVal = numI("histAdvDurValue");
+      c.durationFilter = null;
+      if ((durMode === "longer" || durMode === "shorter") && durVal != null) {
+        c.durationFilter = { mode: durMode, minutes: durVal };
+      }
+      c.durationLabelSub = (durMode === "longer" || durMode === "shorter") ? str("histAdvDurationText") : "";
+      c.profitMin = numF("histAdvProfitMin");
+      c.profitMax = numF("histAdvProfitMax");
+      if (c.profitMin != null && c.profitMax != null && c.profitMin > c.profitMax) {
+        const t = c.profitMin;
+        c.profitMin = c.profitMax;
+        c.profitMax = t;
+      }
+      c.buyInMin = numF("histAdvBuyInMin");
+      c.buyInMax = numF("histAdvBuyInMax");
+      if (c.buyInMin != null && c.buyInMax != null && c.buyInMin > c.buyInMax) {
+        const t = c.buyInMin;
+        c.buyInMin = c.buyInMax;
+        c.buyInMax = t;
+      }
+      c.cashOutMin = numF("histAdvCashOutMin");
+      c.cashOutMax = numF("histAdvCashOutMax");
+      if (c.cashOutMin != null && c.cashOutMax != null && c.cashOutMin > c.cashOutMax) {
+        const t = c.cashOutMin;
+        c.cashOutMin = c.cashOutMax;
+        c.cashOutMax = t;
+      }
+      const startMode = (el("histAdvStartMode")?.value ?? "").trim();
+      const startTimeStr = str("histAdvStartTime");
+      c.timeStartedFilter = null;
+      if ((startMode === "before" || startMode === "after") && startTimeStr) {
+        const mins = parseClockMinutesFromUserTimeString(startTimeStr);
+        if (mins != null) c.timeStartedFilter = { mode: startMode, minutes: mins };
+      }
+      const endMode = (el("histAdvEndMode")?.value ?? "").trim();
+      const endTimeStr = str("histAdvEndTime");
+      c.timeEndedFilter = null;
+      if ((endMode === "before" || endMode === "after") && endTimeStr) {
+        const mins = parseClockMinutesFromUserTimeString(endTimeStr);
+        if (mins != null) c.timeEndedFilter = { mode: endMode, minutes: mins };
+      }
+      c.handsMin = numI("histAdvHandsMin");
+      c.handsMax = numI("histAdvHandsMax");
+      if (c.handsMin != null && c.handsMax != null && c.handsMin > c.handsMax) {
+        const t = c.handsMin;
+        c.handsMin = c.handsMax;
+        c.handsMax = t;
+      }
+      c.location = (el("historyToolbarLocation")?.value ?? "").trim();
+      historyAdvancedCriteria = c;
+    }
+
+    function syncHistoryAdvTimeFilterVisibility() {
+      const sm = document.getElementById("histAdvStartMode")?.value || "";
+      const sw = document.getElementById("histAdvStartTimeWrap");
+      if (sw) sw.classList.toggle("hidden", sm !== "before" && sm !== "after");
+      const em = document.getElementById("histAdvEndMode")?.value || "";
+      const ew = document.getElementById("histAdvEndTimeWrap");
+      if (ew) ew.classList.toggle("hidden", em !== "before" && em !== "after");
+    }
+
+    function syncHistoryAdvDurationVisibility() {
+      const m = document.getElementById("histAdvDurMode")?.value || "";
+      const line = document.getElementById("histAdvDurExtrasLine");
+      if (line) line.classList.toggle("hidden", m !== "longer" && m !== "shorter");
+    }
+
+    function syncHistoryAdvConditionalVisibility() {
+      syncHistoryAdvTimeFilterVisibility();
+      syncHistoryAdvDurationVisibility();
+    }
+
+    function closeHistoryAdvancedDropdown() {
+      if (historyAdvancedDropdown) historyAdvancedDropdown.classList.add("hidden");
+      if (historyAdvancedToggleBtn) historyAdvancedToggleBtn.setAttribute("aria-expanded", "false");
+    }
+
+    function clearHistoryAdvancedFilterInputs() {
+      const ids = [
+        "histAdvTitle",
+        "histAdvDateFrom",
+        "histAdvDateTo",
+        "histAdvDurationText",
+        "histAdvProfitMin",
+        "histAdvProfitMax",
+        "histAdvBuyInMin",
+        "histAdvBuyInMax",
+        "histAdvCashOutMin",
+        "histAdvCashOutMax",
+        "histAdvStartTime",
+        "histAdvEndTime",
+        "histAdvDurValue",
+        "histAdvHandsMin",
+        "histAdvHandsMax"
+      ];
+      ids.forEach((id) => {
+        const node = document.getElementById(id);
+        if (node) node.value = "";
+      });
+      const gs = document.getElementById("histAdvGameType");
+      const ss = document.getElementById("histAdvStake");
+      if (gs) gs.value = "";
+      if (ss) ss.value = "";
+      if (historyToolbarLocation) historyToolbarLocation.value = "";
+      const stm = document.getElementById("histAdvStartMode");
+      const etm = document.getElementById("histAdvEndMode");
+      if (stm) stm.value = "";
+      if (etm) etm.value = "";
+      const dm = document.getElementById("histAdvDurMode");
+      if (dm) dm.value = "";
+      syncHistoryAdvConditionalVisibility();
+    }
+
+    function sessionMatchesHistoryAdvancedCriteria(session) {
+      const c = historyAdvancedCriteria;
+      if (!historyAdvancedCriteriaHasAny(c)) return true;
+      const wantLoc = (c.location || "").trim();
+      if (wantLoc && (session.location || "").trim() !== wantLoc) return false;
+      const titleSubLc = (c.titleSub || "").trim().toLowerCase();
+      if (titleSubLc) {
+        const hasTitle = session && session.title && String(session.title).trim();
+        const tt = hasTitle
+          ? String(session.title).trim().toLowerCase()
+          : "untitled";
+        if (!tt.includes(titleSubLc)) return false;
+      }
+      if (c.dateFromIso || c.dateToIso) {
+        const iso = sessionLegacyDateIso(session);
+        if (!iso) return false;
+        if (c.dateFromIso && iso < c.dateFromIso) return false;
+        if (c.dateToIso && iso > c.dateToIso) return false;
+      }
+      if (c.gameType && session.gameType !== c.gameType) return false;
+      if (c.stake && session.stake !== c.stake) return false;
+
+      const dmin = sessionDurationMinutesForSort(session);
+      if (c.durationFilter) {
+        if (c.durationFilter.mode === "longer" && !(dmin > c.durationFilter.minutes)) return false;
+        if (c.durationFilter.mode === "shorter" && !(dmin < c.durationFilter.minutes)) return false;
+      }
+
+      const durLc = (c.durationLabelSub || "").trim().toLowerCase();
+      if (durLc) {
+        const shown = session && session.duration ? String(session.duration).toLowerCase() : "";
+        if (!shown.includes(durLc)) return false;
+      }
+
+      const p = Number(session.profit);
+      if (c.profitMin != null && (Number.isNaN(p) || p < c.profitMin)) return false;
+      if (c.profitMax != null && (Number.isNaN(p) || p > c.profitMax)) return false;
+
+      const bi = Number(session.buyIn);
+      if (c.buyInMin != null && (Number.isNaN(bi) || bi < c.buyInMin)) return false;
+      if (c.buyInMax != null && (Number.isNaN(bi) || bi > c.buyInMax)) return false;
+
+      const co = Number(session.cashOut);
+      if (c.cashOutMin != null && (Number.isNaN(co) || co < c.cashOutMin)) return false;
+      if (c.cashOutMax != null && (Number.isNaN(co) || co > c.cashOutMax)) return false;
+
+      if (c.timeStartedFilter) {
+        const p = session && session.timeStarted ? parseTimeString(String(session.timeStarted)) : null;
+        if (!p) return false;
+        const smin = convertToMinutes(p.hour, p.minute, p.meridiem);
+        const t = c.timeStartedFilter.minutes;
+        if (c.timeStartedFilter.mode === "after" && !(smin > t)) return false;
+        if (c.timeStartedFilter.mode === "before" && !(smin < t)) return false;
+      }
+      if (c.timeEndedFilter) {
+        const p = session && session.timeEnded ? parseTimeString(String(session.timeEnded)) : null;
+        if (!p) return false;
+        const emin = convertToMinutes(p.hour, p.minute, p.meridiem);
+        const t = c.timeEndedFilter.minutes;
+        if (c.timeEndedFilter.mode === "after" && !(emin > t)) return false;
+        if (c.timeEndedFilter.mode === "before" && !(emin < t)) return false;
+      }
+
+      const hn = Array.isArray(session.hands) ? session.hands.length : 0;
+      if (c.handsMin != null && hn < c.handsMin) return false;
+      if (c.handsMax != null && hn > c.handsMax) return false;
+
+      return true;
+    }
+
+    function getFilteredSortedSessionsForHistory() {
+      const sorted = getSortedSessionsForHistory();
+      return sorted.filter((session) => (
+        sessionTitleMatchesActiveHistorySearch(session)
+          && sessionMatchesHistoryAdvancedCriteria(session)
+      ));
+    }
+
+    function historyListTitleHtml(session) {
+      const hasTitle = session.title && session.title.trim();
+      const q = historyActiveTitleSearch.trim() || (historyAdvancedCriteria?.titleSub || "").trim();
+      const rawTitle = hasTitle ? session.title.trim() : "untitled";
+      if (!q) {
+        return escapeHtml(rawTitle);
+      }
+      const lowerTitle = rawTitle.toLowerCase();
+      const lowerQ = q.toLowerCase();
+      let out = "";
+      let i = 0;
+      while (i < rawTitle.length) {
+        const idx = lowerTitle.indexOf(lowerQ, i);
+        if (idx < 0) {
+          out += escapeHtml(rawTitle.slice(i));
+          break;
+        }
+        out += escapeHtml(rawTitle.slice(i, idx));
+        const matched = rawTitle.slice(idx, idx + q.length);
+        out += `<mark class="history-title-search-hit">${escapeHtml(matched)}</mark>`;
+        i = idx + q.length;
+      }
+      return out;
+    }
+
+    function getFolderById(folderId) {
+      return sessionFolders.find((f) => String(f.id) === String(folderId)) || null;
+    }
+
+    function displayFolderName(rawName) {
+      const trimmed = String(rawName || "").trim();
+      return trimmed || "Untitled Folder";
+    }
+
+    function syncFolderTitleUI(editing = false) {
+      const shown = displayFolderName(folderBuilderState.folderName);
+      if (folderBuilderTitle) folderBuilderTitle.textContent = shown;
+      if (folderBuilderTitleInput) {
+        folderBuilderTitleInput.value = shown;
+        folderBuilderTitleInput.classList.toggle("hidden", !editing);
+      }
+      if (folderBuilderTitle) folderBuilderTitle.classList.toggle("hidden", editing);
+      if (folderBuilderTitleEditBtn) folderBuilderTitleEditBtn.classList.toggle("hidden", editing);
+      if (editing && folderBuilderTitleInput) {
+        folderBuilderTitleInput.focus();
+        folderBuilderTitleInput.select();
+      }
+    }
+
+    function commitFolderTitleEdit() {
+      if (!folderBuilderTitleInput) return;
+      folderBuilderState.folderName = folderBuilderTitleInput.value.trim();
+      syncFolderTitleUI(false);
+      syncFolderBuilderToStorage();
+    }
+
+    function shouldPersistNewFolderDraft() {
+      if (folderBuilderState.selectedSessionIds.size > 0) return true;
+      const raw = String(folderBuilderState.folderName || "").trim();
+      if (!raw) return false;
+      if (raw === "Untitled Folder") return false;
+      return true;
+    }
+
+    function syncFolderBuilderToStorage() {
+      if (!folderBuilderState.editingFolderId && folderBuilderState.isNewFolder) {
+        if (!shouldPersistNewFolderDraft()) return;
+      }
+      const name = displayFolderName(folderBuilderState.folderName);
+      const sessionIds = [...folderBuilderState.selectedSessionIds].map((id) => String(id));
+      let id = folderBuilderState.editingFolderId;
+      if (!id) {
+        id = `folder-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+        folderBuilderState.editingFolderId = id;
+      }
+      const payload = { id, name, sessionIds };
+      const existingIdx = sessionFolders.findIndex((f) => String(f.id) === String(id));
+      if (existingIdx >= 0) sessionFolders[existingIdx] = payload;
+      else sessionFolders.unshift(payload);
+      persistSessionFoldersToStorage();
+      renderHistory();
+    }
+
+    function openFolderBuilder(folderId = null) {
+      ensureFolderBuilderModalSaveUiObserver();
+      stripLegacyFolderBuilderSaveUi();
+      const folder = folderId ? getFolderById(folderId) : null;
+      folderBuilderState.editingFolderId = folder ? folder.id : null;
+      folderBuilderState.isNewFolder = !folder;
+      folderBuilderState.folderName = folder ? String(folder.name || "").trim() : "";
+      folderBuilderState.selectedSessionIds = new Set((folder && folder.sessionIds) ? folder.sessionIds.map((id) => String(id)) : []);
+      folderBuilderState.activeTitleSearch = "";
+      folderBuilderState.showSearchResults = false;
+      folderBuilderState.criteria = emptyHistoryAdvancedCriteria();
+      syncFolderTitleUI(false);
+      if (folderSearchInput) folderSearchInput.value = "";
+      if (folderAdvancedDropdown) folderAdvancedDropdown.classList.add("hidden");
+      if (folderAdvancedToggleBtn) folderAdvancedToggleBtn.setAttribute("aria-expanded", "false");
+      populateFolderAdvancedSelects();
+      syncFolderAdvInputsFromState();
+      setReasonableDateInputBounds(document.getElementById("folderAdvDateFrom"));
+      setReasonableDateInputBounds(document.getElementById("folderAdvDateTo"));
+      renderFolderBuilderCurrentGrid();
+      updateFolderBuilderSearchVisibility();
+      renderFolderBuilderList();
+      stripLegacyFolderBuilderSaveUi();
+      if (folderBuilderModal) folderBuilderModal.classList.remove("hidden");
+    }
+
+    function flushFolderBuilderEditsToStorage() {
+      if (folderBuilderTitleInput && !folderBuilderTitleInput.classList.contains("hidden")) {
+        folderBuilderState.folderName = folderBuilderTitleInput.value.trim();
+      }
+      syncFolderTitleUI(false);
+      syncFolderBuilderToStorage();
+    }
+
+    function closeFolderBuilder() {
+      flushFolderBuilderEditsToStorage();
+      stripLegacyFolderBuilderSaveUi();
+      if (folderBuilderModal && document.activeElement && folderBuilderModal.contains(document.activeElement)) {
+        try {
+          document.activeElement.blur();
+        } catch (_) {
+          /* ignore */
+        }
+      }
+      hideFloatingHoverTooltip();
+      if (folderBuilderModal) folderBuilderModal.classList.add("hidden");
+      requestAnimationFrame(() => {
+        hideFloatingHoverTooltip();
+        stripLegacyFolderBuilderSaveUi();
+      });
+    }
+
+    let folderBuilderSaveUiStripObserver = null;
+
+    function ensureFolderBuilderModalSaveUiObserver() {
+      const modal = document.getElementById("folderBuilderModal");
+      if (!modal || folderBuilderSaveUiStripObserver) return;
+      folderBuilderSaveUiStripObserver = new MutationObserver(() => {
+        stripLegacyFolderBuilderSaveUi();
+      });
+      folderBuilderSaveUiStripObserver.observe(modal, { childList: true, subtree: true });
+    }
+
+    function folderBuilderHasSearchCriteria() {
+      return !!(
+        (folderBuilderState.activeTitleSearch && folderBuilderState.activeTitleSearch.trim()) ||
+        historyAdvancedCriteriaHasAny(folderBuilderState.criteria || emptyHistoryAdvancedCriteria())
+      );
+    }
+
+    function updateFolderBuilderSearchVisibility() {
+      const show = !!folderBuilderState.showSearchResults;
+      if (folderBuilderCurrentWrap) folderBuilderCurrentWrap.classList.toggle("hidden", show);
+      if (folderBuilderListWrap) folderBuilderListWrap.classList.toggle("hidden", !show);
+      if (folderSearchCancelBtn) folderSearchCancelBtn.classList.toggle("hidden", !show);
+    }
+
+    function renderFolderBuilderCurrentGrid() {
+      if (!folderBuilderCurrentGrid) return;
+      const selectedIds = [...folderBuilderState.selectedSessionIds].map((id) => String(id));
+      const byId = new Map(sessions.map((s) => [String(s.id), s]));
+      const selectedSessions = selectedIds.map((id) => byId.get(id)).filter(Boolean);
+      if (!selectedSessions.length) {
+        folderBuilderCurrentGrid.innerHTML = "<p class=\"history-empty\">No sessions in this folder yet.</p>";
+        return;
+      }
+      folderBuilderCurrentGrid.innerHTML = selectedSessions.map((session) => {
+        const sid = String(session.id);
+        let profitClass = "profit-zero";
+        if (session.profit > 0) profitClass = "profit-positive";
+        if (session.profit < 0) profitClass = "profit-negative";
+        return `
+          <article class="history-grid-card" data-folder-current-session-id="${escapeHtml(sid)}">
+            <button type="button" class="folder-card-remove-btn" data-remove-folder-session-id="${escapeHtml(sid)}" title="Remove" data-remove-tooltip="Remove" aria-label="Remove from folder">−</button>
+            <span class="g-title">${historyListTitleHtml(session)}</span>
+            <span class="g-line">Location: ${escapeHtml((session.location || "").trim() || "—")}</span>
+            <span class="g-line">Length: ${escapeHtml(String(session.duration || UNKNOWN))}</span>
+            <span class="g-line ${profitClass}">Profit: ${escapeHtml(formatMoney(session.profit))}</span>
+          </article>
+        `;
+      }).join("");
+      folderBuilderCurrentGrid.querySelectorAll("[data-folder-current-session-id]").forEach((card) => {
+        card.addEventListener("click", () => {
+          const sid = card.getAttribute("data-folder-current-session-id");
+          if (!sid) return;
+          closeFolderBuilder();
+          openSessionDetailView(sid, "historyView");
+        });
+      });
+      folderBuilderCurrentGrid.querySelectorAll(".folder-card-remove-btn").forEach((btn) => {
+        btn.addEventListener("mouseenter", (e) => {
+          showFloatingHoverTooltip("Remove", e.clientX, e.clientY);
+        });
+        btn.addEventListener("mousemove", (e) => {
+          showFloatingHoverTooltip("Remove", e.clientX, e.clientY);
+        });
+        btn.addEventListener("mouseleave", () => {
+          hideFloatingHoverTooltip();
+        });
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          hideFloatingHoverTooltip();
+          const sid = btn.getAttribute("data-remove-folder-session-id");
+          if (!sid) return;
+          if (!window.confirm("Are you sure you want to remove this session from the folder?")) return;
+          folderBuilderState.selectedSessionIds.delete(String(sid));
+          renderFolderBuilderCurrentGrid();
+          renderFolderBuilderList();
+          syncFolderBuilderToStorage();
+        });
+      });
+    }
+
+    function syncFolderAdvInputsFromState() {
+      const c = folderBuilderState.criteria || emptyHistoryAdvancedCriteria();
+      const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+      };
+      set("folderAdvTitle", c.titleSub || "");
+      set("folderAdvLocation", c.location || "");
+      set("folderAdvGameType", c.gameType || "");
+      set("folderAdvStake", c.stake || "");
+      set("folderAdvDateFrom", c.dateFromIso || "");
+      set("folderAdvDateTo", c.dateToIso || "");
+      set("folderAdvDurMode", c.durationFilter ? c.durationFilter.mode : "");
+      set("folderAdvDurValue", c.durationFilter ? c.durationFilter.minutes : "");
+      set("folderAdvDurationText", c.durationLabelSub || "");
+      set("folderAdvProfitMin", c.profitMin != null ? c.profitMin : "");
+      set("folderAdvProfitMax", c.profitMax != null ? c.profitMax : "");
+      set("folderAdvBuyInMin", c.buyInMin != null ? c.buyInMin : "");
+      set("folderAdvBuyInMax", c.buyInMax != null ? c.buyInMax : "");
+      set("folderAdvCashOutMin", c.cashOutMin != null ? c.cashOutMin : "");
+      set("folderAdvCashOutMax", c.cashOutMax != null ? c.cashOutMax : "");
+      set("folderAdvHandsMin", c.handsMin != null ? c.handsMin : "");
+      set("folderAdvHandsMax", c.handsMax != null ? c.handsMax : "");
+      set("folderAdvStartMode", c.timeStartedFilter ? c.timeStartedFilter.mode : "");
+      set("folderAdvStartTime", c.timeStartedFilter != null ? minutesToUserTimeString(c.timeStartedFilter.minutes) : "");
+      set("folderAdvEndMode", c.timeEndedFilter ? c.timeEndedFilter.mode : "");
+      set("folderAdvEndTime", c.timeEndedFilter != null ? minutesToUserTimeString(c.timeEndedFilter.minutes) : "");
+      syncFolderAdvConditionalVisibility();
+    }
+
+    function populateFolderAdvancedSelects() {
+      const gameSel = document.getElementById("folderAdvGameType");
+      const stakeSel = document.getElementById("folderAdvStake");
+      const locSel = document.getElementById("folderAdvLocation");
+      const c = folderBuilderState.criteria || emptyHistoryAdvancedCriteria();
+      const games = [...new Set(sessions.map((s) => s.gameType).filter((gt) => gt && gt !== UNKNOWN))]
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      const stakes = [...new Set(sessions.map((s) => s.stake).filter((st) => st && st !== UNKNOWN))]
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      const locations = [...new Set(sessions.map((s) => (s.location || "").trim()).filter(Boolean))]
+        .sort((a, b) => String(a).localeCompare(String(b)));
+      fillHistoryAdvEnumSelect(gameSel, games, c.gameType || "", "Any");
+      fillHistoryAdvEnumSelect(stakeSel, stakes, c.stake || "", "Any");
+      fillHistoryAdvEnumSelect(locSel, locations, c.location || "", "Any location");
+    }
+
+    function syncFolderAdvTimeFilterVisibility() {
+      const sm = document.getElementById("folderAdvStartMode")?.value || "";
+      const sw = document.getElementById("folderAdvStartTimeWrap");
+      if (sw) sw.classList.toggle("hidden", sm !== "before" && sm !== "after");
+      const em = document.getElementById("folderAdvEndMode")?.value || "";
+      const ew = document.getElementById("folderAdvEndTimeWrap");
+      if (ew) ew.classList.toggle("hidden", em !== "before" && em !== "after");
+    }
+
+    function syncFolderAdvDurationVisibility() {
+      const m = document.getElementById("folderAdvDurMode")?.value || "";
+      const line = document.getElementById("folderAdvDurExtrasLine");
+      if (line) line.classList.toggle("hidden", m !== "longer" && m !== "shorter");
+    }
+
+    function syncFolderAdvConditionalVisibility() {
+      syncFolderAdvTimeFilterVisibility();
+      syncFolderAdvDurationVisibility();
+    }
+
+    function snapshotFolderAdvancedCriteriaFromInputs() {
+      const el = (id) => document.getElementById(id);
+      const numF = (id) => historyAdvParseOptionalFloat(el(id)?.value);
+      const numI = (id) => historyAdvParseOptionalInt(el(id)?.value);
+      const c = emptyHistoryAdvancedCriteria();
+      c.titleSub = (el("folderAdvTitle")?.value || "").trim();
+      c.location = (el("folderAdvLocation")?.value || "").trim();
+      c.gameType = (el("folderAdvGameType")?.value || "").trim();
+      c.stake = (el("folderAdvStake")?.value || "").trim();
+      c.dateFromIso = (el("folderAdvDateFrom")?.value || "").trim();
+      c.dateToIso = (el("folderAdvDateTo")?.value || "").trim();
+      const durMode = (el("folderAdvDurMode")?.value || "").trim();
+      const durVal = numI("folderAdvDurValue");
+      c.durationFilter = null;
+      if ((durMode === "longer" || durMode === "shorter") && durVal != null) {
+        c.durationFilter = { mode: durMode, minutes: durVal };
+      }
+      c.durationLabelSub = (durMode === "longer" || durMode === "shorter")
+        ? ((el("folderAdvDurationText")?.value || "").trim())
+        : "";
+      c.profitMin = numF("folderAdvProfitMin");
+      c.profitMax = numF("folderAdvProfitMax");
+      if (c.profitMin != null && c.profitMax != null && c.profitMin > c.profitMax) {
+        const t = c.profitMin;
+        c.profitMin = c.profitMax;
+        c.profitMax = t;
+      }
+      c.buyInMin = numF("folderAdvBuyInMin");
+      c.buyInMax = numF("folderAdvBuyInMax");
+      if (c.buyInMin != null && c.buyInMax != null && c.buyInMin > c.buyInMax) {
+        const t = c.buyInMin;
+        c.buyInMin = c.buyInMax;
+        c.buyInMax = t;
+      }
+      c.cashOutMin = numF("folderAdvCashOutMin");
+      c.cashOutMax = numF("folderAdvCashOutMax");
+      if (c.cashOutMin != null && c.cashOutMax != null && c.cashOutMin > c.cashOutMax) {
+        const t = c.cashOutMin;
+        c.cashOutMin = c.cashOutMax;
+        c.cashOutMax = t;
+      }
+      c.handsMin = numI("folderAdvHandsMin");
+      c.handsMax = numI("folderAdvHandsMax");
+      if (c.handsMin != null && c.handsMax != null && c.handsMin > c.handsMax) {
+        const t = c.handsMin;
+        c.handsMin = c.handsMax;
+        c.handsMax = t;
+      }
+      const startMode = (el("folderAdvStartMode")?.value || "").trim();
+      const startTimeStr = (el("folderAdvStartTime")?.value || "").trim();
+      c.timeStartedFilter = null;
+      if ((startMode === "before" || startMode === "after") && startTimeStr) {
+        const mins = parseClockMinutesFromUserTimeString(startTimeStr);
+        if (mins != null) c.timeStartedFilter = { mode: startMode, minutes: mins };
+      }
+      const endMode = (el("folderAdvEndMode")?.value || "").trim();
+      const endTimeStr = (el("folderAdvEndTime")?.value || "").trim();
+      c.timeEndedFilter = null;
+      if ((endMode === "before" || endMode === "after") && endTimeStr) {
+        const mins = parseClockMinutesFromUserTimeString(endTimeStr);
+        if (mins != null) c.timeEndedFilter = { mode: endMode, minutes: mins };
+      }
+      folderBuilderState.criteria = c;
+    }
+
+    function sessionMatchesFolderBuilderCriteria(session) {
+      const c = folderBuilderState.criteria || emptyHistoryAdvancedCriteria();
+      const titleQ = (c.titleSub || "").trim().toLowerCase();
+      if (titleQ) {
+        const hasTitle = session && session.title && String(session.title).trim();
+        const shown = hasTitle ? String(session.title).trim().toLowerCase() : "untitled";
+        if (!shown.includes(titleQ)) return false;
+      }
+      if (c.location && (session.location || "").trim() !== c.location) return false;
+      if (c.gameType && session.gameType !== c.gameType) return false;
+      if (c.stake && session.stake !== c.stake) return false;
+      if (c.dateFromIso || c.dateToIso) {
+        const iso = sessionLegacyDateIso(session);
+        if (!iso) return false;
+        if (c.dateFromIso && iso < c.dateFromIso) return false;
+        if (c.dateToIso && iso > c.dateToIso) return false;
+      }
+      const dmin = sessionDurationMinutesForSort(session);
+      if (c.durationFilter) {
+        if (c.durationFilter.mode === "longer" && !(dmin > c.durationFilter.minutes)) return false;
+        if (c.durationFilter.mode === "shorter" && !(dmin < c.durationFilter.minutes)) return false;
+      }
+      const durLc = (c.durationLabelSub || "").trim().toLowerCase();
+      if (durLc) {
+        const shown = session && session.duration ? String(session.duration).toLowerCase() : "";
+        if (!shown.includes(durLc)) return false;
+      }
+      const p = Number(session.profit);
+      if (c.profitMin != null && (Number.isNaN(p) || p < c.profitMin)) return false;
+      if (c.profitMax != null && (Number.isNaN(p) || p > c.profitMax)) return false;
+      const bi = Number(session.buyIn);
+      if (c.buyInMin != null && (Number.isNaN(bi) || bi < c.buyInMin)) return false;
+      if (c.buyInMax != null && (Number.isNaN(bi) || bi > c.buyInMax)) return false;
+      const co = Number(session.cashOut);
+      if (c.cashOutMin != null && (Number.isNaN(co) || co < c.cashOutMin)) return false;
+      if (c.cashOutMax != null && (Number.isNaN(co) || co > c.cashOutMax)) return false;
+      if (c.timeStartedFilter) {
+        const p = session && session.timeStarted ? parseTimeString(String(session.timeStarted)) : null;
+        if (!p) return false;
+        const smin = convertToMinutes(p.hour, p.minute, p.meridiem);
+        const t = c.timeStartedFilter.minutes;
+        if (c.timeStartedFilter.mode === "after" && !(smin > t)) return false;
+        if (c.timeStartedFilter.mode === "before" && !(smin < t)) return false;
+      }
+      if (c.timeEndedFilter) {
+        const p = session && session.timeEnded ? parseTimeString(String(session.timeEnded)) : null;
+        if (!p) return false;
+        const emin = convertToMinutes(p.hour, p.minute, p.meridiem);
+        const t = c.timeEndedFilter.minutes;
+        if (c.timeEndedFilter.mode === "after" && !(emin > t)) return false;
+        if (c.timeEndedFilter.mode === "before" && !(emin < t)) return false;
+      }
+      const hn = Array.isArray(session.hands) ? session.hands.length : 0;
+      if (c.handsMin != null && hn < c.handsMin) return false;
+      if (c.handsMax != null && hn > c.handsMax) return false;
+      return true;
+    }
+
+    function getFilteredSortedSessionsForFolderBuilder() {
+      const sorted = getSortedSessionsForHistory();
+      const q = (folderBuilderState.activeTitleSearch || "").trim().toLowerCase();
+      return sorted.filter((session) => {
+        if (q) {
+          const hasTitle = session && session.title && String(session.title).trim();
+          const shown = hasTitle ? String(session.title).trim().toLowerCase() : "untitled";
+          if (!shown.includes(q)) return false;
+        }
+        return sessionMatchesFolderBuilderCriteria(session);
+      });
+    }
+
+    function renderFolderBuilderList() {
+      if (!folderBuilderList) return;
+      const list = getFilteredSortedSessionsForFolderBuilder();
+      if (!list.length) {
+        folderBuilderList.innerHTML = "<p class=\"history-empty\">No sessions match your criteria.</p>";
+        return;
+      }
+      folderBuilderList.innerHTML = list.map((session) => {
+        const sid = String(session.id);
+        const checked = folderBuilderState.selectedSessionIds.has(sid) ? "checked" : "";
+        let profitClass = "profit-zero";
+        if (session.profit > 0) profitClass = "profit-positive";
+        if (session.profit < 0) profitClass = "profit-negative";
+        return `
+          <div class="folder-select-row" data-select-session-id="${sid}">
+            <input type="checkbox" data-select-session-checkbox="${sid}" ${checked} />
+            <div class="history-session-link">
+              <span class="history-col-date">${historyListTitleHtml(session)}</span>
+              <span class="history-col-location">${escapeHtml((session.location || "").trim() || "—")}</span>
+              <span class="history-col-duration">${session.duration}</span>
+              <span class="history-col-profit ${profitClass}">${formatMoney(session.profit)}</span>
+            </div>
+            <span class="history-delete-spacer" aria-hidden="true"></span>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderHistoryGrid(displaySessions) {
+      if (!historyGrid) return;
+      const addFolderCard = `
+        <button type="button" class="history-grid-card history-grid-add-folder" id="historyAddFolderCard">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2"/><path d="M12 13v8"/><path d="M8 17h8"/></svg>
+          <span>Add folder</span>
+        </button>
+      `;
+      const folderCards = sessionFolders.map((folder) => {
+        const label = (folder.name && String(folder.name).trim()) ? String(folder.name).trim() : "Untitled Folder";
+        return `
+          <button type="button" class="history-grid-card history-grid-folder-card" data-folder-id="${escapeHtml(String(folder.id))}" aria-label="Open folder ${escapeHtml(label)}">
+            <span class="g-title">${escapeHtml(label)}</span>
+          </button>
+        `;
+      }).join("");
+      const sessionCards = displaySessions.map((session) => {
+        const sid = String(session.id);
+        let profitClass = "profit-zero";
+        if (session.profit > 0) profitClass = "profit-positive";
+        if (session.profit < 0) profitClass = "profit-negative";
+        return `
+          <article class="history-grid-card" data-grid-session-id="${escapeHtml(sid)}">
+            <span class="g-title">${historyListTitleHtml(session)}</span>
+            <span class="g-line">Location: ${escapeHtml((session.location || "").trim() || "—")}</span>
+            <span class="g-line">Length: ${escapeHtml(String(session.duration || UNKNOWN))}</span>
+            <span class="g-line ${profitClass}">Profit: ${escapeHtml(formatMoney(session.profit))}</span>
+          </article>
+        `;
+      }).join("");
+      historyGrid.innerHTML = addFolderCard + folderCards + sessionCards;
+      document.getElementById("historyAddFolderCard")?.addEventListener("click", () => openFolderBuilder(null));
+      historyGrid.querySelectorAll("[data-folder-id]").forEach((btn) => {
+        btn.addEventListener("click", () => openFolderBuilder(btn.getAttribute("data-folder-id")));
+      });
+      historyGrid.querySelectorAll("[data-grid-session-id]").forEach((card) => {
+        card.addEventListener("click", () => {
+          const sid = card.getAttribute("data-grid-session-id");
+          if (!sid) return;
+          openSessionDetailView(sid, "historyView");
+        });
+      });
+    }
+
     function renderHistory() {
+      stripLegacyFolderBuilderSaveUi();
+      populateHistoryToolbarLocationSelect();
+      updateHistoryModeToggleButton();
+      const showingGrid = historyDisplayMode === "grid";
+      if (historyTableWrap) historyTableWrap.classList.toggle("hidden", showingGrid);
+      if (historyGridWrap) historyGridWrap.classList.toggle("hidden", !showingGrid);
       if (!sessions.length) {
-        historyList.innerHTML = "<p class=\"history-empty\">No sessions yet.</p>";
+        if (showingGrid) {
+          if (historyGrid) {
+            historyGrid.innerHTML = `
+              <button type="button" class="history-grid-card history-grid-add-folder" id="historyAddFolderCard">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v2"/><path d="M12 13v8"/><path d="M8 17h8"/></svg>
+                <span>Add folder</span>
+              </button>
+              <p class="history-empty">No sessions yet.</p>
+            `;
+            document.getElementById("historyAddFolderCard")?.addEventListener("click", () => openFolderBuilder(null));
+          }
+        } else {
+          historyList.innerHTML = "<p class=\"history-empty\">No sessions yet.</p>";
+        }
         return;
       }
 
-      const displaySessions = getSortedSessionsForHistory();
+      const displaySessions = getFilteredSortedSessionsForHistory();
+      if (showingGrid) {
+        renderHistoryGrid(displaySessions);
+        return;
+      }
+      if (!displaySessions.length) {
+        const titleQ = historyActiveTitleSearch.trim().length > 0;
+        const advOn = historyAdvancedCriteriaHasAny();
+        const locOn = (historyAdvancedCriteria.location || "").trim().length > 0;
+        const parts = [];
+        if (titleQ) parts.push("title search");
+        if (advOn) parts.push("advanced filters");
+        if (locOn) parts.push("location");
+        let msg = "No sessions match your criteria.";
+        if (parts.length === 1) {
+          if (titleQ) msg = "No sessions with that title.";
+          else if (advOn) msg = "No sessions match your advanced filters.";
+          else if (locOn) msg = "No sessions at that location.";
+        } else if (parts.length > 1) {
+          msg = `No sessions match your ${parts.join(" and ")}.`;
+        }
+        historyList.innerHTML = `<p class="history-empty">${msg}</p>`;
+        return;
+      }
 
       historyList.innerHTML = displaySessions
         .map((session) => {
@@ -5925,7 +8829,8 @@
             <article class="history-item">
               <div class="history-summary-row history-session-row" data-session-id="${session.id}">
                 <button type="button" class="history-session-link" data-session-id="${session.id}" aria-label="View session details">
-                  <span class="history-col-date">${session.title && session.title.trim() ? escapeHtml(session.title.trim()) : session.date}</span>
+                  <span class="history-col-date">${historyListTitleHtml(session)}</span>
+                  <span class="history-col-location">${escapeHtml((session.location || "").trim() || "—")}</span>
                   <span class="history-col-duration">${session.duration}</span>
                   <span class="history-col-profit ${profitClass}">${formatMoney(session.profit)}</span>
                 </button>
@@ -6078,7 +8983,8 @@
     }
 
     function findSessionIndexById(sessionId) {
-      return sessions.findIndex((s) => s.id === sessionId);
+      const wanted = String(sessionId);
+      return sessions.findIndex((s) => String(s.id) === wanted);
     }
 
     function setSessionDetailBackButton(returnViewId) {
@@ -6109,6 +9015,9 @@
           <dt>Date</dt><dd>${escapeHtml(String(session.date))}</dd>
           <dt>Time started</dt><dd>${escapeHtml(String(session.timeStarted))}</dd>
           <dt>Time ended</dt><dd>${escapeHtml(String(session.timeEnded))}</dd>
+          ${session.location && String(session.location).trim()
+            ? `<dt>Location</dt><dd>${escapeHtml(String(session.location).trim())}</dd>`
+            : ""}
           <dt>Duration</dt><dd>${escapeHtml(String(session.duration))}</dd>
           <dt>Game type</dt><dd>${escapeHtml(String(session.gameType))}</dd>
           <dt>Stake</dt><dd>${escapeHtml(String(session.stake))}</dd>
@@ -6756,8 +9665,12 @@
     });
     topSignInBtn.addEventListener("click", () => showAuthScreen("login"));
     topCreateAccountBtn.addEventListener("click", () => showAuthScreen("create"));
-    heroSignInBtn.addEventListener("click", () => showAuthScreen("login"));
-    heroJoinNowBtn.addEventListener("click", () => showAuthScreen("create"));
+    if (heroSignInBtn) {
+      heroSignInBtn.addEventListener("click", () => showAuthScreen("login"));
+    }
+    if (heroJoinNowBtn) {
+      heroJoinNowBtn.addEventListener("click", () => showAuthScreen("create"));
+    }
     if (heroDevQuickBtn) {
       heroDevQuickBtn.addEventListener("click", () => {
         currentPlan = "premium";
@@ -6771,6 +9684,331 @@
     historyAddSessionBtn.addEventListener("click", () => openAddSessionNew());
     homeHistoryBtn.addEventListener("click", () => showView("historyView"));
     historySortSelect.addEventListener("change", () => {
+      renderHistory();
+    });
+    const modeToggleBtnInit = ensureHistoryToolbarModeToggle();
+    if (modeToggleBtnInit) {
+      modeToggleBtnInit.addEventListener("click", () => {
+        historyDisplayMode = historyDisplayMode === "list" ? "grid" : "list";
+        renderHistory();
+      });
+    }
+    if (folderBuilderCloseBtn) {
+      folderBuilderCloseBtn.addEventListener("click", closeFolderBuilder);
+    }
+    if (folderBuilderTitleEditBtn) {
+      folderBuilderTitleEditBtn.addEventListener("click", () => syncFolderTitleUI(true));
+      folderBuilderTitleEditBtn.addEventListener("mouseenter", (e) => {
+        showFloatingHoverTooltip("Edit title", e.clientX, e.clientY - 34);
+      });
+      folderBuilderTitleEditBtn.addEventListener("mousemove", (e) => {
+        showFloatingHoverTooltip("Edit title", e.clientX, e.clientY - 34);
+      });
+      folderBuilderTitleEditBtn.addEventListener("mouseleave", () => {
+        hideFloatingHoverTooltip();
+      });
+    }
+    if (folderBuilderTitleInput) {
+      folderBuilderTitleInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          commitFolderTitleEdit();
+        } else if (e.key === "Escape") {
+          e.preventDefault();
+          syncFolderTitleUI(false);
+        }
+      });
+      folderBuilderTitleInput.addEventListener("blur", () => {
+        if (!folderBuilderTitleInput.classList.contains("hidden")) commitFolderTitleEdit();
+      });
+    }
+    if (folderBuilderModal) {
+      folderBuilderModal.addEventListener("click", (event) => {
+        if (event.target === folderBuilderModal) closeFolderBuilder();
+      });
+    }
+    if (folderSearchBtn) {
+      folderSearchBtn.addEventListener("click", () => {
+        folderBuilderState.activeTitleSearch = folderSearchInput ? folderSearchInput.value.trim() : "";
+        folderBuilderState.showSearchResults = folderBuilderHasSearchCriteria();
+        updateFolderBuilderSearchVisibility();
+        renderFolderBuilderList();
+      });
+    }
+    if (folderAddToFolderBtn) {
+      folderAddToFolderBtn.addEventListener("click", () => {
+        if (folderSearchInput) folderSearchInput.focus();
+        if (!folderBuilderHasSearchCriteria()) {
+          window.alert("Type a search or apply advanced filters to find sessions to add.");
+          return;
+        }
+        folderBuilderState.showSearchResults = true;
+        updateFolderBuilderSearchVisibility();
+        renderFolderBuilderList();
+      });
+    }
+    if (folderSearchCancelBtn) {
+      folderSearchCancelBtn.addEventListener("click", () => {
+        folderBuilderState.showSearchResults = false;
+        updateFolderBuilderSearchVisibility();
+        if (folderAdvancedDropdown) folderAdvancedDropdown.classList.add("hidden");
+        if (folderAdvancedToggleBtn) folderAdvancedToggleBtn.setAttribute("aria-expanded", "false");
+      });
+    }
+    if (folderSearchInput) {
+      folderSearchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          folderBuilderState.activeTitleSearch = folderSearchInput.value.trim();
+          folderBuilderState.showSearchResults = folderBuilderHasSearchCriteria();
+          updateFolderBuilderSearchVisibility();
+          renderFolderBuilderList();
+        }
+      });
+    }
+    if (folderAdvancedToggleBtn && folderAdvancedDropdown) {
+      folderAdvancedToggleBtn.addEventListener("click", () => {
+        const willOpen = folderAdvancedDropdown.classList.contains("hidden");
+        folderAdvancedDropdown.classList.toggle("hidden", !willOpen);
+        folderAdvancedToggleBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        if (willOpen) populateFolderAdvancedSelects();
+      });
+    }
+    document.getElementById("folderAdvApplyBtn")?.addEventListener("click", () => {
+      snapshotFolderAdvancedCriteriaFromInputs();
+      folderBuilderState.showSearchResults = folderBuilderHasSearchCriteria();
+      updateFolderBuilderSearchVisibility();
+      renderFolderBuilderList();
+      if (folderAdvancedDropdown) folderAdvancedDropdown.classList.add("hidden");
+      if (folderAdvancedToggleBtn) folderAdvancedToggleBtn.setAttribute("aria-expanded", "false");
+    });
+    document.getElementById("folderAdvClearBtn")?.addEventListener("click", () => {
+      folderBuilderState.criteria = emptyHistoryAdvancedCriteria();
+      syncFolderAdvInputsFromState();
+      populateFolderAdvancedSelects();
+      folderBuilderState.showSearchResults = folderBuilderHasSearchCriteria();
+      updateFolderBuilderSearchVisibility();
+      renderFolderBuilderList();
+    });
+    document.getElementById("folderAdvCancelBtn")?.addEventListener("click", () => {
+      if (folderAdvancedDropdown) folderAdvancedDropdown.classList.add("hidden");
+      if (folderAdvancedToggleBtn) folderAdvancedToggleBtn.setAttribute("aria-expanded", "false");
+    });
+    document.getElementById("folderAdvStartMode")?.addEventListener("change", syncFolderAdvConditionalVisibility);
+    document.getElementById("folderAdvEndMode")?.addEventListener("change", syncFolderAdvConditionalVisibility);
+    document.getElementById("folderAdvDurMode")?.addEventListener("change", syncFolderAdvDurationVisibility);
+    if (folderBuilderList) {
+      folderBuilderList.addEventListener("click", (event) => {
+        const row = event.target.closest("[data-select-session-id]");
+        if (!row) return;
+        const sid = row.getAttribute("data-select-session-id");
+        if (!sid) return;
+        const cb = row.querySelector(`input[data-select-session-checkbox="${sid}"]`);
+        if (event.target !== cb && cb) cb.checked = !cb.checked;
+        const checked = cb ? cb.checked : false;
+        if (checked) folderBuilderState.selectedSessionIds.add(String(sid));
+        else folderBuilderState.selectedSessionIds.delete(String(sid));
+        renderFolderBuilderCurrentGrid();
+        syncFolderBuilderToStorage();
+      });
+    }
+    if (sessionLocationTriggerBtn && sessionLocationPanel) {
+      sessionLocationTriggerBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const willOpen = sessionLocationPanel.classList.contains("hidden");
+        if (willOpen) renderSessionLocationPickerList();
+        setSessionLocationPanelOpen(willOpen);
+      });
+    }
+    if (sessionLocationAddToggle && sessionLocationAddFields) {
+      sessionLocationAddToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sessionLocationAddFields.classList.toggle("hidden");
+        if (!sessionLocationAddFields.classList.contains("hidden") && sessionLocationNewInput) {
+          sessionLocationNewInput.focus();
+        }
+      });
+    }
+    if (sessionLocationSaveNewBtn) {
+      sessionLocationSaveNewBtn.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const raw = sessionLocationNewInput ? sessionLocationNewInput.value.trim() : "";
+        if (!raw) return;
+        savedLocations = normalizeSavedLocationList([...savedLocations, raw]);
+        await persistSavedLocationsToSupabase();
+        setSessionLocationPickerSelection(raw);
+        populateHistoryToolbarLocationSelect();
+        renderSessionLocationPickerList();
+        if (sessionLocationNewInput) sessionLocationNewInput.value = "";
+        if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
+        setSessionLocationPanelOpen(false);
+      });
+    }
+    if (sessionLocationOptionsList) {
+      sessionLocationOptionsList.addEventListener("click", async (e) => {
+        const delBtn = e.target.closest(".location-picker-delete");
+        if (delBtn) {
+          e.stopPropagation();
+          const loc = delBtn.getAttribute("data-delete-location");
+          if (loc == null) return;
+          const ok = window.confirm(
+            `Remove "${loc}" from saved locations? Sessions already tagged with this name keep it until you edit them.`
+          );
+          if (!ok) return;
+          savedLocations = savedLocations.filter((x) => x !== loc);
+          savedLocations = normalizeSavedLocationList(savedLocations);
+          await persistSavedLocationsToSupabase();
+          if (sessionLocationValue && sessionLocationValue.value.trim() === loc) {
+            setSessionLocationPickerSelection("");
+          }
+          renderSessionLocationPickerList();
+          populateHistoryToolbarLocationSelect();
+          return;
+        }
+        const choose = e.target.closest(".location-picker-choose");
+        if (choose) {
+          e.stopPropagation();
+          const loc = choose.getAttribute("data-location") != null ? choose.getAttribute("data-location") : "";
+          setSessionLocationPickerSelection(loc);
+          setSessionLocationPanelOpen(false);
+        }
+      });
+    }
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (sessionLocationPanel && !sessionLocationPanel.classList.contains("hidden")) {
+        setSessionLocationPanelOpen(false);
+      }
+      if (folderBuilderModal && !folderBuilderModal.classList.contains("hidden")) {
+        closeFolderBuilder();
+      }
+    });
+    if (historySearchBtn) {
+      historySearchBtn.addEventListener("click", () => applyHistoryTitleSearch());
+    }
+    if (historySearchInput) {
+      historySearchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          applyHistoryTitleSearch();
+        }
+      });
+    }
+    function positionHistoryAdvancedHoverTooltip(clientX, clientY) {
+      if (!historyAdvancedHoverTooltip || historyAdvancedHoverTooltip.classList.contains("hidden")) return;
+      historyAdvancedHoverTooltip.style.left = `${clientX + 14}px`;
+      historyAdvancedHoverTooltip.style.top = `${clientY + 16}px`;
+    }
+
+    function positionHistoryModeHoverTooltip(clientX, clientY) {
+      if (!historyModeHoverTooltip || historyModeHoverTooltip.classList.contains("hidden")) return;
+      historyModeHoverTooltip.style.left = `${clientX + 14}px`;
+      historyModeHoverTooltip.style.top = `${clientY + 16}px`;
+    }
+
+    function ensureFloatingHoverTooltip() {
+      let tip = historyModeHoverTooltip || document.getElementById("historyModeHoverTooltip");
+      if (tip) return tip;
+      tip = document.createElement("div");
+      tip.id = "historyModeHoverTooltip";
+      tip.className = "history-advanced-hover-tooltip";
+      tip.setAttribute("role", "tooltip");
+      tip.setAttribute("aria-hidden", "true");
+      tip.classList.add("hidden");
+      document.body.appendChild(tip);
+      return tip;
+    }
+
+    function showFloatingHoverTooltip(text, clientX, clientY) {
+      const tip = ensureFloatingHoverTooltip();
+      if (!tip) return;
+      tip.style.removeProperty("display");
+      tip.style.removeProperty("visibility");
+      tip.style.removeProperty("opacity");
+      tip.textContent = text;
+      tip.classList.remove("hidden");
+      tip.setAttribute("aria-hidden", "false");
+      tip.style.left = `${clientX + 14}px`;
+      tip.style.top = `${clientY + 16}px`;
+    }
+
+    function hideFloatingHoverTooltip() {
+      const tip =
+        document.getElementById("historyModeHoverTooltip") || ensureFloatingHoverTooltip();
+      if (!tip) return;
+      tip.textContent = "";
+      tip.classList.add("hidden");
+      tip.setAttribute("aria-hidden", "true");
+      tip.style.setProperty("display", "none", "important");
+      tip.style.setProperty("visibility", "hidden", "important");
+      tip.style.setProperty("opacity", "0", "important");
+    }
+
+    if (historyAdvancedToggleBtn && historyAdvancedHoverTooltip) {
+      historyAdvancedToggleBtn.addEventListener("mouseenter", (e) => {
+        historyAdvancedHoverTooltip.classList.remove("hidden");
+        historyAdvancedHoverTooltip.setAttribute("aria-hidden", "false");
+        positionHistoryAdvancedHoverTooltip(e.clientX, e.clientY);
+      });
+      historyAdvancedToggleBtn.addEventListener("mousemove", (e) => {
+        positionHistoryAdvancedHoverTooltip(e.clientX, e.clientY);
+      });
+      historyAdvancedToggleBtn.addEventListener("mouseleave", () => {
+        historyAdvancedHoverTooltip.classList.add("hidden");
+        historyAdvancedHoverTooltip.setAttribute("aria-hidden", "true");
+      });
+    }
+
+    const modeToggleBtnForHover = ensureHistoryToolbarModeToggle();
+    if (modeToggleBtnForHover && historyModeHoverTooltip) {
+      modeToggleBtnForHover.addEventListener("mouseenter", (e) => {
+        showFloatingHoverTooltip(historyDisplayMode === "grid" ? "Show list" : "Show folders", e.clientX, e.clientY);
+      });
+      modeToggleBtnForHover.addEventListener("mousemove", (e) => {
+        showFloatingHoverTooltip(historyDisplayMode === "grid" ? "Show list" : "Show folders", e.clientX, e.clientY);
+      });
+      modeToggleBtnForHover.addEventListener("mouseleave", () => {
+        hideFloatingHoverTooltip();
+      });
+    }
+
+    if (historyAdvancedToggleBtn && historyAdvancedDropdown) {
+      historyAdvancedToggleBtn.addEventListener("click", () => {
+        const willOpen = historyAdvancedDropdown.classList.contains("hidden");
+        historyAdvancedDropdown.classList.toggle("hidden", !willOpen);
+        historyAdvancedToggleBtn.setAttribute("aria-expanded", willOpen ? "true" : "false");
+        if (willOpen) {
+          populateHistoryToolbarLocationSelect();
+          populateHistoryAdvancedGameStakeSelects();
+          setReasonableDateInputBounds(document.getElementById("histAdvDateFrom"));
+          setReasonableDateInputBounds(document.getElementById("histAdvDateTo"));
+          syncHistoryAdvConditionalVisibility();
+        }
+      });
+    }
+
+    document.getElementById("histAdvStartMode")?.addEventListener("change", syncHistoryAdvConditionalVisibility);
+    document.getElementById("histAdvEndMode")?.addEventListener("change", syncHistoryAdvConditionalVisibility);
+    document.getElementById("histAdvDurMode")?.addEventListener("change", syncHistoryAdvDurationVisibility);
+
+    document.getElementById("histAdvCancelBtn")?.addEventListener("click", () => {
+      closeHistoryAdvancedDropdown();
+    });
+
+    document.getElementById("histAdvApplyBtn")?.addEventListener("click", () => {
+      snapshotHistoryAdvancedCriteriaFromInputs();
+      // "Apply" should use everything currently typed, including the main title search input.
+      historyActiveTitleSearch = historySearchInput && historySearchInput.value
+        ? historySearchInput.value.trim()
+        : "";
+      renderHistory();
+      closeHistoryAdvancedDropdown();
+    });
+
+    document.getElementById("histAdvClearBtn")?.addEventListener("click", () => {
+      historyAdvancedCriteria = emptyHistoryAdvancedCriteria();
+      clearHistoryAdvancedFilterInputs();
+      populateHistoryAdvancedGameStakeSelects();
       renderHistory();
     });
     homeBankrollBtn.addEventListener("click", () => showView("bankrollView"));
@@ -6841,6 +10079,19 @@
         showSettingsPanel(tab.dataset.settingsPanel);
       });
     });
+
+    if (settingsBackBtn) {
+      settingsBackBtn.addEventListener("click", () => {
+        const target = lastViewBeforeSettings || "homeView";
+        showView(target);
+      });
+    }
+    if (profileBackBtn) {
+      profileBackBtn.addEventListener("click", () => {
+        const target = lastViewBeforeProfile || "homeView";
+        showView(target);
+      });
+    }
 
     themeSelect.addEventListener("change", async () => {
       applyTheme();
@@ -7389,7 +10640,22 @@
       pendingSessionHands = [];
       bankroll = 0;
       startingBankroll = 0;
-      showLanding();
+      savedLocations = [];
+      sessionFolders = loadSessionFoldersFromStorage();
+      historyAdvancedCriteria = emptyHistoryAdvancedCriteria();
+      if (historyToolbarLocation) {
+        historyToolbarLocation.innerHTML = "";
+        const anyOpt = document.createElement("option");
+        anyOpt.value = "";
+        anyOpt.textContent = "Any location";
+        historyToolbarLocation.appendChild(anyOpt);
+      }
+      setSessionLocationPickerSelection("");
+      setSessionLocationPanelOpen(false);
+      if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
+      if (sessionLocationNewInput) sessionLocationNewInput.value = "";
+      showLanding({ replaceRoute: true });
+      playLandingIntroAnimationWithDelay(1000);
     });
 
     stakeType.addEventListener("change", toggleCustomStakeField);
@@ -7527,6 +10793,15 @@
         closeProfileMenu();
       }
 
+      if (
+        sessionLocationPickerWrap &&
+        !sessionLocationPickerWrap.contains(event.target) &&
+        sessionLocationPanel &&
+        !sessionLocationPanel.classList.contains("hidden")
+      ) {
+        setSessionLocationPanelOpen(false);
+      }
+
       if (!homeScreen.classList.contains("hidden") && leftPanel.classList.contains("panel-visible")) {
         if (!leftPanel.contains(event.target)) {
           leftPanel.classList.remove("panel-visible");
@@ -7606,6 +10881,9 @@
         await ensureProfileForUser(user);
         await enterApp(user, { replaceRoute: true });
       } else {
+        restoreDeveloperSampleBundleIfNeeded();
+        recomputeBankroll();
+        renderAll();
         applyRouteForCurrentAuthState();
       }
     }
@@ -7619,13 +10897,18 @@
     if (authMethodSelect) authMethodSelect.value = "email";
     toggleCustomStakeField();
     showSettingsPanel("generalPanel");
+    sessionFolders = loadSessionFoldersFromStorage();
+    updateHistoryModeToggleButton();
     recomputeBankroll();
     renderAll();
     showLanding({ syncRoute: false });
     applyTheme();
     updateLandingNavActiveState();
     refreshLandingChrome();
-    playLandingIntroAnimation();
+    ensureHistoryToolbarModeToggle();
+    ensureFolderBuilderModalSaveUiObserver();
+    stripLegacyFolderBuilderSaveUi();
+    playLandingIntroAnimationWithDelay(1000);
     restoreAuthSessionOnLoad();
   </script>
 </body>
