@@ -5,6 +5,6 @@
   "description": "Static site with Netlify Functions",
   "dependencies": {
     "@supabase/supabase-js": "^2.57.2",
-    "stripe": "^18.2.1"
+    "stripe": "^18.5.0"
   }
 }
