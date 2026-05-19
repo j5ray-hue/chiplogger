@@ -1264,6 +1264,41 @@
       background: transparent;
     }
 
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      html,
+      body {
+        overflow-x: hidden;
+        overscroll-behavior-x: none;
+      }
+
+      .landing-screen {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow: hidden;
+        overscroll-behavior: none;
+      }
+
+      .landing-scroll {
+        width: 100%;
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+      }
+
+      .landing-nav,
+      .landing-sidebar-hint {
+        display: none !important;
+        pointer-events: none !important;
+      }
+    }
+
     .landing-section {
       scroll-snap-align: start;
       min-height: 100vh;
@@ -1281,6 +1316,13 @@
       align-items: center;
       justify-content: center;
       background: transparent;
+    }
+
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .landing-section,
+      .landing-section--hero {
+        min-height: 100dvh;
+      }
     }
 
     .landing-section--features {
@@ -1353,6 +1395,21 @@
       white-space: nowrap;
     }
 
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .landing-hero-cta:not(.app-home-dashboard-card) {
+        width: calc(100% - 32px);
+        max-width: 520px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .landing-hero-cta h2.landing-intro-title {
+        width: 100%;
+        max-width: 100%;
+        font-size: clamp(2.65rem, 13vw, 4.2rem);
+      }
+    }
+
     .landing-intro-points {
       margin: clamp(120px, 16vh, 220px) 0 0;
       padding-left: 1.25rem;
@@ -1363,6 +1420,12 @@
       font-size: 0.98rem;
       line-height: 1.4;
       font-weight: 600;
+    }
+
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .landing-intro-points {
+        margin-top: clamp(92px, 15dvh, 150px);
+      }
     }
 
     .landing-hero-slogan {
@@ -10004,17 +10067,27 @@
       subscriptionTop: 0
     };
 
+    function getLandingViewportHeight() {
+      const visualViewportHeight = window.visualViewport && Number(window.visualViewport.height);
+      if (window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse)").matches && visualViewportHeight > 0) {
+        return visualViewportHeight;
+      }
+      return window.innerHeight;
+    }
+
     function getLandingFeaturesPeekPx() {
+      const viewportHeight = getLandingViewportHeight();
       return Math.min(
         LANDING_FEATURES_PEEK_MAX_PX,
-        Math.max(LANDING_FEATURES_PEEK_MIN_PX, window.innerHeight * 0.075)
+        Math.max(LANDING_FEATURES_PEEK_MIN_PX, viewportHeight * 0.075)
       );
     }
 
     function recalculateLandingLayoutMetrics() {
+      const viewportHeight = getLandingViewportHeight();
       const tableWrap = landingParallaxTableWrap;
       if (tableWrap) {
-        const dividerY = window.innerHeight - getLandingFeaturesPeekPx() - LANDING_FEATURES_DIVIDER_HEIGHT_PX;
+        const dividerY = viewportHeight - getLandingFeaturesPeekPx() - LANDING_FEATURES_DIVIDER_HEIGHT_PX;
         const unscaledHeight = tableWrap.offsetHeight || 1;
         const maxScale = Math.max(
           0.72,
@@ -10024,7 +10097,7 @@
         const scaledHeight = unscaledHeight * scale;
         const edgeMargin = Math.max(0, (dividerY - scaledHeight) / 2);
         const desiredCenterY = edgeMargin + (scaledHeight / 2);
-        const viewportCenterY = window.innerHeight / 2;
+        const viewportCenterY = viewportHeight / 2;
         landingLayoutState.tableOffsetY = Math.round(desiredCenterY - viewportCenterY);
         landingLayoutState.tableScale = scale;
       }
@@ -10042,6 +10115,40 @@
 
     function landingTableTransform(extraY = 0) {
       return `translate3d(0, ${Math.round(landingLayoutState.tableOffsetY + extraY)}px, 0) scale(${landingLayoutState.tableScale})`;
+    }
+
+    function getClampedLandingScrollTop(value) {
+      if (!landingScroll) return 0;
+      const maxScroll = Math.max(0, landingScroll.scrollHeight - landingScroll.clientHeight);
+      return Math.min(maxScroll, Math.max(0, Number(value) || 0));
+    }
+
+    function reviveLandingTouchScroll(targetScrollTop = null, options = {}) {
+      if (!landingScroll) return;
+      const resetTouchScroller = options.resetTouchScroller !== false;
+      const requestedTop = targetScrollTop == null ? landingScroll.scrollTop : targetScrollTop;
+      const applyScrollTop = () => {
+        recalculateLandingLayoutMetrics();
+        landingScroll.scrollTop = getClampedLandingScrollTop(requestedTop);
+        updateLandingScrollUI();
+        refreshLandingChrome();
+      };
+
+      applyScrollTop();
+
+      if (!resetTouchScroller || !window.matchMedia || !window.matchMedia("(hover: none) and (pointer: coarse)").matches) return;
+
+      landingScroll.style.overflowY = "hidden";
+      landingScroll.style.webkitOverflowScrolling = "auto";
+      void landingScroll.offsetHeight;
+      landingScroll.style.overflowY = "";
+      landingScroll.style.webkitOverflowScrolling = "";
+      applyScrollTop();
+
+      window.requestAnimationFrame(() => {
+        applyScrollTop();
+        window.requestAnimationFrame(applyScrollTop);
+      });
     }
 
     function animateHomeBackdropBlur() {
@@ -10126,9 +10233,7 @@
       }
       showLanding({ replaceRoute: true, restoreScroll: true });
       if (landingScroll) {
-        landingScroll.scrollTop = Math.max(0, Number(state.landingScrollTop) || 0);
-        updateLandingScrollUI();
-        refreshLandingChrome();
+        reviveLandingTouchScroll(state.landingScrollTop);
       }
       showLandingAuthActionsInstant();
     }
@@ -10231,8 +10336,7 @@
       recalculateLandingLayoutMetrics();
       setLandingSnap(true);
       setTopBarMode("landing");
-      updateLandingScrollUI();
-      refreshLandingChrome();
+      reviveLandingTouchScroll(options.restoreScroll === true ? landingScroll.scrollTop : 0);
       if (options.syncRoute !== false) {
         syncRoute("/", Boolean(options.replaceRoute));
       }
@@ -11656,7 +11760,7 @@
         const start = landingLayoutState.featuresTop;
         const baseY = (start - landingScroll.scrollTop) * 0.62 + 120;
         const peekPx = getLandingFeaturesPeekPx();
-        const startHiddenY = window.innerHeight - peekPx;
+        const startHiddenY = getLandingViewportHeight() - peekPx;
         const baseAtTop = (start * 0.62) + 120;
         const offsetAdjust = startHiddenY - baseAtTop;
         const yBg = Math.round(baseY + offsetAdjust);
@@ -22084,8 +22188,22 @@
 
     window.addEventListener("resize", () => {
       positionHandSummaryPane();
-      updateLandingScrollUI();
       recalculateLandingLayoutMetrics();
+      reviveLandingTouchScroll(null, { resetTouchScroller: false });
+    });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        if (landingScreen.classList.contains("hidden")) return;
+        reviveLandingTouchScroll(null, { resetTouchScroller: false });
+      }, { passive: true });
+    }
+
+    window.addEventListener("orientationchange", () => {
+      window.setTimeout(() => {
+        if (landingScreen.classList.contains("hidden")) return;
+        reviveLandingTouchScroll(null, { resetTouchScroller: false });
+      }, 120);
     });
 
     if (handStackCancelBtn) {
@@ -22365,6 +22483,32 @@
 
     landingScroll.addEventListener("scroll", updateLandingScrollUI);
     landingScroll.addEventListener("scroll", refreshLandingChrome);
+    let landingTouchStartX = 0;
+    let landingTouchStartY = 0;
+    landingScroll.addEventListener("touchstart", (event) => {
+      const touch = event.touches && event.touches[0];
+      if (!touch) return;
+      landingTouchStartX = touch.clientX;
+      landingTouchStartY = touch.clientY;
+    }, { passive: true });
+    landingScroll.addEventListener("touchmove", (event) => {
+      if (landingScreen.classList.contains("hidden")) return;
+      if (!window.matchMedia || !window.matchMedia("(hover: none) and (pointer: coarse)").matches) return;
+      const touch = event.touches && event.touches[0];
+      if (!touch) return;
+      const deltaX = touch.clientX - landingTouchStartX;
+      const deltaY = touch.clientY - landingTouchStartY;
+      const verticalIntent = Math.abs(deltaY) >= Math.abs(deltaX);
+      const maxScroll = Math.max(0, landingScroll.scrollHeight - landingScroll.clientHeight);
+      const atTop = landingScroll.scrollTop <= 0;
+      const atBottom = landingScroll.scrollTop >= maxScroll - 1;
+      const pullingPastTop = atTop && deltaY > 0;
+      const pullingPastBottom = atBottom && deltaY < 0;
+      const horizontalRubberBand = !verticalIntent && Math.abs(deltaX) > 10;
+      if (event.cancelable && (pullingPastTop || pullingPastBottom || horizontalRubberBand)) {
+        event.preventDefault();
+      }
+    }, { passive: false });
     landingNav.classList.add("disabled");
     landingNavButtons.forEach((button) => {
       button.addEventListener("click", (event) => {
@@ -22410,6 +22554,12 @@
       }
       if (path === "/auth/login") {
         showAuthScreen("login", { syncRoute: false });
+        return;
+      }
+      if (restoreScroll && authBackState && authBackState.type === "landing") {
+        showLanding({ syncRoute: false, restoreScroll: true });
+        reviveLandingTouchScroll(authBackState.landingScrollTop);
+        showLandingAuthActionsInstant();
         return;
       }
       showLanding({ syncRoute: false });
