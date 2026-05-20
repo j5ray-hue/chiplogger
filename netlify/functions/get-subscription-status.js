@@ -13,6 +13,12 @@ const adminSupabase = (supabaseUrl && supabaseServiceRoleKey)
 
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
 
+function normalizePremiumValue(value) {
+  if (value === true || value === 1) return true;
+  const normalized = String(value || "").trim().toLowerCase();
+  return normalized === "true" || normalized === "1" || normalized === "premium" || normalized === "paid";
+}
+
 async function syncPremiumFlag(userId, premiumValue, token) {
   if (!userId) return;
   console.log("[get-subscription-status] syncPremiumFlag");
@@ -39,6 +45,22 @@ async function syncPremiumFlag(userId, premiumValue, token) {
   if (error) {
     throw new Error(`Supabase profile update failed: ${error.message}`);
   }
+}
+
+async function getProfilePremiumAccess(userId, stripeHasSubscription) {
+  const { data, error } = await adminSupabase
+    .from("profiles")
+    .select("premium, manual_premium")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) {
+    throw new Error(`Supabase profile lookup failed: ${error.message}`);
+  }
+  return Boolean(
+    stripeHasSubscription ||
+    normalizePremiumValue(data?.premium) ||
+    normalizePremiumValue(data?.manual_premium)
+  );
 }
 
 async function lookupSubscriptionForEmail(email) {
@@ -110,10 +132,11 @@ exports.handler = async (event) => {
   if (!email) {
     console.log("[get-subscription-status] no email on user, syncing free plan");
     await syncPremiumFlag(user.id, false, token);
+    const hasPremiumAccess = await getProfilePremiumAccess(user.id, false);
     console.log("[get-subscription-status] successful return: free plan with no email");
     return {
       statusCode: 200,
-      body: JSON.stringify({ hasSubscription: false, status: "none", customerId: "", subscriptionId: "" })
+      body: JSON.stringify({ hasSubscription: hasPremiumAccess, status: "none", customerId: "", subscriptionId: "" })
     };
   }
 
@@ -121,6 +144,7 @@ exports.handler = async (event) => {
     console.log("[get-subscription-status] lookupSubscriptionForEmail");
     const result = await lookupSubscriptionForEmail(email);
     await syncPremiumFlag(user.id, result.hasSubscription, token);
+    result.hasSubscription = await getProfilePremiumAccess(user.id, result.hasSubscription);
     console.log("[get-subscription-status] successful return");
     return {
       statusCode: 200,

@@ -549,6 +549,10 @@
       transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
 
+    .home-phone-bankroll-btn {
+      display: none;
+    }
+
     .home-widget-card:hover {
       transform: translateY(-2px);
       background: linear-gradient(180deg, rgba(15, 23, 42, 0.62), rgba(10, 15, 30, 0.66));
@@ -780,6 +784,17 @@
       background:
         radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 30%),
         linear-gradient(180deg, rgba(15, 23, 42, 0.55), rgba(12, 18, 33, 0.58));
+    }
+
+    .home-widget-card--bankroll {
+      background:
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.12), transparent 30%),
+        linear-gradient(180deg, rgba(12, 28, 16, 0.55), rgba(9, 20, 15, 0.58));
+      border-color: rgba(34, 197, 94, 0.42);
+    }
+
+    .home-widget-card--bankroll .home-widget-stat {
+      color: #86efac;
     }
 
     .home-widget-card--analytics {
@@ -1576,7 +1591,6 @@
 
     .feature-shot {
       width: var(--feature-media-width);
-      aspect-ratio: 16 / 10;
     }
 
     .feature-shot-pair {
@@ -1595,20 +1609,21 @@
       margin-left: calc(50% - var(--feature-center-overlap));
     }
 
+    .feature-shot picture {
+      display: block;
+      width: 100%;
+    }
+
     .feature-shot img {
       width: 100%;
-      height: 100%;
+      height: auto;
       display: block;
       border-radius: 8px;
       border: none;
       box-shadow: none;
       background: #0b1020;
-      object-fit: cover;
+      object-fit: contain;
       max-width: none;
-    }
-
-    .feature-shot-pair .feature-shot img {
-      height: 100%;
     }
 
     @media (max-width: 900px) {
@@ -1627,7 +1642,6 @@
 
       .feature-shot {
         width: 100%;
-        aspect-ratio: 16 / 10;
       }
 
       .feature-card:nth-child(odd) > .feature-shot,
@@ -1644,7 +1658,7 @@
 
       .feature-shot img {
         width: 100%;
-        height: 100%;
+        height: auto;
       }
     }
 
@@ -1663,6 +1677,71 @@
       .feature-card:nth-child(even) .feature-caption {
         margin-left: 0;
         text-align: left;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .landing-section--features {
+        min-height: auto;
+        padding-top: clamp(20px, 4dvh, 36px);
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-bottom: clamp(72px, 12dvh, 120px);
+        align-items: center;
+      }
+
+      .landing-section--plans {
+        min-height: auto;
+        padding-top: clamp(20px, 4dvh, 36px);
+      }
+
+      .landing-features-wrap {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .feature-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: clamp(32px, 8dvh, 64px) 16px;
+        min-height: 100dvh;
+      }
+
+      .feature-card:first-child {
+        padding-top: clamp(12px, 3dvh, 28px);
+      }
+
+      .feature-card > .feature-shot,
+      .feature-card > .feature-shot-pair,
+      .feature-card:nth-child(odd) > .feature-shot,
+      .feature-card:nth-child(odd) > .feature-shot-pair,
+      .feature-card:nth-child(even) > .feature-shot,
+      .feature-card:nth-child(even) > .feature-shot-pair {
+        grid-area: unset;
+        justify-self: center;
+        align-self: center;
+        width: 100%;
+        max-width: min(100%, 400px);
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .feature-shot-pair {
+        max-width: min(100%, 400px);
+      }
+
+      .feature-caption,
+      .feature-card:nth-child(even) .feature-caption {
+        grid-area: unset;
+        justify-self: center;
+        width: 100%;
+        max-width: min(100%, 400px);
+        margin-left: 0;
+        margin-right: 0;
+        text-align: center;
       }
     }
 
@@ -2470,6 +2549,592 @@
       .history-toolbar-col--sort select {
         width: 100%;
         min-width: 0;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      body.app-session .app-stage {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      body.app-session .app-stage .app-home-shell {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      body.app-session .app-home-shell > section.view.active {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      body.app-session .history-page,
+      body.app-session .hand-history-page,
+      body.app-session .bankroll-page,
+      body.app-session .settings-page,
+      body.app-session .profile-page {
+        width: min(980px, calc(100vw - 16px));
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      body.app-session.home-layout .app-stage {
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow-y: hidden;
+      }
+
+      body.app-session.home-layout .app-home-view {
+        min-height: 100dvh;
+        padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
+      }
+
+      body.app-session.home-layout .app-home-view > .app-home-center {
+        min-height: 100dvh;
+        align-items: center;
+        padding-block-start: calc(58px + env(safe-area-inset-top, 0px));
+        padding-block-end: max(12px, env(safe-area-inset-bottom, 0px));
+        padding-inline: 8px;
+      }
+
+      body.app-session.home-layout .app-home-dashboard-card {
+        width: min(100%, calc(100vw - 16px));
+        padding: 0;
+      }
+
+      body.app-session.home-layout .app-home-dashboard-grid {
+        grid-template-columns: minmax(0, 1fr);
+        grid-auto-rows: auto;
+        gap: 8px;
+      }
+
+      body.app-session.home-layout .home-widget-card {
+        min-height: 72px;
+        height: clamp(72px, 10.5dvh, 92px);
+        padding: 10px 14px;
+        border-radius: 14px;
+        gap: 6px;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      body.app-session.home-layout .home-phone-bankroll-btn {
+        display: flex;
+      }
+
+      body.app-session.home-layout .home-widget-card-top {
+        display: grid;
+        justify-items: center;
+        gap: 4px;
+      }
+
+      body.app-session.home-layout .home-widget-kicker {
+        font-size: 0.76rem;
+        line-height: 1.15;
+      }
+
+      body.app-session.home-layout .home-widget-stat {
+        font-size: 0.9rem;
+        line-height: 1.15;
+        white-space: normal;
+      }
+
+      body.app-session.home-layout .home-widget-preview-list,
+      body.app-session.home-layout .home-widget-preview-hand,
+      body.app-session.home-layout .home-widget-copy,
+      body.app-session.home-layout .home-widget-footer {
+        display: none !important;
+      }
+
+      body.app-session.home-layout .home-widget-card--add .home-widget-add-hero {
+        display: grid;
+        flex: 0 0 auto;
+        min-height: 0;
+        font-size: 1.45rem;
+        line-height: 1;
+        margin-top: -2px;
+      }
+
+      #historyView .history-page {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      #historyView .history-toolbar-grid {
+        margin-bottom: 8px;
+      }
+
+      #historyView .history-search-inline-row {
+        flex-wrap: nowrap;
+        gap: 6px;
+        align-items: stretch;
+      }
+
+      #historyView .history-search-inline-row .history-search-composite {
+        flex: 1 1 54px;
+        min-width: 0;
+      }
+
+      #historyView .history-search-composite input.history-search-input {
+        min-width: 0;
+        padding-left: 10px;
+        padding-right: 32px;
+      }
+
+      #historyView .history-search-btn,
+      #historyView .history-mode-toggle-btn,
+      #historyView .history-add-session-btn {
+        width: 38px;
+        min-width: 38px;
+        flex-basis: 38px;
+      }
+
+      #historyView .history-search-btn {
+        width: 58px;
+        min-width: 58px;
+        flex-basis: 58px;
+        padding: 0 8px;
+        font-size: 0.74rem;
+        line-height: 1;
+      }
+
+      #historyView .history-search-inline-row .history-toolbar-col--sort {
+        width: auto;
+        flex: 0 0 58px;
+        position: relative;
+      }
+
+      #historyView .history-toolbar-col--sort select {
+        width: 58px;
+        min-width: 58px;
+        padding-left: 8px;
+        padding-right: 18px;
+        color: transparent;
+      }
+
+      #historyView .history-search-inline-row .history-toolbar-col--sort::after {
+        content: "Sort";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--controlText);
+        font-size: 0.74rem;
+        font-weight: 700;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      #handHistoryView .hand-history-page {
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      #handHistoryView .hand-history-free-content {
+        gap: 0;
+      }
+
+      #handHistoryView .hand-history-toolbar {
+        margin-bottom: 8px;
+      }
+
+      #handHistoryView .history-search-inline-row {
+        flex-wrap: nowrap;
+        gap: 6px;
+        align-items: stretch;
+      }
+
+      #handHistoryView .hand-history-toolbar .history-search-inline-row .history-search-composite {
+        flex: 1 1 54px;
+        min-width: 0;
+      }
+
+      #handHistoryView .history-search-composite input.history-search-input {
+        min-width: 0;
+        padding-left: 10px;
+        padding-right: 32px;
+      }
+
+      #handHistoryView .history-search-btn,
+      #handHistoryView .history-mode-toggle-btn,
+      #handHistoryView .history-add-session-btn {
+        width: 38px;
+        min-width: 38px;
+        flex-basis: 38px;
+      }
+
+      #handHistoryView .history-search-btn {
+        width: 58px;
+        min-width: 58px;
+        flex-basis: 58px;
+        padding: 0 8px;
+        font-size: 0.74rem;
+        line-height: 1;
+      }
+
+      #handHistoryView .hand-history-toolbar .history-search-inline-row .history-toolbar-col--sort {
+        width: auto;
+        flex: 0 0 58px;
+        position: relative;
+      }
+
+      #handHistoryView .hand-history-toolbar .history-search-inline-row .history-toolbar-col--sort select {
+        width: 58px;
+        min-width: 58px;
+        padding-left: 8px;
+        padding-right: 18px;
+        color: transparent;
+      }
+
+      #handHistoryView .hand-history-toolbar .history-search-inline-row .history-toolbar-col--sort::after {
+        content: "Sort";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--controlText);
+        font-size: 0.74rem;
+        font-weight: 700;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .history-advanced-hover-tooltip,
+      .chart-tooltip {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+
+      #historyView .history-list-example,
+      #handHistoryView .hand-history-header-row {
+        display: block;
+      }
+
+      #historyView .history-session-row,
+      #handHistoryView .hand-history-row {
+        grid-template-columns: minmax(0, 1fr) 82px;
+        gap: 10px;
+        height: 42px;
+        min-height: 42px;
+        padding: 0 14px;
+      }
+
+      #historyView .history-item,
+      #handHistoryView .history-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 34px;
+        align-items: center;
+        min-height: 42px;
+      }
+
+      #handHistoryView .history-item {
+        background: transparent;
+      }
+
+      #historyView .history-list-example .history-summary-row,
+      #handHistoryView .hand-history-header-row .history-summary-row {
+        grid-template-columns: minmax(0, 1fr);
+        height: 42px;
+        min-height: 42px;
+        padding: 0 14px;
+        gap: 10px;
+      }
+
+      #historyView .history-list-example .history-session-link,
+      #handHistoryView .hand-history-header-link {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 82px;
+        gap: 10px;
+        align-items: center;
+        height: 100%;
+        opacity: 0.92;
+      }
+
+      #historyView .history-session-row .history-col-location,
+      #historyView .history-session-row .history-col-duration,
+      #historyView .history-session-row .history-col-profit,
+      #historyView .history-list-example .history-col-location,
+      #historyView .history-list-example .history-col-duration,
+      #historyView .history-list-example .history-col-profit,
+      #handHistoryView .hand-history-row .history-col-location,
+      #handHistoryView .hand-history-row .history-col-duration,
+      #handHistoryView .hand-history-header-link .history-col-location,
+      #handHistoryView .hand-history-header-link .history-col-duration {
+        display: none;
+      }
+
+      #historyView .history-session-row .history-col-date,
+      #historyView .history-list-example .history-col-date,
+      #handHistoryView .hand-history-row .history-col-date,
+      #handHistoryView .hand-history-header-link .history-col-date {
+        align-self: center;
+        height: 42px;
+        line-height: 42px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      #historyView .mobile-history-date,
+      #handHistoryView .mobile-history-date {
+        display: block;
+        align-self: center;
+        height: 42px;
+        line-height: 42px;
+        width: 82px;
+        min-width: 82px;
+        max-width: 82px;
+        overflow: hidden;
+        text-overflow: clip;
+        white-space: nowrap;
+        text-align: left;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #historyView .mobile-history-date-head,
+      #handHistoryView .mobile-history-date-head {
+        color: #9ca3af;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      #historyView .history-delete-btn,
+      #handHistoryView .history-delete-btn {
+        display: grid !important;
+        width: 34px;
+        min-width: 34px;
+        height: 42px;
+        min-height: 42px;
+        border-radius: 0;
+      }
+
+      #handHistoryView .hand-history-row {
+        border-bottom: none;
+      }
+
+      #bankrollView .bankroll-actions-row {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        align-items: stretch;
+        margin: 8px 0;
+      }
+
+      #bankrollView #openManualBankrollBtn {
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0 10px;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+
+      #bankrollView .bankroll-history-sort-field {
+        flex: 0 0 58px;
+        width: 58px;
+        position: relative;
+      }
+
+      #bankrollView .bankroll-history-sort-field select {
+        width: 58px;
+        min-width: 58px;
+        max-width: 58px;
+        padding-left: 8px;
+        padding-right: 18px;
+        color: transparent;
+      }
+
+      #bankrollView .bankroll-history-sort-field::after {
+        content: "Sort";
+        position: absolute;
+        left: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--controlText);
+        font-size: 0.74rem;
+        font-weight: 700;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      #bankrollView #bankrollChangesTableWrap {
+        margin-top: 8px;
+      }
+
+      #bankrollView .bankroll-history-table {
+        background: transparent;
+      }
+
+      #bankrollView .bankroll-history-header-row,
+      #bankrollView .bankroll-change-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 82px 34px;
+        gap: 10px;
+        align-items: center;
+        height: 42px;
+        min-height: 42px;
+        padding: 0 14px;
+        background: rgba(15, 23, 42, 0.42);
+      }
+
+      #bankrollView .bankroll-change-row {
+        border-top: 1px solid rgba(148, 163, 184, 0.14);
+        cursor: pointer;
+      }
+
+      #bankrollView .bankroll-change-row--auto {
+        background: rgba(15, 23, 42, 0.42);
+      }
+
+      #bankrollView .bankroll-history-header-row .history-summary-row {
+        display: contents;
+      }
+
+      #bankrollView .bankroll-history-header {
+        display: contents;
+      }
+
+      #bankrollView .bankroll-history-header span,
+      #bankrollView .bankroll-history-change,
+      #bankrollView .bankroll-history-mobile-date,
+      #bankrollView .bankroll-history-pencil,
+      #bankrollView .bankroll-history-spacer {
+        align-self: center;
+        height: 42px;
+        line-height: 42px;
+      }
+
+      #bankrollView .bankroll-history-description,
+      #bankrollView .bankroll-history-description-head,
+      #bankrollView .bankroll-history-balance {
+        display: none;
+      }
+
+      #bankrollView .bankroll-history-mobile-date {
+        display: block;
+        width: 82px;
+        min-width: 82px;
+        max-width: 82px;
+        overflow: hidden;
+        text-overflow: clip;
+        white-space: nowrap;
+        text-align: left;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #bankrollView .bankroll-history-mobile-date-head {
+        color: #9ca3af;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      #bankrollView .bankroll-history-pencil,
+      #bankrollView .bankroll-history-spacer {
+        width: 34px;
+        min-width: 34px;
+        border-radius: 0;
+      }
+
+      #bankrollView .bankroll-history-pencil {
+        background: transparent;
+        border-color: transparent;
+        box-shadow: none;
+      }
+
+      #bankrollView .bankroll-history-pencil:hover {
+        background: transparent;
+        border-color: transparent;
+      }
+
+      #bankrollView .chart-card {
+        padding: 8px 8px 6px;
+      }
+
+      #bankrollView .chart-card .chart-title {
+        margin-bottom: 4px;
+        font-size: 0.86rem;
+      }
+
+      #bankrollView .chart-card .hint {
+        display: none;
+      }
+
+      #bankrollView #bankrollChart {
+        display: block;
+        width: 100%;
+        height: 320px;
+      }
+
+      .hand-replay-overlay {
+        align-items: flex-start;
+        justify-content: center;
+        padding:
+          max(8px, env(safe-area-inset-top, 0px))
+          max(8px, env(safe-area-inset-right, 0px))
+          max(8px, env(safe-area-inset-bottom, 0px))
+          max(8px, env(safe-area-inset-left, 0px));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .hand-replay-shell {
+        width: min(1120px, 100%);
+        max-height: none;
+        margin-block: 0;
+        padding: 12px;
+      }
+
+      .hand-replay-topbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        z-index: 80;
+      }
+
+      .hand-replay-controls {
+        width: 100%;
+        justify-content: space-between;
+        z-index: 81;
+      }
+
+      .hand-replay-close-btn {
+        position: relative;
+        z-index: 82;
+        touch-action: manipulation;
+        pointer-events: auto;
+      }
+
+      .hand-replay-subtitle {
+        white-space: normal;
+      }
+
+      .hand-table-visual {
+        --hand-table-rail: 12px;
+        max-width: none;
+      }
+
+      .hand-table-wrap {
+        padding-top: 36px;
+      }
+
+      .hand-table-visual {
+        overflow: visible;
+      }
+
+      .hand-table-felt {
+        overflow: visible;
+        background: radial-gradient(ellipse at 50% 50%, #22c55e 0%, var(--tableFelt) 52%, #0f3d20 100%);
+      }
+
+      .hand-table-felt.has-expanded-seat {
+        overflow: visible;
       }
     }
 
@@ -3630,6 +4295,14 @@
       display: block;
     }
 
+    .mobile-history-date {
+      display: none;
+    }
+
+    .bankroll-history-mobile-date {
+      display: none;
+    }
+
     .history-empty {
       color: var(--muted);
       font-size: 0.95rem;
@@ -3804,6 +4477,10 @@
 
     .history-delete-btn svg {
       display: block;
+    }
+
+    .hand-history-delete-btn {
+      display: none;
     }
 
     .profit-positive {
@@ -4251,6 +4928,24 @@
       word-break: break-word;
     }
 
+    .bankroll-change-edit-form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bankroll-change-edit-form label {
+      display: grid;
+      gap: 6px;
+      margin: 0;
+      color: #9ca3af;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .bankroll-change-edit-form input {
+      width: 100%;
+    }
+
     .hourly-bar-group.is-hovered .hourly-bar-vis {
       filter: brightness(1.18);
       stroke: #facc15;
@@ -4284,6 +4979,11 @@
       stroke: #facc15 !important;
       stroke-width: 2px !important;
       filter: drop-shadow(0 0 3px rgba(250, 204, 21, 0.75));
+    }
+
+    .line-chart-point-dot.line-chart-point-dot--visible {
+      opacity: 1;
+      stroke-width: 1.2px;
     }
 
     .analytics-page {
@@ -5054,12 +5754,12 @@
     .hand-history-free-below {
       position: relative;
       display: grid;
-      gap: var(--analytics-chart-gap, 16px);
+      gap: 0;
     }
 
     .hand-history-free-content {
       display: grid;
-      gap: var(--analytics-chart-gap, 16px);
+      gap: 0;
     }
 
     .hand-history-page.hand-history-page--free .hand-history-free-below {
@@ -5118,7 +5818,7 @@
     }
 
     .hand-history-toolbar {
-      margin-bottom: 10px;
+      margin-bottom: 0;
     }
 
     .hand-history-toolbar .history-search-inline-row {
@@ -5182,7 +5882,7 @@
 
     .hand-history-page .history-item {
       border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-      background: rgba(15, 23, 42, 0.42);
+      background: transparent;
     }
 
     .hand-history-page .history-item:last-child {
@@ -5238,6 +5938,18 @@
       margin: 24px auto;
       padding: 26px;
       box-sizing: border-box;
+    }
+
+    #handDetailView.view.active {
+      position: relative;
+      z-index: 2;
+      pointer-events: auto;
+    }
+
+    #handDetailView .session-detail-page {
+      position: relative;
+      z-index: 1;
+      pointer-events: auto;
     }
 
     .hand-detail-header {
@@ -5726,6 +6438,15 @@
       background: rgba(2, 6, 23, 0.55);
     }
 
+    .hand-replay-overlay.hidden {
+      pointer-events: none !important;
+    }
+
+    body > .hand-inline-amount-editor.hidden,
+    body > .hand-commit-action-menu.hidden {
+      pointer-events: none !important;
+    }
+
     .analytics-expand-overlay {
       position: fixed;
       inset: 0;
@@ -5847,6 +6568,47 @@
       font-weight: 800;
     }
 
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .analytics-expand-chart-title-row {
+        flex-wrap: nowrap;
+        gap: 8px;
+      }
+
+      .analytics-expand-chart-title-row .chart-title {
+        min-width: 0;
+        flex: 1 1 auto;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.92rem;
+        line-height: 1.15;
+      }
+
+      .analytics-expand-chart-title-row .analytics-scatter-zoom-controls {
+        gap: 0;
+      }
+
+      .analytics-expand-chart-title-row .analytics-scatter-zoom-btn {
+        display: none;
+      }
+
+      .analytics-expand-chart-title-row .analytics-scatter-zoom-input {
+        width: 58px;
+        height: 28px;
+        min-height: 28px;
+        padding: 0 4px;
+        border-radius: 7px;
+        font-size: 0.7rem;
+      }
+
+      .analytics-expand-content .analytics-line-zoom-scroll {
+        touch-action: none;
+        overscroll-behavior: contain;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+    }
+
     .analytics-scatter-zoom-shell {
       display: grid;
       grid-template-columns: 82px minmax(0, 1fr);
@@ -5904,6 +6666,44 @@
       flex: 0 0 auto;
     }
 
+    .analytics-line-zoom-scroll {
+      height: min(560px, calc(100vh - 260px));
+      min-height: 320px;
+      overflow: auto;
+      border: 1px solid rgba(51, 65, 85, 0.7);
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.18);
+      scrollbar-gutter: stable;
+      touch-action: pan-x pan-y;
+    }
+
+    .analytics-line-zoom-scroll svg {
+      display: block;
+      width: auto;
+      height: auto;
+      max-width: none;
+      max-height: none;
+    }
+
+    .analytics-line-zoom-content {
+      width: max-content;
+      height: max-content;
+      overflow: visible;
+    }
+
+    .analytics-line-zoom-scroll.is-live-pinching svg {
+      will-change: width, height;
+    }
+
+    .analytics-line-zoom-scroll.is-live-pinching line,
+    .analytics-line-zoom-scroll.is-live-pinching polyline {
+      vector-effect: non-scaling-stroke;
+    }
+
+    .analytics-line-zoom-scroll.is-live-pinching .line-chart-point-dot--visible {
+      vector-effect: non-scaling-stroke;
+    }
+
     .analytics-expand-content .analytics-scatter-zoom-x-axis,
     .analytics-expand-content .analytics-scatter-zoom-y-axis {
       width: 100%;
@@ -5924,6 +6724,14 @@
       height: auto;
     }
 
+    .analytics-expand-content .analytics-line-zoom-scroll > svg,
+    .analytics-expand-content .analytics-line-zoom-content > svg {
+      width: auto;
+      height: auto;
+      max-width: none;
+      max-height: none;
+    }
+
     .analytics-expandable {
       cursor: zoom-in;
     }
@@ -5936,6 +6744,8 @@
     }
 
     .hand-replay-topbar {
+      position: relative;
+      z-index: 30;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -5963,6 +6773,8 @@
     }
 
     .hand-replay-controls {
+      position: relative;
+      z-index: 31;
       display: inline-flex;
       align-items: center;
       gap: 10px;
@@ -6014,6 +6826,8 @@
     }
 
     .hand-replay-table-wrap {
+      position: relative;
+      z-index: 1;
       margin-top: 0;
     }
 
@@ -6253,6 +7067,7 @@
     }
 
     .hand-table-wrap {
+      position: relative;
       margin-top: 14px;
       width: 100%;
     }
@@ -6332,19 +7147,22 @@
     }
 
     .hand-table-visual {
+      --hand-table-rail: 14px;
       position: relative;
       width: 100%;
       max-width: 620px;
       margin: 0 auto;
       aspect-ratio: 1.45 / 1;
+      box-sizing: border-box;
       border-radius: 999px;
-      padding: 14px;
+      padding: var(--hand-table-rail);
       background: linear-gradient(145deg, #9a6a39, var(--tableWood));
       box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.35);
       overflow: hidden;
     }
 
-    .hand-table-visual.button-dragging {
+    .hand-table-visual.button-dragging,
+    .hand-table-visual.has-button-on-table {
       overflow: visible;
     }
 
@@ -6487,11 +7305,21 @@
     .hand-button-token.hand-button-on-table {
       position: absolute;
       transform: translate(-50%, -50%);
-      z-index: 7;
+      z-index: 30;
+    }
+
+    .hand-table-visual > .hand-button-token.hand-button-on-table {
+      z-index: 100;
     }
 
     .hand-button-token.hand-button-locked {
       cursor: not-allowed;
+    }
+
+    .hand-replay-button-token {
+      cursor: default;
+      pointer-events: none;
+      z-index: 140;
     }
 
     .hand-center-street-info {
@@ -6508,23 +7336,17 @@
       white-space: pre-line;
     }
 
-    .hand-history-controls {
-      position: absolute;
-      left: 8px;
-      top: 6px;
-      display: inline-flex;
-      gap: 6px;
-      z-index: 8;
-    }
-
-    .hand-history-controls .inline-btn {
-      width: 28px;
-      height: 28px;
-      padding: 0;
-      margin: 0;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
+    .hand-center-street-info.hand-winner-banner {
+      top: 50%;
+      z-index: 10;
+      font-size: clamp(1rem, 4.2vw, 1.35rem);
+      line-height: 1.25;
+      color: #fef9c3;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(250, 204, 21, 0.45);
     }
 
     .hand-button-drop-prompt {
@@ -6557,13 +7379,15 @@
     }
 
     .hand-table-felt {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      position: absolute;
+      inset: var(--hand-table-rail);
+      width: auto;
+      height: auto;
       border-radius: 999px;
       background: radial-gradient(ellipse at 50% 45%, #22c55e 0%, var(--tableFelt) 52%, #0f3d20 100%);
       box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.25);
       overflow: visible;
+      z-index: 1;
     }
 
     .hand-dealer-btn {
@@ -6625,6 +7449,136 @@
       min-height: 38px;
       font-size: 0.62rem;
       padding: 3px 4px;
+    }
+
+    .hand-seat-compact-num {
+      display: none;
+    }
+
+    .hand-seat-details {
+      display: contents;
+    }
+
+    @media (max-width: 980px) {
+      .hand-table-felt .hand-seat {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        padding: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+        z-index: 5;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-compact,
+      .hand-table-felt .hand-seat.hand-seat-micro {
+        width: 40px;
+        min-width: 40px;
+        height: 40px;
+        min-height: 40px;
+        font-size: 0.72rem;
+        padding: 0;
+      }
+
+      .hand-table-felt .hand-seat .hand-seat-compact-num {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        font-size: 0.88rem;
+        font-weight: 800;
+        color: #e5e7eb;
+        line-height: 1;
+        pointer-events: none;
+      }
+
+      .hand-table-felt .hand-seat .hand-seat-details {
+        display: none;
+        width: 100%;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded {
+        width: min(76px, 21vw);
+        min-width: 58px;
+        height: auto;
+        min-height: 48px;
+        padding: 4px 6px;
+        border-radius: 10px;
+        flex-direction: column;
+        z-index: 8;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded.hand-seat-compact {
+        width: min(68px, 19vw);
+        min-width: 54px;
+        min-height: 44px;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded.hand-seat-micro {
+        width: min(62px, 17vw);
+        min-width: 50px;
+        min-height: 40px;
+        font-size: 0.66rem;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-compact-num {
+        display: none;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-details {
+        display: block;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-label,
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-value,
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-equity,
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-cards {
+        display: block;
+      }
+
+      .hand-table-felt .hand-dealer-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.65rem;
+        z-index: 6;
+      }
+
+      .hand-table-visual > .hand-button-token.hand-button-on-table {
+        z-index: 100;
+      }
+
+      .hand-table-felt .hand-seat-committed {
+        font-size: 0.58rem;
+        padding: 1px 5px;
+        z-index: 4;
+        max-width: 52px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .hand-table-felt .hand-seat-action-row {
+        z-index: 6;
+        gap: 3px;
+      }
+
+      .hand-table-felt .hand-seat-action-btn {
+        min-width: 30px;
+        padding: 2px 5px;
+        font-size: 0.58rem;
+      }
+
+      .hand-table-visual .hand-board-wrap {
+        top: 50%;
+      }
+
+      .hand-table-visual .hand-center-street-info {
+        top: 38%;
+      }
     }
 
     .hand-seat-label {
@@ -6979,10 +7933,7 @@
 
     @media (max-width: 520px) {
       .row-three,
-      .row-two,
-      .add-session-meta-grid,
-      .add-session-time-grid,
-      .add-session-money-grid {
+      .row-two {
         grid-template-columns: 1fr;
       }
 
@@ -7012,6 +7963,156 @@
 
       .analytics-range-controls {
         justify-content: flex-start;
+      }
+    }
+
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      #addSessionForm {
+        margin: 10px auto;
+        padding: 10px;
+      }
+
+      #addSessionForm .session-title {
+        margin-bottom: 10px;
+      }
+
+      #addSessionForm label,
+      #addSessionForm .add-session-meta-col > label {
+        margin-bottom: 4px;
+        font-size: 0.78rem;
+        line-height: 1.15;
+      }
+
+      #addSessionForm input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+      #addSessionForm select,
+      #addSessionForm .location-picker-trigger.secondary-btn {
+        --control-height: 34px;
+        min-height: 34px;
+        max-height: 34px;
+        border-radius: 8px;
+        font-size: 0.84rem;
+      }
+
+      #addSessionForm input:not([type="checkbox"]):not([type="radio"]):not([type="file"]) {
+        padding-inline: 8px;
+      }
+
+      #addSessionForm select {
+        padding-left: 8px;
+        padding-right: 24px;
+        background-position: right 6px center;
+      }
+
+      #addSessionForm .add-session-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      #addSessionForm .add-session-meta-col {
+        gap: 4px;
+      }
+
+      #addSessionForm .add-session-time-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      #addSessionForm .add-session-time-grid .row-three {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(76px, 0.8fr);
+        gap: 6px;
+      }
+
+      #addSessionForm .add-session-money-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      #addSessionForm #customStakeWrap {
+        margin-top: 4px;
+      }
+
+      #addSessionForm .add-session-actions {
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      #addSessionForm .add-session-actions button {
+        flex-basis: 0;
+        min-width: 0;
+        padding: 8px 9px;
+        font-size: 0.84rem;
+      }
+
+      #addHandPage {
+        margin-top: 10px;
+        padding: 12px;
+      }
+
+      #addHandPage .add-hand-top {
+        margin-bottom: 8px;
+      }
+
+      #addHandLayout {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      #addHandRight {
+        order: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #handSummaryPane {
+        order: 2;
+      }
+
+      #addHandRight > .hand-table-wrap {
+        order: 1;
+        margin-top: 0;
+        padding-top: 0;
+      }
+
+      #handStreetNavRow {
+        order: 2;
+        margin-top: 8px;
+        margin-bottom: 10px;
+      }
+
+      #addHandGameTypeLine {
+        order: 3;
+      }
+
+      #addHandRight > .field {
+        order: 4;
+      }
+
+      #addHandRight > .hand-setup-top-row {
+        order: 5;
+      }
+
+      #addHandRight > .hand-street-status {
+        order: 6;
+      }
+
+      #handActionPanel {
+        order: 7;
+      }
+
+      #handStackPanel {
+        order: 8;
+      }
+
+      #handSaveToSessionBtn {
+        order: 9;
+      }
+
+      #handSaveMessage {
+        order: 10;
       }
     }
 
@@ -7054,6 +8155,7 @@
     body[data-theme="light"] .placeholder,
     body[data-theme="light"] .home-widget-card,
     body[data-theme="light"] .home-widget-card--history,
+    body[data-theme="light"] .home-widget-card--bankroll,
     body[data-theme="light"] .home-widget-card--analytics,
     body[data-theme="light"] .home-widget-card--add,
     body[data-theme="light"] .home-widget-card--hand,
@@ -7229,6 +8331,11 @@
       box-shadow: 0 22px 40px rgba(0, 0, 0, 0.10);
     }
 
+    body[data-theme="light"] .home-widget-card--bankroll {
+      background: #ffffff;
+      box-shadow: 0 22px 40px rgba(0, 0, 0, 0.10);
+    }
+
     body[data-theme="light"] .home-widget-card--hand {
       background: #ffffff;
       box-shadow: 0 22px 40px rgba(0, 0, 0, 0.10);
@@ -7245,6 +8352,7 @@
     }
 
     body[data-theme="light"] .home-widget-card--hand .home-widget-stat,
+    body[data-theme="light"] .home-widget-card--bankroll .home-widget-stat,
     body[data-theme="light"] .home-widget-card--add .home-widget-stat--plus,
     body[data-theme="light"] .home-widget-kicker,
     body[data-theme="light"] .payment-plan-eyebrow,
@@ -7538,9 +8646,14 @@
     body[data-theme="light"] .bankroll-page .chart-card,
     body[data-theme="light"] .bankroll-history-table,
     body[data-theme="light"] .hand-history-table,
-    body[data-theme="light"] .hand-history-advanced-dropdown,
-    body[data-theme="light"] .hand-history-page .history-item {
+    body[data-theme="light"] .hand-history-advanced-dropdown {
       background: #ffffff;
+      border-color: rgba(148, 163, 184, 0.32);
+      box-shadow: none;
+    }
+
+    body[data-theme="light"] .hand-history-page .history-item {
+      background: transparent;
       border-color: rgba(148, 163, 184, 0.32);
       box-shadow: none;
     }
@@ -7848,30 +8961,45 @@
           <div class="landing-features-grid">
             <article class="feature-card">
               <div class="feature-shot">
-                <img src="assets/chip-logger-images/add-session.png" alt="Add Session form in Chip Logger" loading="lazy" />
+                <picture>
+                  <source media="(hover: none) and (pointer: coarse) and (max-width: 767px)" srcset="assets/chip-logger-images/IMG_1056.jpg" />
+                  <img src="assets/chip-logger-images/add-session.png" alt="Add Session form in Chip Logger" loading="lazy" />
+                </picture>
               </div>
               <p class="feature-caption">Log each session in seconds.</p>
             </article>
             <article class="feature-card">
               <div class="feature-shot">
-                <img src="assets/chip-logger-images/session-history.png" alt="Session history table in Chip Logger" loading="lazy" />
+                <picture>
+                  <source media="(hover: none) and (pointer: coarse) and (max-width: 767px)" srcset="assets/chip-logger-images/IMG_1057.jpg" />
+                  <img src="assets/chip-logger-images/session-history.png" alt="Session history table in Chip Logger" loading="lazy" />
+                </picture>
               </div>
               <p class="feature-caption">Search, sort, and review your session history.</p>
             </article>
             <article class="feature-card">
               <div class="feature-shot-pair">
                 <div class="feature-shot">
-                  <img src="assets/chip-logger-images/analytics-profit.png" alt="Profit analytics chart in Chip Logger" loading="lazy" />
+                  <picture>
+                    <source media="(hover: none) and (pointer: coarse) and (max-width: 767px)" srcset="assets/chip-logger-images/IMG_1058.jpg" />
+                    <img src="assets/chip-logger-images/analytics-profit.png" alt="Profit analytics chart in Chip Logger" loading="lazy" />
+                  </picture>
                 </div>
                 <div class="feature-shot">
-                  <img src="assets/chip-logger-images/analytics-patterns.png" alt="Behavior and hand intelligence analytics in Chip Logger" loading="lazy" />
+                  <picture>
+                    <source media="(hover: none) and (pointer: coarse) and (max-width: 767px)" srcset="assets/chip-logger-images/IMG_1059.jpg" />
+                    <img src="assets/chip-logger-images/analytics-patterns.png" alt="Behavior and hand intelligence analytics in Chip Logger" loading="lazy" />
+                  </picture>
                 </div>
               </div>
               <p class="feature-caption">Track profit and spot patterns.</p>
             </article>
             <article class="feature-card">
               <div class="feature-shot">
-                <img src="assets/chip-logger-images/hand-replay.png" alt="Hand replay view in Chip Logger" loading="lazy" />
+                <picture>
+                  <source media="(hover: none) and (pointer: coarse) and (max-width: 767px)" srcset="assets/chip-logger-images/IMG_1060.jpg" />
+                  <img src="assets/chip-logger-images/hand-replay.png" alt="Hand replay view in Chip Logger" loading="lazy" />
+                </picture>
               </div>
               <p class="feature-caption">Replay important hands street by street.</p>
             </article>
@@ -8189,6 +9317,13 @@
         <div class="app-home-center">
           <div class="landing-hero-cta app-home-dashboard-card">
             <div class="app-home-dashboard-grid">
+              <button id="homeBankrollBtn" type="button" class="home-widget-card home-widget-card--bankroll home-phone-bankroll-btn">
+                <div class="home-widget-card-top">
+                  <span class="home-widget-kicker">Bankroll</span>
+                  <span id="homeBankrollTotal" class="home-widget-stat">$0.00</span>
+                </div>
+              </button>
+
               <button id="homeHistoryBtn" type="button" class="home-widget-card home-widget-card--history">
                 <div class="home-widget-card-top">
                   <span class="home-widget-kicker">Session history</span>
@@ -8511,10 +9646,6 @@
           </div>
           <div class="hand-table-wrap">
             <div id="handTableVisual" class="hand-table-visual" aria-hidden="false">
-              <div class="hand-history-controls">
-                <button type="button" id="handUndoBtn" class="inline-btn" aria-label="Undo action">↶</button>
-                <button type="button" id="handRedoBtn" class="inline-btn" aria-label="Redo action">↷</button>
-              </div>
               <div id="handInlineAmountEditor" class="hand-inline-amount-editor hidden">
                 <input id="handInlineAmountInput" type="number" min="0" step="0.01" placeholder="Amount" />
                 <button type="button" id="handInlineAmountSaveBtn" class="inline-btn">Save</button>
@@ -8625,7 +9756,7 @@
                     </svg>
                   </button>
                 </div>
-                <button type="button" id="historySearchBtn" class="history-search-btn">Search</button>
+                <button type="button" id="historySearchBtn" class="history-search-btn" aria-label="Search sessions">Search</button>
                 <button type="button" id="historyModeToggleBtn" class="history-mode-toggle-btn secondary-btn" aria-label="Switch to folders/grid view">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
                 </button>
@@ -8775,6 +9906,7 @@
               <div class="history-summary-row">
                 <div class="history-session-link">
                   <span class="history-col-date">Title</span>
+                  <span class="mobile-history-date mobile-history-date-head">Date</span>
                   <span class="history-col-location">Location</span>
                   <span class="history-col-duration">Length of Session</span>
                   <span class="history-col-profit">Profit</span>
@@ -9003,7 +10135,7 @@
                           </svg>
                         </button>
                       </div>
-                      <button type="button" id="handHistorySearchBtn" class="history-search-btn">Search</button>
+                      <button type="button" id="handHistorySearchBtn" class="history-search-btn" aria-label="Search hands">Search</button>
                       <button type="button" id="handHistoryModeToggleBtn" class="history-mode-toggle-btn secondary-btn" aria-label="Toggle hand folders">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                           <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -9076,6 +10208,7 @@
                   <div class="history-summary-row">
                     <div class="history-session-link hand-history-header-link">
                       <span class="history-col-date">Hand</span>
+                      <span class="mobile-history-date mobile-history-date-head">Date</span>
                       <span class="history-col-location">Session</span>
                       <span class="history-col-duration">Summary</span>
                       <span class="history-delete-spacer" aria-hidden="true"></span>
@@ -9155,7 +10288,7 @@
         <h3 id="bankrollValue" class="bankroll-value adaptive-contrast-text">Total Bankroll: $0.00</h3>
         <div class="chart-card chart-with-tooltip">
           <p class="chart-title">Bankroll over time</p>
-          <p class="hint" style="margin: 0 0 8px; font-size: 0.85rem;">Hover the line for values; session points open full session.</p>
+          <p class="hint" style="margin: 0 0 8px; font-size: 0.85rem;">Click the graph to open the detailed view.</p>
           <div id="bankrollChartTooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
           <svg id="bankrollChart" viewBox="0 0 700 260" width="100%" height="260" aria-label="Bankroll by date chart"></svg>
         </div>
@@ -9191,6 +10324,14 @@
             </div>
           </div>
           <div id="bankrollChangesTableWrap"></div>
+        </div>
+      </section>
+
+      <section id="bankrollChangeDetailView" class="view">
+        <div class="app-panel-card session-detail-page bankroll-change-detail-page">
+          <button type="button" id="backFromBankrollChangeDetailBtn" class="secondary-btn">← Back to Bankroll</button>
+          <h3 id="bankrollChangeDetailTitle" class="session-title">Bankroll change</h3>
+          <div id="bankrollChangeDetailBody"></div>
         </div>
       </section>
 
@@ -9422,6 +10563,7 @@
     const homeAddSessionBtn = document.getElementById("homeAddSessionBtn");
     const historyAddSessionBtn = document.getElementById("historyAddSessionBtn");
     const historyViewTitle = document.querySelector("#historyView .history-page .session-title");
+    const homeBankrollBtn = document.getElementById("homeBankrollBtn");
     const homeHistoryBtn = document.getElementById("homeHistoryBtn");
     const homeAnalyticsBtn = document.getElementById("homeAnalyticsBtn");
     const homeHandBtn = document.getElementById("homeHandBtn");
@@ -9673,6 +10815,9 @@
     const backFromSessionDetailBtn = document.getElementById("backFromSessionDetailBtn");
     const sessionDetailTitle = document.getElementById("sessionDetailTitle");
     const sessionDetailBody = document.getElementById("sessionDetailBody");
+    const backFromBankrollChangeDetailBtn = document.getElementById("backFromBankrollChangeDetailBtn");
+    const bankrollChangeDetailTitle = document.getElementById("bankrollChangeDetailTitle");
+    const bankrollChangeDetailBody = document.getElementById("bankrollChangeDetailBody");
     const backFromStakeDetailBtn = document.getElementById("backFromStakeDetailBtn");
     const stakeDetailTitle = document.getElementById("stakeDetailTitle");
     const stakeDetailSubtitle = document.getElementById("stakeDetailSubtitle");
@@ -9726,8 +10871,6 @@
     const handStackInput = document.getElementById("handStackInput");
     const handStackSaveBtn = document.getElementById("handStackSaveBtn");
     const handStackCancelBtn = document.getElementById("handStackCancelBtn");
-    const handUndoBtn = document.getElementById("handUndoBtn");
-    const handRedoBtn = document.getElementById("handRedoBtn");
     const handSaveToSessionBtn = document.getElementById("handSaveToSessionBtn");
     const handSaveMessage = document.getElementById("handSaveMessage");
     const handHistoryList = document.getElementById("handHistoryList");
@@ -9768,6 +10911,7 @@
     const handReplayNextBtn = document.getElementById("handReplayNextBtn");
     const handReplaySpeedSelect = document.getElementById("handReplaySpeedSelect");
     const handReplayCloseBtn = document.getElementById("handReplayCloseBtn");
+    const handReplayTableVisual = document.getElementById("handReplayTableVisual");
     const handReplayTableFelt = document.getElementById("handReplayTableFelt");
     const handReplayBoardWrap = document.getElementById("handReplayBoardWrap");
     const handReplayCenterStreetInfo = document.getElementById("handReplayCenterStreetInfo");
@@ -9871,6 +11015,9 @@
     let handReplayPlaying = false;
     let handDetailTitleIsEditing = false;
     let handReplayTimerId = null;
+    let handExpandedSeatIndex = null;
+    let handReplayExpandedSeatIndex = null;
+    let handSeatPhoneUiBound = false;
     let currentHandDetailEntry = null;
     let handDetailReturnViewId = "handHistoryView";
     let editingHandSessionIndex = null;
@@ -9990,6 +11137,7 @@
     let lastViewBeforeAccountViews = "homeView";
     let sessionDetailReturnViewId = "analyticsView";
     let sessionDetailReturnFolderId = null;
+    let activeBankrollChangeId = null;
     /** Applied title-only filter after user clicks Search (not live while typing). */
     let historyActiveTitleSearch = "";
     const animatedViewsOnce = new Set(["homeView"]);
@@ -10047,6 +11195,7 @@
       bankrollView: "/bankroll",
       analyticsView: "/analytics",
       sessionDetailView: "/session-detail",
+      bankrollChangeDetailView: "/bankroll-change-detail",
       stakeDetailView: "/stake-detail"
     };
     const supabaseProjectUrl = "https://gaobxnzfiogklkoueldd.supabase.co";
@@ -10571,7 +11720,7 @@
       saveSessionBtn.textContent = editing ? "Edit Session" : "Add Session";
     }
 
-    function loadAddSessionEditorFromSession(sessionIndex) {
+    function loadAddSessionEditorFromSession(sessionIndex, options = {}) {
       const session = sessions[sessionIndex];
       if (!session) return false;
       editingSessionIndex = sessionIndex;
@@ -10580,7 +11729,13 @@
       prefillAddSessionFormFromSession(session);
       pendingSessionHands = ((session.hands || []).map((h) => JSON.parse(JSON.stringify(h))));
       updateAddSessionChrome();
-      renderHandHistory();
+      if (!options.skipHandHistoryRender) {
+        try {
+          renderHandHistory();
+        } catch (err) {
+          console.error("Failed to refresh hand history while loading session", err);
+        }
+      }
       return true;
     }
 
@@ -10607,6 +11762,71 @@
       lastViewBeforeAddHand = "handHistoryView";
       addHandReturnViewLocked = true;
       showView("addHandView");
+      scrollPageToTop();
+    }
+
+    function openHandEditorFromEntry(entry, options = {}) {
+      if (!entry || !entry.hand) return;
+      dismissHandFloatingUi();
+      closeHandReplay();
+      const returnViewId = options.lastViewBeforeAddHand || "handDetailView";
+      lastViewBeforeAddHand = returnViewId;
+      addHandReturnViewLocked = true;
+      viewScrollPositions.set("addHandView", 0);
+      showView("addHandView", {
+        replaceRoute: options.replaceRoute !== false,
+        immediateRender: true
+      });
+      scrollPageToTop();
+      try {
+        const sessionIndex = entry.sessionIndex;
+        if (Number.isInteger(sessionIndex) && sessionIndex >= 0 && sessions[sessionIndex]) {
+          loadAddSessionEditorFromSession(sessionIndex, { skipHandHistoryRender: true });
+        }
+        loadHandIntoEditorFromEntry(entry);
+        renderHandStreetUI();
+        renderHandTable();
+        syncHandButtonTokenToSeat();
+        positionHandSummaryPane();
+      } catch (err) {
+        console.error("Failed to open hand editor", err);
+        window.alert("Could not open the hand editor. Please try again.");
+        showView(returnViewId, { immediateRender: true, replaceRoute: true });
+        return;
+      }
+      scrollPageToTop();
+      window.requestAnimationFrame(() => {
+        scrollPageToTop();
+        positionHandSummaryPane();
+      });
+    }
+
+    function bindHandDetailViewActions() {
+      if (!handDetailView || handDetailView.dataset.actionsBound === "1") return;
+      handDetailView.dataset.actionsBound = "1";
+      handDetailView.addEventListener("click", (event) => {
+        const btn = event.target.closest("button");
+        if (!btn || !handDetailView.contains(btn)) return;
+        if (btn.id === "backFromHandDetailBtn") {
+          event.preventDefault();
+          dismissHandFloatingUi();
+          closeHandReplay();
+          showView(handDetailReturnViewId || "handHistoryView", {
+            restoreScroll: true,
+            replaceRoute: true,
+            immediateRender: true
+          });
+          return;
+        }
+      });
+    }
+
+    function bindHandDetailActionButton(btn, handler) {
+      if (!btn) return;
+      btn.onclick = (event) => {
+        event.preventDefault();
+        handler();
+      };
     }
 
     function openHandHistorySessionPicker() {
@@ -10693,6 +11913,10 @@
       }
       document.documentElement.scrollTop = position.windowY;
       document.body.scrollTop = position.windowY;
+    }
+
+    function scrollPageToTop() {
+      restorePageScrollPosition(0);
     }
 
     function getPageScrollTop() {
@@ -10784,12 +12008,41 @@
       }
     }
 
-    function shouldRenderBeforeViewEnter(viewId) {
-      return viewId === "handHistoryView";
+    function safeRenderViewContent(viewId) {
+      try {
+        renderViewContent(viewId);
+      } catch (err) {
+        console.error(`Failed to render view "${viewId}"`, err);
+      }
+    }
+
+    function restoreHandTableFloatingWidgets() {
+      if (!handTableVisual) return;
+      const felt = document.getElementById("handTableFelt");
+      const restore = (el) => {
+        if (!el || el.parentElement === handTableVisual) return;
+        if (el.parentElement === document.body) {
+          el.style.left = "";
+          el.style.top = "";
+          if (felt) {
+            handTableVisual.insertBefore(el, felt);
+          } else {
+            handTableVisual.appendChild(el);
+          }
+        }
+      };
+      restore(handInlineAmountEditor);
+      restore(handCommitActionMenu);
     }
 
     function showView(viewId, options = {}) {
       clearMotionBackdropBlur("app");
+      hideViewLoading();
+      if (viewId !== "addHandView") {
+        dismissHandFloatingUi();
+        closeHandReplay();
+        handExpandedSeatIndex = null;
+      }
       const analyticsExpandWasOpen =
         analyticsExpandOverlay &&
         !analyticsExpandOverlay.classList.contains("hidden");
@@ -10859,10 +12112,6 @@
         resetAddSessionForm();
         updateAddSessionChrome();
       }
-      const preRenderedView = shouldRenderBeforeViewEnter(viewId);
-      if (preRenderedView) {
-        renderViewContent(viewId);
-      }
       views.forEach((view) => {
         view.classList.toggle("active", view.id === viewId);
         if (view.id !== "homeView" && view.id === viewId && !animatedViewsOnce.has(viewId)) {
@@ -10927,23 +12176,31 @@
       }
 
       const renderToken = ++pendingViewRenderToken;
-      if (options.immediateRender === true) {
-        if (!preRenderedView) renderViewContent(viewId);
+      const finishViewEnter = () => {
+        safeRenderViewContent(viewId);
         animateHomeBackdropBlur();
         startMotionBackdropBlur("app");
         restoreViewScrollAfterRender(viewId, targetScrollTop);
+        if (viewId === "handDetailView" && !restoreScroll) {
+          scrollPageToTop();
+        }
+      };
+      if (options.immediateRender === true) {
+        finishViewEnter();
         hideViewLoading();
         return;
       }
       showViewLoading("XXXX...");
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
-          if (renderToken !== pendingViewRenderToken) return;
-          if (!preRenderedView) renderViewContent(viewId);
-          animateHomeBackdropBlur();
-          startMotionBackdropBlur("app");
-          restoreViewScrollAfterRender(viewId, targetScrollTop);
-          hideViewLoading();
+          try {
+            if (renderToken !== pendingViewRenderToken) return;
+            finishViewEnter();
+          } finally {
+            if (renderToken === pendingViewRenderToken) {
+              hideViewLoading();
+            }
+          }
         });
       });
     }
@@ -11511,11 +12768,12 @@
         }, profileEmailInput ? profileEmailInput.value : "");
         startingBankroll = Number(profileData.starting_bankroll || 0);
         bankroll = startingBankroll;
-        currentPlan = normalizePremiumValue(profileData.premium) ? "premium" : "free";
+        const hasManualPremium = normalizePremiumValue(profileData.manual_premium);
+        currentPlan = (normalizePremiumValue(profileData.premium) || hasManualPremium) ? "premium" : "free";
         const subscriptionStatus = normalizeSubscriptionStatus(profileData.subscription_status);
         if (subscriptionStatus === "active" || subscriptionStatus === "trialing" || subscriptionStatus === "past_due") {
           currentPlan = "premium";
-        } else if (subscriptionStatus === "canceled" || subscriptionStatus === "unpaid" || subscriptionStatus === "incomplete_expired" || subscriptionStatus === "paused") {
+        } else if (!hasManualPremium && (subscriptionStatus === "canceled" || subscriptionStatus === "unpaid" || subscriptionStatus === "incomplete_expired" || subscriptionStatus === "paused")) {
           currentPlan = "free";
         }
         if (themeSelect) themeSelect.value = normalizeThemeValue(profileData.theme || "dark");
@@ -12319,14 +13577,16 @@
 
     function updateHandCenterStreetInfo() {
       if (!handCenterStreetInfo) return;
-      const msg = getHandWinnerText();
-      if (!msg) {
+      const banner = getHandWinnerBannerText();
+      if (!banner) {
         handCenterStreetInfo.classList.add("hidden");
+        handCenterStreetInfo.classList.remove("hand-winner-banner");
         handCenterStreetInfo.textContent = "";
         return;
       }
       handCenterStreetInfo.classList.remove("hidden");
-      handCenterStreetInfo.textContent = msg;
+      handCenterStreetInfo.classList.add("hand-winner-banner");
+      handCenterStreetInfo.textContent = banner;
     }
 
     function updateHandStreetNav() {
@@ -12817,6 +14077,78 @@
       const label = resultSeatLabel(seatIndex, nicknames, heroSeatIndex);
       const verb = label === "You" ? "win" : "wins";
       return `${label} ${verb} ${potLabel}`;
+    }
+
+    function formatHandWinnerBannerText(seatIndex, nicknames = handSeatNicknames, heroSeatIndex = handHeroSeatIndex) {
+      if (!Number.isInteger(seatIndex) || seatIndex < 0) return "";
+      const label = resultSeatLabel(seatIndex, nicknames, heroSeatIndex);
+      const verb = label === "You" ? "win" : "wins";
+      return `${label} ${verb}`;
+    }
+
+    function getStoredHandBoardCards(hand) {
+      const board = hand && hand.boardCards ? hand.boardCards : {};
+      return []
+        .concat(Array.isArray(board.flop) ? board.flop.slice(0, 3) : [])
+        .concat(Array.isArray(board.turn) ? board.turn.slice(0, 1) : [])
+        .concat(Array.isArray(board.river) ? board.river.slice(0, 1) : [])
+        .filter(Boolean);
+    }
+
+    function getStoredHandWinnerSeatIndex(hand) {
+      if (!hand) return null;
+      const stored = Number(hand.winnerSeatIndex);
+      if (Number.isInteger(stored) && stored >= 0) return stored;
+      const seatCards = Array.isArray(hand.seatCards) ? hand.seatCards : [];
+      const seatCount = seatCards.length;
+      if (!seatCount) return null;
+      const activeSeats = getStoredHandActiveSeats(hand, seatCount);
+      if (activeSeats.length === 1) return activeSeats[0];
+      const boardCards = getStoredHandBoardCards(hand);
+      if (boardCards.length !== 5 || activeSeats.length < 2) return null;
+      const useOmahaRules = seatCards.some((cards) => Array.isArray(cards) && cards.length >= 4);
+      return bestSeatForPot(activeSeats, seatCards, boardCards, useOmahaRules);
+    }
+
+    function getStoredHandWinnerBannerText(hand) {
+      const seatIndex = getStoredHandWinnerSeatIndex(hand);
+      if (seatIndex == null) return "";
+      return formatHandWinnerBannerText(
+        seatIndex,
+        Array.isArray(hand.seatNicknames) ? hand.seatNicknames : [],
+        Number.isInteger(Number(hand.heroSeatIndex)) ? Number(hand.heroSeatIndex) : null
+      );
+    }
+
+    function shouldShowHandWinnerBanner() {
+      if (!handSetupConfirmed) return false;
+      const seatIndex = getHandWinnerSeatIndex();
+      if (seatIndex == null) return false;
+      if (getActiveHandSeatIndices().length === 1) return true;
+      return isViewingFinalHandState();
+    }
+
+    function getHandWinnerBannerText() {
+      if (!shouldShowHandWinnerBanner()) return "";
+      return formatHandWinnerBannerText(getHandWinnerSeatIndex(), handSeatNicknames, handHeroSeatIndex);
+    }
+
+    function getHandReplayWinnerBannerText(entry, state) {
+      const hand = entry && entry.hand ? entry.hand : null;
+      let seatIndex = getStoredHandWinnerSeatIndex(hand);
+      if (seatIndex == null && state && Array.isArray(state.seatFolded)) {
+        const live = state.seatFolded
+          .map((folded, idx) => (!folded ? idx : -1))
+          .filter((idx) => idx >= 0);
+        if (live.length === 1) seatIndex = live[0];
+      }
+      if (seatIndex == null) return "";
+      const nicknames = (hand && Array.isArray(hand.seatNicknames) ? hand.seatNicknames : null)
+        || (state && Array.isArray(state.seatNicknames) ? state.seatNicknames : []);
+      const heroSeatIndex = Number.isInteger(Number(hand && hand.heroSeatIndex))
+        ? Number(hand.heroSeatIndex)
+        : (state && Number.isInteger(Number(state.heroSeatIndex)) ? Number(state.heroSeatIndex) : null);
+      return formatHandWinnerBannerText(seatIndex, nicknames, heroSeatIndex);
     }
 
     function bestSeatForPot(eligibleSeats, seatCards, boardCards, useOmahaRules) {
@@ -13716,32 +15048,35 @@
     }
 
     function renderButtonToken() {
-      if (!handButtonToken || !handTableVisual) return;
+      if (!handButtonToken || !handTableVisual || !handTableFelt) return;
       if (!handButtonToken.classList.contains("hand-button-on-table")) return;
-      let x = handButtonDrag.xPct;
-      let y = handButtonDrag.yPct;
+      ensureHandButtonTokenOnVisual();
+      let feltX = handButtonDrag.xPct;
+      let feltY = handButtonDrag.yPct;
       if (handButtonSeatIndex != null && handSeatPoints[handButtonSeatIndex]) {
         const p = handSeatPoints[handButtonSeatIndex];
-        x = 50 + (p.xPct - 50) * 0.78;
-        y = 50 + (p.yPct - 50) * 0.78;
+        const tokenPos = handTableButtonTokenPosition(p.xPct, p.yPct, handTableFelt);
+        feltX = tokenPos.xPct;
+        feltY = tokenPos.yPct;
       }
-      handButtonDrag.xPct = x;
-      handButtonDrag.yPct = y;
-      handButtonToken.style.left = `${x}%`;
-      handButtonToken.style.top = `${y}%`;
+      handButtonDrag.xPct = feltX;
+      handButtonDrag.yPct = feltY;
+      const visualPos = handTableFeltPointToVisualPercent(feltX, feltY, handTableFelt, handTableVisual);
+      handButtonToken.style.left = `${visualPos.xPct}%`;
+      handButtonToken.style.top = `${visualPos.yPct}%`;
       handButtonToken.style.zIndex = handButtonDrag.dragging ? "2300" : "";
     }
 
     function syncHandButtonTokenToSeat() {
-      if (!handButtonToken || !handTableVisual || handButtonSeatIndex == null) return;
-      if (handButtonToken.parentElement !== handTableVisual) {
-        handButtonToken.classList.add("hand-button-on-table");
-        handTableVisual.appendChild(handButtonToken);
-      }
+      if (!handButtonToken || !handTableVisual || !handTableFelt || handButtonSeatIndex == null) return;
+      handButtonToken.classList.add("hand-button-on-table");
+      setHandButtonOnTableUiActive(true);
+      ensureHandButtonTokenOnVisual();
       if (handSeatPoints[handButtonSeatIndex]) {
         const p = handSeatPoints[handButtonSeatIndex];
-        handButtonDrag.xPct = 50 + (p.xPct - 50) * 0.78;
-        handButtonDrag.yPct = 50 + (p.yPct - 50) * 0.78;
+        const tokenPos = handTableButtonTokenPosition(p.xPct, p.yPct, handTableFelt);
+        handButtonDrag.xPct = tokenPos.xPct;
+        handButtonDrag.yPct = tokenPos.yPct;
       }
       handButtonToken.classList.remove("dragging");
       handButtonToken.style.zIndex = "";
@@ -13756,6 +15091,7 @@
       handButtonToken.style.top = "";
       handButtonToken.style.zIndex = "";
       handTableVisual?.classList.remove("button-dragging");
+      setHandButtonOnTableUiActive(false);
       handButtonHolder.appendChild(handButtonToken);
     }
 
@@ -13803,6 +15139,19 @@
       if (!handCommitActionMenu) return;
       handCommitActionMenu.classList.add("hidden");
       handCommitMenuSeatIndex = null;
+      restoreHandTableFloatingWidgets();
+    }
+
+    function dismissHandFloatingUi() {
+      closeHandStackPanel();
+      closeHandCommitActionMenu();
+      if (handInlineAmountEditor) {
+        handInlineAmountEditor.classList.add("hidden");
+        handInlineAmountEditor.dataset.action = "";
+        handInlineAmountEditor.dataset.actorIndex = "";
+      }
+      restoreHandTableFloatingWidgets();
+      if (handButtonDropPrompt) handButtonDropPrompt.classList.add("hidden");
     }
 
     function openHandCommitActionMenu(seatIndex, anchorEl) {
@@ -14199,8 +15548,6 @@
             .filter((v) => v != null && !Number.isNaN(v));
           handSummaryEffective.textContent = eff.length ? formatMoney(Math.min(...eff)) : "—";
         }
-        if (handUndoBtn) handUndoBtn.disabled = true;
-        if (handRedoBtn) handRedoBtn.disabled = true;
         renderHandActionLog();
         return;
       }
@@ -14218,16 +15565,14 @@
         if (handSetupCompleteBtn) {
           handSetupCompleteBtn.classList.add("hidden");
         }
-        const winnerText = getHandWinnerText();
-        if (winnerText) {
-          handActorLabel.textContent = winnerText;
+        const winnerBanner = getHandWinnerBannerText();
+        if (winnerBanner) {
+          handActorLabel.textContent = winnerBanner;
         } else {
           handActorLabel.textContent = "Hand complete";
         }
         if (handSummaryStreet) handSummaryStreet.textContent = "Complete";
         if (handSummaryActor) handSummaryActor.textContent = handActorLabel ? handActorLabel.textContent : "—";
-        if (handUndoBtn) handUndoBtn.disabled = true;
-        if (handRedoBtn) handRedoBtn.disabled = true;
         updateHandCenterStreetInfo();
         renderHandActionLog();
         updateHandStreetNav();
@@ -14251,15 +15596,15 @@
         handActorLabel.textContent = "Press Setup complete to continue.";
       }
       const boardReady = isCurrentStreetBoardReady();
-      const winnerText = getHandWinnerText();
+      const winnerBanner = getHandWinnerBannerText();
       if (handAwaitingUndoAfterBack) {
         handActorLabel.textContent = "Click a committed amount and choose Undo action to continue.";
       }
       if (handSetupConfirmed && !boardReady && street !== "preflop") {
         handActorLabel.textContent = `Set all ${getStreetTitle(street)} board cards first.`;
       }
-      if (winnerText) {
-        handActorLabel.textContent = winnerText;
+      if (winnerBanner) {
+        handActorLabel.textContent = winnerBanner;
       }
       if (handSeatActionEditWrap) handSeatActionEditWrap.classList.add("hidden");
       const allowed = getAllowedActionsForSeat(handCurrentActorIndex);
@@ -14281,8 +15626,6 @@
           .filter((v) => v != null && !Number.isNaN(v));
         handSummaryEffective.textContent = eff.length ? formatMoney(Math.min(...eff)) : "—";
       }
-      if (handUndoBtn) handUndoBtn.disabled = handUndoStack.length === 0;
-      if (handRedoBtn) handRedoBtn.disabled = handRedoStack.length === 0;
       renderHandActionLog();
     }
 
@@ -14691,9 +16034,21 @@
           <button type="button" id="showHandBtn" class="secondary-btn">Show hand</button>
         </div>
       `;
+      bindHandDetailActionButton(document.getElementById("editHandBtn"), () => {
+        if (!currentHandDetailEntry) return;
+        openHandEditorFromEntry(currentHandDetailEntry, { lastViewBeforeAddHand: "handDetailView" });
+      });
+      bindHandDetailActionButton(document.getElementById("showHandBtn"), () => {
+        if (!currentHandDetailEntry) return;
+        dismissHandFloatingUi();
+        openHandReplay(currentHandDetailEntry);
+      });
       const sessionBtn = document.getElementById("handDetailSessionBtn");
       if (sessionBtn) {
-        sessionBtn.addEventListener("click", () => openHandHistorySession(entry));
+        sessionBtn.addEventListener("click", (event) => {
+          event.preventDefault();
+          openHandHistorySession(entry);
+        });
       }
       if (handDetailTitleEditBtn) {
         handDetailTitleEditBtn.onclick = () => setHandDetailTitleEditing(true);
@@ -14712,18 +16067,6 @@
           }
         };
       }
-      document.getElementById("editHandBtn")?.addEventListener("click", () => {
-        lastViewBeforeAddHand = "handDetailView";
-        addHandReturnViewLocked = true;
-        if (entry.sessionIndex != null && sessions[entry.sessionIndex]) {
-          openAddSessionEdit(entry.sessionIndex);
-        }
-        loadHandIntoEditorFromEntry(entry);
-        showView("addHandView");
-      });
-      document.getElementById("showHandBtn")?.addEventListener("click", () => {
-        openHandReplay(entry);
-      });
     }
 
     function buildHandReplayState(entry) {
@@ -14806,6 +16149,389 @@
       };
     }
 
+    function isHandTablePhoneLayout() {
+      return Boolean(window.matchMedia && window.matchMedia("(max-width: 980px)").matches);
+    }
+
+    function getHandTableSeatRingRadiusFallback() {
+      return { rx: 41, ry: 37 };
+    }
+
+    function getHandTableFeltMetrics(feltEl) {
+      const rect = feltEl?.getBoundingClientRect();
+      return {
+        width: Math.max(1, rect?.width || 0),
+        height: Math.max(1, rect?.height || 0)
+      };
+    }
+
+    function handTableFeltPointToVisualPercent(feltXPct, feltYPct, feltEl, visualEl) {
+      if (!feltEl || !visualEl) return { xPct: feltXPct, yPct: feltYPct };
+      const feltRect = feltEl.getBoundingClientRect();
+      const visualRect = visualEl.getBoundingClientRect();
+      if (feltRect.width <= 0 || visualRect.width <= 0) return { xPct: feltXPct, yPct: feltYPct };
+      const px = feltRect.left + (feltXPct / 100) * feltRect.width;
+      const py = feltRect.top + (feltYPct / 100) * feltRect.height;
+      return {
+        xPct: ((px - visualRect.left) / visualRect.width) * 100,
+        yPct: ((py - visualRect.top) / visualRect.height) * 100
+      };
+    }
+
+    function handTableVisualPointToFeltPercent(visualXPct, visualYPct, feltEl, visualEl) {
+      if (!feltEl || !visualEl) return { xPct: visualXPct, yPct: visualYPct };
+      const feltRect = feltEl.getBoundingClientRect();
+      const visualRect = visualEl.getBoundingClientRect();
+      if (feltRect.width <= 0 || visualRect.width <= 0) return { xPct: visualXPct, yPct: visualYPct };
+      const px = visualRect.left + (visualXPct / 100) * visualRect.width;
+      const py = visualRect.top + (visualYPct / 100) * visualRect.height;
+      return {
+        xPct: ((px - feltRect.left) / feltRect.width) * 100,
+        yPct: ((py - feltRect.top) / feltRect.height) * 100
+      };
+    }
+
+    function setHandButtonOnTableUiActive(active) {
+      handTableVisual?.classList.toggle("has-button-on-table", Boolean(active));
+    }
+
+    function ensureHandButtonTokenOnVisual() {
+      if (!handButtonToken || !handTableVisual) return;
+      if (handButtonToken.parentElement !== handTableVisual) {
+        handTableVisual.appendChild(handButtonToken);
+      }
+    }
+
+    /** Distance from felt edge to seat center (phone seats are 40px → radius 20). */
+    function getHandTableSeatEdgeInsetPx() {
+      if (!isHandTablePhoneLayout()) return 12;
+      return 20;
+    }
+
+    /** Fine-tune phone seat discs slightly closer to the felt top edge. */
+    function getHandTablePhoneSeatUpNudgePx() {
+      return 6;
+    }
+
+    /** Phone seat vertical tweak in px (negative = up, positive = down). */
+    function getHandTablePhoneSeatVerticalAdjustPx(feltEl) {
+      const adjust = -getHandTablePhoneSeatUpNudgePx();
+      if (feltEl?.id === "handReplayTableFelt") {
+        return adjust + 8;
+      }
+      return adjust;
+    }
+
+    /** Fine-tune phone bet chips slightly lower on the felt. */
+    function getHandTablePhoneBetDownNudgePx() {
+      return 8;
+    }
+
+    /** Pill-shaped felt (border-radius: 999px): cap radius = half height. */
+    function getHandTableFeltShape(w, h) {
+      const cx = w / 2;
+      const cy = h / 2;
+      const capR = h / 2;
+      const straightHalf = Math.max(0, w / 2 - capR);
+      return { cx, cy, capR, straightHalf };
+    }
+
+    function handTableFeltPerimeterLength(w, h) {
+      const { capR, straightHalf } = getHandTableFeltShape(w, h);
+      if (straightHalf <= 0) return 2 * Math.PI * capR;
+      return 4 * straightHalf + 2 * Math.PI * capR;
+    }
+
+    /**
+     * Point on outer felt boundary plus outward unit normal (away from table interior).
+     * t in [0,1), clockwise from top center.
+     */
+    function handTableFeltPerimeterBoundaryAt(t, w, h) {
+      const { cx, cy, capR, straightHalf } = getHandTableFeltShape(w, h);
+      const norm = ((t % 1) + 1) % 1;
+
+      if (straightHalf <= 0) {
+        const angle = -Math.PI / 2 + norm * 2 * Math.PI;
+        const nx = Math.cos(angle);
+        const ny = Math.sin(angle);
+        return {
+          x: cx + capR * nx,
+          y: cy + capR * ny,
+          nx,
+          ny
+        };
+      }
+
+      const sTopRight = straightHalf;
+      const sRightCap = Math.PI * capR;
+      const sBottom = 2 * straightHalf;
+      const sLeftCap = Math.PI * capR;
+      const perim = handTableFeltPerimeterLength(w, h);
+      let d = norm * perim;
+
+      if (d <= sTopRight) {
+        return { x: cx + d, y: 0, nx: 0, ny: -1 };
+      }
+      d -= sTopRight;
+
+      if (d <= sRightCap) {
+        const theta = -Math.PI / 2 + (d / sRightCap) * Math.PI;
+        const nx = Math.cos(theta);
+        const ny = Math.sin(theta);
+        return {
+          x: cx + straightHalf + capR * nx,
+          y: cy + capR * ny,
+          nx,
+          ny
+        };
+      }
+      d -= sRightCap;
+
+      if (d <= sBottom) {
+        return { x: cx + straightHalf - d, y: h, nx: 0, ny: 1 };
+      }
+      d -= sBottom;
+
+      if (d <= sLeftCap) {
+        const theta = Math.PI / 2 + (d / sLeftCap) * Math.PI;
+        const nx = Math.cos(theta);
+        const ny = Math.sin(theta);
+        return {
+          x: cx - straightHalf + capR * nx,
+          y: cy + capR * ny,
+          nx,
+          ny
+        };
+      }
+      d -= sLeftCap;
+
+      return { x: cx - straightHalf + d, y: 0, nx: 0, ny: -1 };
+    }
+
+    /** Seat center so the disc's outermost point sits on the felt edge (normal inset, not radial). */
+    function handTableFeltPerimeterSlotPoint(slotIndex, totalSlots, feltEl) {
+      const { width: w, height: h } = getHandTableFeltMetrics(feltEl);
+      const seatRadius = getHandTableSeatEdgeInsetPx();
+      const slots = Math.max(1, totalSlots);
+      const { x, y, nx, ny } = handTableFeltPerimeterBoundaryAt(slotIndex / slots, w, h);
+      const verticalAdjust = getHandTablePhoneSeatVerticalAdjustPx(feltEl);
+      const seatX = x - nx * seatRadius;
+      const seatY = y - ny * seatRadius + verticalAdjust;
+      return {
+        xPct: (seatX / w) * 100,
+        yPct: (seatY / h) * 100
+      };
+    }
+
+    /** Seat / dealer ring position (even spacing on felt perimeter for phone). */
+    function handTableSeatRingPosition(slotIndex, totalSlots, feltEl) {
+      if (!isHandTablePhoneLayout() || !feltEl) {
+        const angle = -Math.PI / 2 + (2 * Math.PI * slotIndex) / Math.max(1, totalSlots);
+        return handTableEllipsePoint(angle, feltEl);
+      }
+      const { width, height } = getHandTableFeltMetrics(feltEl);
+      if (width < 48 || height < 36) {
+        const angle = -Math.PI / 2 + (2 * Math.PI * slotIndex) / Math.max(1, totalSlots);
+        return handTableEllipsePoint(angle, feltEl);
+      }
+      return handTableFeltPerimeterSlotPoint(slotIndex, totalSlots, feltEl);
+    }
+
+    /** Desktop ellipse ring; phone uses perimeter slots via handTableSeatRingPosition. */
+    function handTableEllipsePoint(angle, feltEl) {
+      const { rx, ry } = getHandTableSeatRingRadiusFallback();
+      return {
+        xPct: 50 + rx * Math.cos(angle),
+        yPct: 50 + ry * Math.sin(angle)
+      };
+    }
+
+    /** Move from seat position toward table center by a fixed pixel distance. */
+    function handTablePointInwardFromSeat(xPct, yPct, feltEl, insetPx) {
+      const { width, height } = getHandTableFeltMetrics(feltEl);
+      const cx = width / 2;
+      const cy = height / 2;
+      const sx = (xPct / 100) * width;
+      const sy = (yPct / 100) * height;
+      const dx = sx - cx;
+      const dy = sy - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      const t = Math.max(0, len - insetPx);
+      return {
+        xPct: ((cx + (dx / len) * t) / width) * 100,
+        yPct: ((cy + (dy / len) * t) / height) * 100
+      };
+    }
+
+    /** Move from seat position away from table center (toward felt edge). */
+    function handTablePointOutwardFromSeat(xPct, yPct, feltEl, outsetPx) {
+      const { width, height } = getHandTableFeltMetrics(feltEl);
+      const cx = width / 2;
+      const cy = height / 2;
+      const sx = (xPct / 100) * width;
+      const sy = (yPct / 100) * height;
+      const dx = sx - cx;
+      const dy = sy - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      const t = len + outsetPx;
+      return {
+        xPct: ((cx + (dx / len) * t) / width) * 100,
+        yPct: ((cy + (dy / len) * t) / height) * 100
+      };
+    }
+
+    /** Position between table center and seat; factor 1 = on seat ring, lower = slightly inward. */
+    function handTablePointTowardCenter(xPct, yPct, radiusFactor) {
+      return {
+        xPct: 50 + (xPct - 50) * radiusFactor,
+        yPct: 50 + (yPct - 50) * radiusFactor
+      };
+    }
+
+    function handTableBetPosition(xPct, yPct, feltEl) {
+      if (isHandTablePhoneLayout() && feltEl) {
+        const pos = handTablePointInwardFromSeat(xPct, yPct, feltEl, 32);
+        const { height } = getHandTableFeltMetrics(feltEl);
+        const downNudge = getHandTablePhoneBetDownNudgePx();
+        return {
+          xPct: pos.xPct,
+          yPct: pos.yPct + (downNudge / height) * 100
+        };
+      }
+      return handTablePointTowardCenter(xPct, yPct, 0.64);
+    }
+
+    function handTableButtonTokenPosition(xPct, yPct, feltEl) {
+      if (isHandTablePhoneLayout() && feltEl) {
+        const seatRadius = getHandTableSeatEdgeInsetPx();
+        const buttonRadius = 14;
+        const gap = 4;
+        return handTablePointOutwardFromSeat(xPct, yPct, feltEl, seatRadius + buttonRadius + gap);
+      }
+      return handTablePointTowardCenter(xPct, yPct, 0.78);
+    }
+
+    function handTableActionRowPosition(xPct, yPct, feltEl) {
+      if (isHandTablePhoneLayout() && feltEl) {
+        return handTablePointInwardFromSeat(xPct, yPct, feltEl, 48);
+      }
+      return { xPct, yPct: Math.max(4, yPct - 10) };
+    }
+
+    /** Dealer marker: same ring as seats; nudge inward on phone so it does not overlap seat discs. */
+    function handTableDealerPosition(slotIndex, totalSlots, feltEl) {
+      const ring = handTableSeatRingPosition(slotIndex, totalSlots, feltEl);
+      if (!isHandTablePhoneLayout() || !feltEl) return ring;
+      return handTablePointInwardFromSeat(ring.xPct, ring.yPct, feltEl, 14);
+    }
+
+    let handTableLayoutObserver = null;
+
+    function scheduleHandTableLayoutRefresh() {
+      if (!isHandTablePhoneLayout() || !handTableFelt) return;
+      window.requestAnimationFrame(() => {
+        const active = document.querySelector("#homeScreen .view.active")?.id;
+        if (active === "addHandView") {
+          renderHandTable();
+        } else if (handReplayOverlay && !handReplayOverlay.classList.contains("hidden") && handReplayState) {
+          renderHandReplayTable(handReplayState);
+        }
+      });
+    }
+
+    function bindHandTableLayoutObserver() {
+      if (handTableLayoutObserver) return;
+      const observeTargets = [handTableFelt, handTableVisual, handReplayTableFelt, handReplayTableVisual].filter(Boolean);
+      if (!observeTargets.length) return;
+      handTableLayoutObserver = new ResizeObserver(() => {
+        scheduleHandTableLayoutRefresh();
+      });
+      observeTargets.forEach((el) => handTableLayoutObserver.observe(el));
+    }
+
+    function buildHandSeatInnerContent(seatEl, { seatIndex, labelText, stackText, equityPct, seatCards }) {
+      const compactNum = document.createElement("span");
+      compactNum.className = "hand-seat-compact-num";
+      compactNum.textContent = String(seatIndex + 1);
+      compactNum.setAttribute("aria-hidden", "true");
+
+      const details = document.createElement("div");
+      details.className = "hand-seat-details";
+
+      const lbl = document.createElement("span");
+      lbl.className = "hand-seat-label";
+      lbl.textContent = truncateHandSeatLabel(labelText);
+      details.appendChild(lbl);
+
+      const val = document.createElement("span");
+      val.className = "hand-seat-value";
+      val.textContent = stackText;
+      details.appendChild(val);
+
+      if (typeof equityPct === "number" && Number.isFinite(equityPct)) {
+        const eqEl = document.createElement("span");
+        eqEl.className = "hand-seat-equity";
+        eqEl.textContent = `Eq ${equityPct.toFixed(1)}%`;
+        details.appendChild(eqEl);
+      }
+
+      const cardsWrap = document.createElement("div");
+      cardsWrap.className = "hand-seat-cards";
+      (seatCards || []).forEach((card) => {
+        if (!card || !card.rank || !card.suit) return;
+        const cardEl = document.createElement("span");
+        const redSuit = card.suit === "h" || card.suit === "d";
+        cardEl.className = `hand-seat-card${redSuit ? " suit-red" : ""}`;
+        cardEl.textContent = cardDisplayText(card.rank, card.suit);
+        cardsWrap.appendChild(cardEl);
+      });
+      if (cardsWrap.childElementCount > 0) {
+        details.appendChild(cardsWrap);
+      }
+
+      seatEl.appendChild(compactNum);
+      seatEl.appendChild(details);
+    }
+
+    function applyHandSeatExpandedState(felt, expandedIndex) {
+      if (!felt) return;
+      felt.classList.toggle("has-expanded-seat", expandedIndex != null && isHandTablePhoneLayout());
+      felt.querySelectorAll(".hand-seat").forEach((el) => {
+        const si = Number.parseInt(el.dataset.seatIndex, 10);
+        const expanded = expandedIndex != null && !Number.isNaN(si) && si === expandedIndex;
+        el.classList.toggle("hand-seat-expanded", expanded);
+        if (expanded) {
+          el.setAttribute("aria-expanded", "true");
+        } else {
+          el.removeAttribute("aria-expanded");
+        }
+      });
+    }
+
+    function bindHandSeatPhoneUiOnce() {
+      if (handSeatPhoneUiBound) return;
+      handSeatPhoneUiBound = true;
+      document.addEventListener("pointerdown", (event) => {
+        if (!isHandTablePhoneLayout()) return;
+        const target = event.target;
+        if (
+          target.closest?.(
+            ".hand-seat, .hand-seat-action-row, .hand-seat-action-btn, .hand-inline-amount-editor, .hand-commit-action-menu, .hand-stack-panel"
+          )
+        ) {
+          return;
+        }
+        if (handExpandedSeatIndex != null) {
+          handExpandedSeatIndex = null;
+          applyHandSeatExpandedState(handTableFelt, null);
+        }
+        if (handReplayExpandedSeatIndex != null) {
+          handReplayExpandedSeatIndex = null;
+          applyHandSeatExpandedState(handReplayTableFelt, null);
+        }
+      });
+    }
+
     function renderHandReplayBoard(state) {
       if (!handReplayBoardWrap) return;
       const streetKey = state.streetKey;
@@ -14846,18 +16572,32 @@
     }
 
     function renderHandReplayTable(state) {
-      if (!handReplayTableFelt || !handReplayCenterStreetInfo) return;
+      if (!handReplayTableFelt || !handReplayTableVisual || !handReplayCenterStreetInfo) return;
       const seatCount = state.seatCount || 0;
       handReplayTableFelt.innerHTML = "";
-      const rx = 41;
-      const ry = 37;
+      handReplayTableVisual.querySelectorAll(".hand-replay-button-token").forEach((el) => el.remove());
       const totalSlots = seatCount + 1;
+      let replayButtonSeatPoint = null;
+      const hasReplayButtonSeat =
+        state.buttonSeatIndex != null &&
+        Number.isInteger(Number(state.buttonSeatIndex)) &&
+        Number(state.buttonSeatIndex) >= 0 &&
+        Number(state.buttonSeatIndex) < seatCount;
+      handReplayTableVisual.classList.toggle("has-button-on-table", hasReplayButtonSeat);
 
-      if (!state.streetKey) {
+      const atReplayEnd = handReplayTimeline.length > 0 && handReplayStepIndex >= handReplayTimeline.length - 1;
+      const winnerBanner = atReplayEnd ? getHandReplayWinnerBannerText(handReplayEntry, state) : "";
+      if (winnerBanner) {
+        handReplayCenterStreetInfo.classList.remove("hidden");
+        handReplayCenterStreetInfo.classList.add("hand-winner-banner");
+        handReplayCenterStreetInfo.textContent = winnerBanner;
+      } else if (!state.streetKey) {
         handReplayCenterStreetInfo.classList.add("hidden");
+        handReplayCenterStreetInfo.classList.remove("hand-winner-banner");
         handReplayCenterStreetInfo.textContent = "";
       } else {
         handReplayCenterStreetInfo.classList.remove("hidden");
+        handReplayCenterStreetInfo.classList.remove("hand-winner-banner");
         handReplayCenterStreetInfo.textContent = getStreetTitle(state.streetKey);
       }
 
@@ -14865,17 +16605,16 @@
       const replayEquities = handReplayEquityValues(state);
 
       for (let k = 0; k < totalSlots; k += 1) {
-        const angle = -Math.PI / 2 + (2 * Math.PI * k) / totalSlots;
-        const xPct = 50 + rx * Math.cos(angle);
-        const yPct = 50 + ry * Math.sin(angle);
+        const { xPct, yPct } = handTableSeatRingPosition(k, totalSlots, handReplayTableFelt);
 
         if (k === 0) {
+          const dealerPos = handTableDealerPosition(k, totalSlots, handReplayTableFelt);
           const dealer = document.createElement("div");
           dealer.className = "hand-dealer-btn";
           dealer.textContent = "D";
           dealer.setAttribute("title", "Dealer");
-          dealer.style.left = `${xPct}%`;
-          dealer.style.top = `${yPct}%`;
+          dealer.style.left = `${dealerPos.xPct}%`;
+          dealer.style.top = `${dealerPos.yPct}%`;
           handReplayTableFelt.appendChild(dealer);
           continue;
         }
@@ -14891,49 +16630,86 @@
         if (state.seatFolded[seatIndex]) button.classList.add("folded-seat");
         button.style.left = `${xPct}%`;
         button.style.top = `${yPct}%`;
+        if (state.buttonSeatIndex === seatIndex) {
+          replayButtonSeatPoint = { xPct, yPct };
+        }
+
+        button.dataset.seatIndex = String(seatIndex);
+        button.setAttribute("role", "button");
+        button.tabIndex = 0;
 
         const nick = state.seatNicknames[seatIndex];
         const labelText = state.heroSeatIndex === seatIndex ? "Me" : (nick && String(nick).trim() ? String(nick).trim() : `Seat ${seatIndex + 1}`);
-        const lbl = document.createElement("span");
-        lbl.className = "hand-seat-label";
-        lbl.textContent = truncateHandSeatLabel(labelText);
-        const val = document.createElement("span");
-        val.className = "hand-seat-value";
-        val.textContent = state.seatStacks[seatIndex] != null ? formatHandSeatChipAmount(state.seatStacks[seatIndex]) : "Unknown";
-        button.appendChild(lbl);
-        button.appendChild(val);
         const eq = replayEquities && !state.seatFolded[seatIndex] ? replayEquities[seatIndex] : null;
-        if (typeof eq === "number") {
-          const eqEl = document.createElement("span");
-          eqEl.className = "hand-seat-equity";
-          eqEl.textContent = `Eq ${eq.toFixed(1)}%`;
-          button.appendChild(eqEl);
-        }
-
-        const cardsWrap = document.createElement("div");
-        cardsWrap.className = "hand-seat-cards";
-        const seatCards = state.seatCards[seatIndex] || [];
-        seatCards.forEach((card) => {
-          if (!card || !card.rank || !card.suit) return;
-          const cardEl = document.createElement("span");
-          const redSuit = card.suit === "h" || card.suit === "d";
-          cardEl.className = `hand-seat-card${redSuit ? " suit-red" : ""}`;
-          cardEl.textContent = cardDisplayText(card.rank, card.suit);
-          cardsWrap.appendChild(cardEl);
+        buildHandSeatInnerContent(button, {
+          seatIndex,
+          labelText,
+          stackText: state.seatStacks[seatIndex] != null ? formatHandSeatChipAmount(state.seatStacks[seatIndex]) : "Unknown",
+          equityPct: typeof eq === "number" ? eq : null,
+          seatCards: state.seatCards[seatIndex] || []
         });
-        if (cardsWrap.childElementCount > 0) button.appendChild(cardsWrap);
+        button.setAttribute(
+          "aria-label",
+          `${labelText}, seat ${seatIndex + 1}${isHandTablePhoneLayout() ? ", tap to expand" : ""}`
+        );
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (!isHandTablePhoneLayout()) return;
+          if (handReplayExpandedSeatIndex !== seatIndex) {
+            handReplayExpandedSeatIndex = seatIndex;
+            applyHandSeatExpandedState(handReplayTableFelt, seatIndex);
+            return;
+          }
+          handReplayExpandedSeatIndex = null;
+          applyHandSeatExpandedState(handReplayTableFelt, null);
+        });
         handReplayTableFelt.appendChild(button);
 
         const committed = state.seatCommitted[seatIndex] || 0;
         if (committed > 0 || state.seatFolded[seatIndex]) {
           const chip = document.createElement("div");
           chip.className = "hand-seat-committed";
-          const cx = 50 + (xPct - 50) * 0.64;
-          const cy = 50 + (yPct - 50) * 0.64;
-          chip.style.left = `${cx}%`;
-          chip.style.top = `${cy}%`;
+          const betPos = handTableBetPosition(xPct, yPct, handReplayTableFelt);
+          chip.style.left = `${betPos.xPct}%`;
+          chip.style.top = `${betPos.yPct}%`;
           chip.textContent = state.seatFolded[seatIndex] ? "Folded" : formatHandSeatChipAmount(committed);
           handReplayTableFelt.appendChild(chip);
+        }
+      }
+      if (hasReplayButtonSeat && replayButtonSeatPoint) {
+        const tokenPos = handTableButtonTokenPosition(
+          replayButtonSeatPoint.xPct,
+          replayButtonSeatPoint.yPct,
+          handReplayTableFelt
+        );
+        const visualPos = handTableFeltPointToVisualPercent(
+          tokenPos.xPct,
+          tokenPos.yPct,
+          handReplayTableFelt,
+          handReplayTableVisual
+        );
+        const replayButton = document.createElement("div");
+        replayButton.className = "hand-button-token hand-button-on-table hand-button-locked hand-replay-button-token";
+        replayButton.textContent = "B";
+        replayButton.setAttribute("title", "Button");
+        replayButton.setAttribute("aria-hidden", "true");
+        replayButton.style.left = `${visualPos.xPct}%`;
+        replayButton.style.top = `${visualPos.yPct}%`;
+        handReplayTableVisual.appendChild(replayButton);
+      }
+      if (isHandTablePhoneLayout() && handReplayExpandedSeatIndex != null && handReplayExpandedSeatIndex < seatCount) {
+        applyHandSeatExpandedState(handReplayTableFelt, handReplayExpandedSeatIndex);
+      } else if (!isHandTablePhoneLayout()) {
+        handReplayExpandedSeatIndex = null;
+      }
+      if (isHandTablePhoneLayout() && handReplayTableFelt) {
+        const { width, height } = getHandTableFeltMetrics(handReplayTableFelt);
+        if (width < 48 || height < 36) {
+          window.requestAnimationFrame(() => {
+            if (handReplayOverlay && !handReplayOverlay.classList.contains("hidden") && handReplayState) {
+              renderHandReplayTable(handReplayState);
+            }
+          });
         }
       }
     }
@@ -15168,12 +16944,16 @@
       handReplayBaseState = null;
       handReplayTimeline = [];
       handReplayStepIndex = -1;
+      handReplayExpandedSeatIndex = null;
+      handReplayTableVisual?.classList.remove("has-button-on-table");
+      handReplayTableVisual?.querySelectorAll(".hand-replay-button-token").forEach((el) => el.remove());
       setHandReplayVisible(false);
       updateHandReplayControlButtons();
     }
 
     function openHandReplay(entry) {
       if (!entry || !entry.hand) return;
+      handReplayExpandedSeatIndex = null;
       if (handReplaySpeedSelect && !handReplaySpeedSelect.value) {
         handReplaySpeedSelect.value = "1";
       }
@@ -15191,20 +16971,54 @@
       }
       setHandReplayVisible(true);
       renderHandReplayStep(0);
+      if (isHandTablePhoneLayout()) {
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            if (handReplayState && handReplayOverlay && !handReplayOverlay.classList.contains("hidden")) {
+              renderHandReplayTable(handReplayState);
+            }
+          });
+        });
+      }
       scheduleHandReplayAdvance();
     }
 
     function renderHandHistoryFlat(entries) {
-      return entries.map((x, i) => `
+      return entries.map((x, i) => {
+        const session = x.sessionIndex != null ? sessions[x.sessionIndex] : null;
+        return `
         <article class="history-item">
           <button type="button" class="hand-history-row" data-hand-history-index="${i}" data-tooltip="Open hand details" aria-label="Open hand details">
             <span class="history-col-date hand-history-col hand-history-col--hand">${escapeHtml(getHandDisplayName(x.hand, "Untitled hand"))}</span>
+            <span class="mobile-history-date">${escapeHtml(formatSessionDateShort(session))}</span>
             <span class="history-col-location hand-history-col hand-history-col--session">${escapeHtml(String(x.sessionTitle || ""))}</span>
             <span class="history-col-duration hand-history-col hand-history-col--summary">${escapeHtml(String(x.hand.summary || ""))}</span>
             <span class="history-delete-spacer hand-history-delete-spacer" aria-hidden="true"></span>
           </button>
+          <button type="button" class="history-delete-btn hand-history-delete-btn" data-hand-delete-index="${i}" aria-label="Delete hand">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
+          </button>
         </article>
-      `).join("");
+      `;
+      }).join("");
+    }
+
+    async function deleteHandHistoryEntry(entry) {
+      if (!entry || entry.handIndex == null) return;
+      if (entry.sessionIndex == null) {
+        if (entry.handIndex >= 0 && entry.handIndex < pendingSessionHands.length) {
+          pendingSessionHands.splice(entry.handIndex, 1);
+        }
+        renderAll();
+        return;
+      }
+      const session = sessions[entry.sessionIndex];
+      if (!session || !Array.isArray(session.hands) || entry.handIndex < 0 || entry.handIndex >= session.hands.length) return;
+      session.hands.splice(entry.handIndex, 1);
+      if (supabaseClient && currentUserId && session.id) {
+        await saveSessionToSupabase(session, session.hands);
+      }
+      renderAll();
     }
 
     function renderHandHistoryGrid(entries) {
@@ -15313,6 +17127,16 @@
           showView("handDetailView");
         });
       });
+      handHistoryList.querySelectorAll("[data-hand-delete-index]").forEach((button) => {
+        button.addEventListener("click", async (e) => {
+          e.stopPropagation();
+          const idx = Number.parseInt(button.getAttribute("data-hand-delete-index"), 10);
+          const entry = entries[idx];
+          if (!entry) return;
+          if (!window.confirm("Are you sure you want to delete this hand?")) return;
+          await deleteHandHistoryEntry(entry);
+        });
+      });
     }
 
     function saveCurrentHandToSessionDraft() {
@@ -15398,23 +17222,20 @@
 
       handTableFelt.innerHTML = "";
 
-      const rx = 41;
-      const ry = 37;
       const totalSlots = n + 1;
       handSeatPoints = Array.from({ length: n }, () => null);
 
       for (let k = 0; k < totalSlots; k += 1) {
-        const angle = -Math.PI / 2 + (2 * Math.PI * k) / totalSlots;
-        const xPct = 50 + rx * Math.cos(angle);
-        const yPct = 50 + ry * Math.sin(angle);
+        const { xPct, yPct } = handTableSeatRingPosition(k, totalSlots, handTableFelt);
 
         if (k === 0) {
+          const dealerPos = handTableDealerPosition(k, totalSlots, handTableFelt);
           const dealer = document.createElement("div");
           dealer.className = "hand-dealer-btn";
           dealer.textContent = "D";
           dealer.setAttribute("title", "Dealer");
-          dealer.style.left = `${xPct}%`;
-          dealer.style.top = `${yPct}%`;
+          dealer.style.left = `${dealerPos.xPct}%`;
+          dealer.style.top = `${dealerPos.yPct}%`;
           handTableFelt.appendChild(dealer);
           continue;
         }
@@ -15450,44 +17271,23 @@
         const labelText = handHeroSeatIndex === i ? "Me" : (nick && nick.trim() ? nick.trim() : `Seat ${i + 1}`);
         btn.setAttribute(
           "aria-label",
-          `${labelText}, seat ${i + 1}, tap to set nickname and stack`
+          `${labelText}, seat ${i + 1}${isHandTablePhoneLayout() ? ", tap to expand, tap again to edit" : ", tap to set nickname and stack"}`
         );
-        const lbl = document.createElement("span");
-        lbl.className = "hand-seat-label";
-        lbl.textContent = truncateHandSeatLabel(labelText);
-        const val = document.createElement("span");
-        val.className = "hand-seat-value";
-        val.textContent =
-          handSeatStacks[i] != null ? formatHandSeatChipAmount(handSeatStacks[i]) : "Unknown";
-        btn.appendChild(lbl);
-        btn.appendChild(val);
         const eq = seatEquityPct(i);
-        if (eq != null) {
-          const eqEl = document.createElement("span");
-          eqEl.className = "hand-seat-equity";
-          eqEl.textContent = `Eq ${eq.toFixed(1)}%`;
-          btn.appendChild(eqEl);
-        }
-        const cardsWrap = document.createElement("div");
-        cardsWrap.className = "hand-seat-cards";
-        const seatCards = handSeatCards[i] || [];
-        seatCards.forEach((card) => {
-          if (!card || !card.rank || !card.suit) return;
-          const cardEl = document.createElement("span");
-          const redSuit = card.suit === "h" || card.suit === "d";
-          cardEl.className = `hand-seat-card${redSuit ? " suit-red" : ""}`;
-          cardEl.textContent = cardDisplayText(card.rank, card.suit);
-          cardsWrap.appendChild(cardEl);
+        buildHandSeatInnerContent(btn, {
+          seatIndex: i,
+          labelText,
+          stackText: handSeatStacks[i] != null ? formatHandSeatChipAmount(handSeatStacks[i]) : "Unknown",
+          equityPct: eq,
+          seatCards: handSeatCards[i] || []
         });
-        if (cardsWrap.childElementCount > 0) {
-          btn.appendChild(cardsWrap);
-        }
         const allowedSeatActions = getAllowedActionsForSeat(i);
         if (allowedSeatActions.length) {
           const actionRow = document.createElement("div");
           actionRow.className = "hand-seat-action-row";
-          actionRow.style.left = `${xPct}%`;
-          actionRow.style.top = `${Math.max(4, yPct - 10)}%`;
+          const actionPos = handTableActionRowPosition(xPct, yPct, handTableFelt);
+          actionRow.style.left = `${actionPos.xPct}%`;
+          actionRow.style.top = `${actionPos.yPct}%`;
           allowedSeatActions.forEach((act) => {
             const ab = document.createElement("button");
             ab.type = "button";
@@ -15522,7 +17322,15 @@
           });
           handTableFelt.appendChild(actionRow);
         }
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (event) => {
+          event.stopPropagation();
+          if (isHandTablePhoneLayout()) {
+            if (handExpandedSeatIndex !== i) {
+              handExpandedSeatIndex = i;
+              applyHandSeatExpandedState(handTableFelt, i);
+              return;
+            }
+          }
           openHandStackEditor(i);
         });
         handTableFelt.appendChild(btn);
@@ -15531,10 +17339,9 @@
         if (committed > 0 || (handStageIndex > 0 && foldedOnCurrentStreet)) {
           const chip = document.createElement("div");
           chip.className = "hand-seat-committed";
-          const cx = 50 + (xPct - 50) * 0.64;
-          const cy = 50 + (yPct - 50) * 0.64;
-          chip.style.left = `${cx}%`;
-          chip.style.top = `${cy}%`;
+          const betPos = handTableBetPosition(xPct, yPct, handTableFelt);
+          chip.style.left = `${betPos.xPct}%`;
+          chip.style.top = `${betPos.yPct}%`;
           if (foldedOnCurrentStreet) {
             chip.textContent = "Folded";
           } else {
@@ -15560,13 +17367,36 @@
           handTableFelt.appendChild(chip);
         }
       }
-      renderButtonToken();
       if (handButtonToken) {
         handButtonToken.classList.toggle("hand-button-locked", handStageIndex >= 2);
         if (handStageIndex >= 2) handButtonDrag.dragging = false;
+        if (handButtonToken.classList.contains("hand-button-on-table")) {
+          setHandButtonOnTableUiActive(true);
+          if (handButtonSeatIndex != null) {
+            syncHandButtonTokenToSeat();
+          } else {
+            ensureHandButtonTokenOnVisual();
+            renderButtonToken();
+          }
+        }
+      }
+      if (isHandTablePhoneLayout() && handExpandedSeatIndex != null && handExpandedSeatIndex < n) {
+        applyHandSeatExpandedState(handTableFelt, handExpandedSeatIndex);
+      } else if (!isHandTablePhoneLayout()) {
+        handExpandedSeatIndex = null;
       }
       updateHandCenterStreetInfo();
       handPauseEquityComputeForRender = false;
+      if (isHandTablePhoneLayout() && handTableFelt) {
+        const { width, height } = getHandTableFeltMetrics(handTableFelt);
+        if (width < 48 || height < 36) {
+          window.requestAnimationFrame(() => {
+            if (document.querySelector("#homeScreen .view.active")?.id === "addHandView") {
+              renderHandTable();
+            }
+          });
+        }
+      }
     }
 
     function openHandStackEditor(seatIndex) {
@@ -17294,6 +19124,7 @@
             <article class="history-item">
               <button type="button" class="history-summary-row history-session-row" data-session-id="${session.id}" data-tooltip="${escapeHtml(sessionActionLabel)}" aria-label="${escapeHtml(sessionActionLabel)}">
                 <span class="history-col-date">${historyListTitleHtml(session)}</span>
+                <span class="mobile-history-date">${escapeHtml(formatSessionDateShort(session))}</span>
                 <span class="history-col-location">${escapeHtml((session.location || "").trim() || "—")}</span>
                 <span class="history-col-duration">${session.duration}</span>
                 <span class="history-col-profit ${profitClass}">${formatMoney(session.profit)}</span>
@@ -17504,6 +19335,175 @@
       }
     }
 
+    function bankrollChangeDateInputValue(change, row = null) {
+      if (change && change.manualDate && change.manualDate !== UNKNOWN) {
+        return legacySessionDateToIsoDateString(change.manualDate);
+      }
+      if (change && change.type === "session" && change.sessionId != null) {
+        const sess = sessions.find((s) => s.id === change.sessionId);
+        if (sess) return legacySessionDateToIsoDateString(sess.date);
+      }
+      if (row && row.dateMs != null) return isoDateOnly(new Date(row.dateMs));
+      return "";
+    }
+
+    function bankrollChangeDetailLines(row) {
+      const change = row.change || {};
+      const typeLabel = row.kind === "auto"
+        ? "Automatic top-up"
+        : change.type === "session"
+          ? "Session change"
+          : change.type === "manual"
+            ? "Manual change"
+            : "Bankroll change";
+      return [
+        `Type: ${typeLabel}`,
+        `Change: ${row.amount >= 0 ? "+" : ""}${formatMoney(row.amount)}`,
+        `Date: ${formatDateMsShort(row.dateMs)}`,
+        `Description: ${row.description || "No description"}`,
+        `Bankroll after: ${formatMoney(row.balance)}`
+      ];
+    }
+
+    function showBankrollChangeDetails(row) {
+      renderBankrollChangeDetailView(row, "detail");
+    }
+
+    function bankrollChangeTypeLabel(rowOrChange) {
+      const change = rowOrChange && rowOrChange.change ? rowOrChange.change : rowOrChange;
+      if (rowOrChange && rowOrChange.kind === "auto") return "Automatic top-up";
+      if (change && change.type === "session") return "Session change";
+      if (change && change.type === "manual") return "Manual change";
+      return "Bankroll change";
+    }
+
+    function renderBankrollChangeDetailView(row, mode = "detail") {
+      if (!bankrollChangeDetailTitle || !bankrollChangeDetailBody || !row) return;
+      const change = row.change || null;
+      activeBankrollChangeId = change && change.id != null ? String(change.id) : null;
+      const editing = mode === "edit" && change;
+      const amountClass = row.amount > 0 ? "profit-positive" : row.amount < 0 ? "profit-negative" : "profit-zero";
+      bankrollChangeDetailTitle.textContent = editing ? "Edit bankroll change" : "Bankroll change";
+      if (!editing) {
+        bankrollChangeDetailBody.innerHTML = `
+          <dl class="session-detail-dl">
+            <dt>Type</dt><dd>${escapeHtml(bankrollChangeTypeLabel(row))}</dd>
+            <dt>Change</dt><dd class="${amountClass}">${escapeHtml(`${row.amount >= 0 ? "+" : ""}${formatMoney(row.amount)}`)}</dd>
+            <dt>Date</dt><dd>${escapeHtml(formatDateMsShort(row.dateMs))}</dd>
+            <dt>Description</dt><dd>${escapeHtml(row.description || "No description")}</dd>
+            <dt>Bankroll after</dt><dd>${escapeHtml(formatMoney(row.balance))}</dd>
+          </dl>
+          ${change ? `
+            <div class="history-actions" style="margin-top:14px">
+              <button type="button" id="bankrollChangeDetailEditBtn" class="inline-btn">Edit change</button>
+            </div>
+          ` : ""}
+        `;
+        document.getElementById("bankrollChangeDetailEditBtn")?.addEventListener("click", () => {
+          renderBankrollChangeDetailView(row, "edit");
+        });
+        showView("bankrollChangeDetailView");
+        return;
+      }
+
+      const dateIso = bankrollChangeDateInputValue(change, row);
+      bankrollChangeDetailBody.innerHTML = `
+        <div class="session-detail-dl bankroll-change-edit-form">
+          <label>
+            <span>Type</span>
+            <input type="text" value="${escapeHtml(bankrollChangeTypeLabel(change))}" disabled />
+          </label>
+          <label>
+            <span>Change amount</span>
+            <input id="bankrollChangeEditAmount" type="number" step="0.01" value="${escapeHtml(String(Number(change.amount) || 0))}" />
+          </label>
+          <label>
+            <span>Date</span>
+            <input id="bankrollChangeEditDate" type="date" value="${escapeHtml(dateIso)}" />
+          </label>
+          <label>
+            <span>Description</span>
+            <input id="bankrollChangeEditDescription" type="text" value="${escapeHtml(String(change.description || ""))}" />
+          </label>
+        </div>
+        <div class="history-actions" style="margin-top:14px">
+          <button type="button" id="bankrollChangeSaveEditBtn" class="inline-btn">Save changes</button>
+          <button type="button" id="bankrollChangeCancelEditBtn" class="secondary-btn">Cancel</button>
+        </div>
+      `;
+      document.getElementById("bankrollChangeCancelEditBtn")?.addEventListener("click", () => {
+        const freshRow = findBankrollHistoryRowByChangeId(activeBankrollChangeId) || row;
+        renderBankrollChangeDetailView(freshRow, "detail");
+      });
+      document.getElementById("bankrollChangeSaveEditBtn")?.addEventListener("click", async () => {
+        await saveBankrollChangeEditFromDetail(change);
+      });
+      showView("bankrollChangeDetailView");
+    }
+
+    function findBankrollHistoryRowByChangeId(changeId) {
+      if (changeId == null) return null;
+      return buildBankrollHistoryRows().find((row) => row.change && String(row.change.id) === String(changeId)) || null;
+    }
+
+    async function saveBankrollChangeEditFromDetail(change) {
+      if (!change) return;
+      const amountInput = document.getElementById("bankrollChangeEditAmount");
+      const dateInput = document.getElementById("bankrollChangeEditDate");
+      const descriptionInput = document.getElementById("bankrollChangeEditDescription");
+      const nextAmount = Number.parseFloat(amountInput ? amountInput.value : "");
+      if (Number.isNaN(nextAmount)) {
+        window.alert("Enter a valid number for the bankroll change.");
+        return;
+      }
+      const nextLegacyDate = dateInput && dateInput.value ? isoDateStringToLegacySessionDate(dateInput.value) : UNKNOWN;
+      if (dateInput && dateInput.value && nextLegacyDate === UNKNOWN) {
+        window.alert("Enter a valid date.");
+        return;
+      }
+      change.amount = nextAmount;
+      change.description = descriptionInput && descriptionInput.value.trim()
+        ? descriptionInput.value.trim()
+        : "Bankroll change";
+      if (change.type === "session" && change.sessionId != null) {
+        const sess = sessions.find((s) => s.id === change.sessionId);
+        if (sess && nextLegacyDate !== UNKNOWN) {
+          sess.date = nextLegacyDate;
+          if (supabaseClient && currentUserId && sess.id) {
+            await saveSessionToSupabase(sess, sess.hands || []);
+          }
+        }
+      } else {
+        change.manualDate = nextLegacyDate;
+        if (!change.type || change.type === "other") change.type = "manual";
+      }
+      await saveBankrollChangeToSupabase(change);
+      recomputeBankroll();
+      renderAll();
+      const freshRow = findBankrollHistoryRowByChangeId(change.id);
+      if (freshRow) renderBankrollChangeDetailView(freshRow, "detail");
+    }
+
+    async function saveBankrollChangeToSupabase(change) {
+      if (!supabaseClient || !currentUserId || !change || change.id == null) return;
+      await supabaseClient
+        .from("bankroll_changes")
+        .update({
+          amount: Number(change.amount) || 0,
+          description: change.description || "",
+          type: change.type || "manual",
+          manual_date: change.manualDate || null,
+          session_id: change.sessionId || null
+        })
+        .eq("change_id", change.id);
+    }
+
+    async function editBankrollChangeOnPhone(change) {
+      if (!change) return;
+      const row = buildBankrollHistoryRows().find((candidate) => candidate.change === change) || null;
+      if (row) renderBankrollChangeDetailView(row, "edit");
+    }
+
     function renderBankrollChangesTable() {
       if (!bankrollChanges.length) {
         bankrollChangesTableWrap.innerHTML = "<p class=\"history-empty\">No bankroll changes yet.</p>";
@@ -17513,13 +19513,15 @@
         ? bankrollHistorySortSelect.value
         : "date-desc";
       const rows = buildBankrollHistoryRows().sort((a, b) => compareBankrollHistoryRowsForSort(a, b, sortMode));
+      const rowsByOrder = new Map(rows.map((row) => [String(row.order), row]));
       bankrollChangesTableWrap.innerHTML = `
         <div class="bankroll-history-table" role="table" aria-label="Bankroll change history">
           <article class="history-item history-list-example bankroll-history-header-row" aria-hidden="true">
             <div class="history-summary-row">
               <div class="bankroll-history-header">
                 <span>Change</span>
-                <span>Description</span>
+                <span class="bankroll-history-mobile-date bankroll-history-mobile-date-head">Date</span>
+                <span class="bankroll-history-description-head">Description</span>
                 <span class="bankroll-history-balance">Bankroll</span>
                 <span class="bankroll-history-spacer" aria-hidden="true"></span>
               </div>
@@ -17530,9 +19532,12 @@
             const balanceClass = row.balance > 0 ? "profit-positive" : row.balance < 0 ? "profit-negative" : "profit-zero";
             if (!row.editable) {
               return `
-                <article class="history-item bankroll-change-row bankroll-change-row--auto">
+                <article class="history-item bankroll-change-row bankroll-change-row--auto" data-bankroll-row-index="${row.order}" aria-label="View bankroll change details">
                   <div class="bankroll-history-change ${amountClass}">
                     +${formatMoney(row.amount)}
+                  </div>
+                  <div class="bankroll-history-mobile-date">
+                    ${escapeHtml(formatDateMsShort(row.dateMs))}
                   </div>
                   <div class="bankroll-history-description">
                     <span>${escapeHtml(row.description)}</span>
@@ -17546,13 +19551,16 @@
             }
             const change = row.change;
             return `
-              <article class="history-item bankroll-change-row">
+              <article class="history-item bankroll-change-row" data-bankroll-row-index="${row.order}" aria-label="View bankroll change details">
                 <div class="bankroll-history-change ${amountClass}">
                   ${row.amount >= 0 ? "+" : ""}${formatMoney(row.amount)}
                 </div>
+                <div class="bankroll-history-mobile-date">
+                  ${escapeHtml(formatDateMsShort(row.dateMs))}
+                </div>
                 <div class="bankroll-history-description">
-                  <span id="desc-text-${change.id}">${change.description}</span>
-                  <input id="desc-input-${change.id}" class="hidden" type="text" value="${change.description}" />
+                  <span id="desc-text-${change.id}">${escapeHtml(change.description)}</span>
+                  <input id="desc-input-${change.id}" class="hidden" type="text" value="${escapeHtml(change.description)}" />
                 </div>
                 <div class="bankroll-history-balance ${balanceClass}">
                   ${formatMoney(row.balance)}
@@ -17566,16 +19574,32 @@
         </div>
       `;
 
+      bankrollChangesTableWrap.querySelectorAll("[data-bankroll-row-index]").forEach((rowEl) => {
+        rowEl.addEventListener("click", () => {
+          if (!isPhonePointerLayout()) return;
+          const row = rowsByOrder.get(String(rowEl.dataset.bankrollRowIndex || ""));
+          if (!row) return;
+          showBankrollChangeDetails(row);
+        });
+      });
+
       bankrollChangesTableWrap.querySelectorAll(".table-edit-btn").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const id = Number.parseInt(btn.dataset.changeId, 10);
+        btn.addEventListener("click", async (event) => {
+          event.stopPropagation();
+          const id = String(btn.dataset.changeId || "");
+          const target = bankrollChanges.find((change) => String(change.id) === id);
+          if (isPhonePointerLayout()) {
+            if (target) await editBankrollChangeOnPhone(target);
+            return;
+          }
           const text = document.getElementById(`desc-text-${id}`);
           const input = document.getElementById(`desc-input-${id}`);
+          if (!text || !input || !target) return;
           const editing = !input.classList.contains("hidden");
           if (editing) {
-            const target = bankrollChanges.find((change) => change.id === id);
             if (target) target.description = input.value.trim() || target.description;
-            text.textContent = target.description;
+            await saveBankrollChangeToSupabase(target);
+            text.textContent = target ? target.description : "";
             text.classList.remove("hidden");
             input.classList.add("hidden");
             btn.setAttribute("aria-label", "Edit bankroll change");
@@ -18185,6 +20209,9 @@
       const hitEls = svgEl.querySelectorAll(".line-chart-hit-point");
       let hoveredIdx = -1;
       let pinnedIdx = -1;
+      let touchStartPoint = null;
+      let touchMoved = false;
+      let touchStartTime = 0;
 
       function setHovered(idx) {
         if (hoveredIdx === idx) return;
@@ -18223,6 +20250,42 @@
         return bestD <= 20 ? best : -1;
       }
 
+      function nearestPointIndex(clientX, clientY, maxDistance = 28) {
+        let best = -1;
+        let bestD = Infinity;
+        pointMeta.forEach((m, i) => {
+          const point = svgPointToClient(svgEl, m.cx, m.cy);
+          const d = Math.hypot(clientX - point.clientX, clientY - point.clientY);
+          if (d < bestD) {
+            bestD = d;
+            best = i;
+          }
+        });
+        return bestD <= maxDistance ? best : -1;
+      }
+
+      function activatePoint(idx, sourceEvent = null) {
+        if (idx < 0) return false;
+        const m = pointMeta[idx];
+        if (!m || !isPointClickable(m)) return false;
+        const anchor = hitEls[idx];
+        if (clickBehavior === "popup") {
+          pinnedIdx = pinnedIdx === idx ? -1 : idx;
+          if (pinnedIdx === idx) {
+            showTooltipForIndex(idx, anchor, true);
+          } else {
+            clearChartTooltip(tooltipEl);
+          }
+          return true;
+        }
+        if (onPointClick) {
+          onPointClick(m, idx, sourceEvent);
+        } else if (m.sessionId != null) {
+          openSessionDetailView(m.sessionId, navigateReturnView);
+        }
+        return true;
+      }
+
       const onMove = (e) => {
         const { x } = svgCoordsFromClient(svgEl, e.clientX, e.clientY);
         const idx = nearestIndex(x);
@@ -18244,36 +20307,58 @@
       };
 
       const onClick = (e) => {
-        const { x } = svgCoordsFromClient(svgEl, e.clientX, e.clientY);
-        const idx = nearestIndex(x);
-        if (idx < 0) return;
-        const m = pointMeta[idx];
-        if (!isPointClickable(m)) return;
-        const anchor = hitEls[idx];
-        if (clickBehavior === "popup") {
-          pinnedIdx = pinnedIdx === idx ? -1 : idx;
-          if (pinnedIdx === idx) {
-            showTooltipForIndex(idx, anchor, true);
-          } else {
-            clearChartTooltip(tooltipEl);
-          }
+        const idx = isPhonePointerLayout()
+          ? nearestPointIndex(e.clientX, e.clientY)
+          : nearestIndex(svgCoordsFromClient(svgEl, e.clientX, e.clientY).x);
+        activatePoint(idx, e);
+      };
+
+      const onTouchStart = (e) => {
+        if (!isPhonePointerLayout() || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        touchStartPoint = {
+          clientX: touch.clientX,
+          clientY: touch.clientY
+        };
+        touchMoved = false;
+        touchStartTime = Date.now();
+      };
+
+      const onTouchMove = (e) => {
+        if (!touchStartPoint || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        if (Math.hypot(touch.clientX - touchStartPoint.clientX, touch.clientY - touchStartPoint.clientY) > 10) {
+          touchMoved = true;
+        }
+      };
+
+      const onTouchEnd = (e) => {
+        if (!isPhonePointerLayout() || !touchStartPoint || touchMoved || Date.now() - touchStartTime > 500) {
+          touchStartPoint = null;
           return;
         }
-        if (onPointClick) {
-          onPointClick(m, idx);
-        } else if (m.sessionId != null) {
-          openSessionDetailView(m.sessionId, navigateReturnView);
-        }
+        const touch = e.changedTouches[0];
+        touchStartPoint = null;
+        if (!touch) return;
+        const idx = nearestPointIndex(touch.clientX, touch.clientY, 34);
+        if (!activatePoint(idx, e)) return;
+        e.preventDefault();
       };
 
       svgEl.addEventListener("mousemove", onMove);
       svgEl.addEventListener("mouseleave", onLeave);
       svgEl.addEventListener("click", onClick);
+      svgEl.addEventListener("touchstart", onTouchStart, { passive: true });
+      svgEl.addEventListener("touchmove", onTouchMove, { passive: true });
+      svgEl.addEventListener("touchend", onTouchEnd, { passive: false });
 
       svgEl._disposeLineChart = () => {
         svgEl.removeEventListener("mousemove", onMove);
         svgEl.removeEventListener("mouseleave", onLeave);
         svgEl.removeEventListener("click", onClick);
+        svgEl.removeEventListener("touchstart", onTouchStart);
+        svgEl.removeEventListener("touchmove", onTouchMove);
+        svgEl.removeEventListener("touchend", onTouchEnd);
       };
     }
 
@@ -18284,24 +20369,29 @@
       navigateReturnView = "analyticsView",
       options = {}
     ) {
-      if (interactiveTooltipEl && typeof svgEl._disposeLineChart === "function") {
+      if (typeof svgEl._disposeLineChart === "function") {
         svgEl._disposeLineChart();
         svgEl._disposeLineChart = null;
       }
 
-      const width = options.width || 700;
-      const height = options.height || (svgEl.id === "analyticsBankrollChart" ? 340 : 260);
-      const leftGutter = 88;
-      const rightGutter = 72;
+      const isPhoneMainLineChart =
+        isPhonePointerLayout() && (svgEl.id === "bankrollChart" || svgEl.id === "analyticsBankrollChart");
+      const isPhoneExpandedLineChart =
+        isPhonePointerLayout() && Boolean(svgEl.closest(".analytics-expand-content"));
+      const width = options.width || (isPhoneMainLineChart ? 390 : 700);
+      const height = options.height || (isPhoneMainLineChart ? 320 : svgEl.id === "analyticsBankrollChart" ? 340 : 260);
+      const leftGutter = isPhoneMainLineChart || isPhoneExpandedLineChart ? 74 : 88;
+      const rightGutter = isPhoneMainLineChart || isPhoneExpandedLineChart ? 18 : 72;
       const yAxisLabel = options.yAxisLabel || "Bankroll";
       const noDataText = options.noDataText || "No bankroll data yet";
       const strokeColor = options.strokeColor || chartGreenColor();
       const buildTooltipHtml = options.buildTooltipHtml || ((m) => buildBankrollLineTooltipHtml(m, yAxisLabel));
-      const labelFontSize = analyticsScaledSvgFontSize(svgEl, 14, width, height);
-      const topGutter = Math.max(34, labelFontSize + 12);
-      const bottomGutter = Math.max(72, labelFontSize * 4.2);
+      const labelFontSize = isPhoneExpandedLineChart ? 11 : isPhoneMainLineChart ? 13 : analyticsScaledSvgFontSize(svgEl, 14, width, height);
+      const topGutter = isPhoneMainLineChart || isPhoneExpandedLineChart ? 34 : Math.max(34, labelFontSize + 12);
+      const bottomGutter = isPhoneExpandedLineChart ? 62 : isPhoneMainLineChart ? 50 : Math.max(72, labelFontSize * 4.2);
       const plotW = width - leftGutter - rightGutter;
       const plotH = height - topGutter - bottomGutter;
+      svgEl.setAttribute("viewBox", `0 0 ${width} ${height}`);
       svgEl.setAttribute("height", String(height));
       const values = timeline.map((t) => t.amount);
       const allowNegativeValues = options.includeNegativeValues === true;
@@ -18314,12 +20404,13 @@
           interactiveTooltipEl.classList.remove("visible");
           interactiveTooltipEl.innerHTML = "";
         }
+        svgEl._lineChartLayout = null;
         svgEl.innerHTML = `<text x="24" y="48" fill="#9ca3af" font-size="${labelFontSize}">${escapeSvgText(noDataText)}</text>`;
         return;
       }
       const rawMinVal = allowNegativeValues ? Math.min(...values) : 0;
       const rawMaxVal = allowNegativeValues ? Math.max(...values) : Math.max(0, ...values);
-      const yTicks = buildAnalyticsTickValues(rawMinVal, rawMaxVal, 4, { includeZero: true });
+      const yTicks = buildAnalyticsTickValues(rawMinVal, rawMaxVal, isPhoneMainLineChart ? 3 : 4, { includeZero: true });
       const minVal = yTicks[0] ?? 0;
       const maxVal = yTicks[yTicks.length - 1] ?? 1;
       const range = Math.max(1, maxVal - minVal);
@@ -18342,6 +20433,16 @@
           autoTopUpAmount: Number(entry.autoTopUpAmount) || 0
         };
       });
+      svgEl._lineChartLayout = {
+        width,
+        height,
+        leftGutter,
+        rightGutter,
+        topGutter,
+        bottomGutter,
+        plotW,
+        plotH
+      };
 
       const points = pointMeta.map((m) => `${m.cx},${m.cy}`).join(" ");
 
@@ -18359,7 +20460,7 @@
 
       const zeroY = yTop + plotH - ((0 - minVal) / range) * plotH;
 
-      const maxXLabels = 8;
+      const maxXLabels = isPhoneExpandedLineChart ? 3 : isPhoneMainLineChart ? 4 : 8;
       const xIndices = new Set();
       if (n <= maxXLabels) {
         for (let i = 0; i < n; i++) xIndices.add(i);
@@ -18374,15 +20475,15 @@
 
       const xLabels = [];
       const xGridLines = [];
-      const angleXLabels = maxXLabels < 5 && n > 2;
-      const xTickLabelY = height - labelFontSize - 18;
+      const angleXLabels = isPhoneExpandedLineChart ? n > 2 : isPhoneMainLineChart ? false : maxXLabels < 5 && n > 2;
+      const xTickLabelY = isPhoneExpandedLineChart ? height - labelFontSize - 24 : height - labelFontSize - 18;
       timeline.forEach((entry, i) => {
         if (!xIndices.has(i)) return;
         const x = x0 + i * stepX;
         const anchor = angleXLabels ? "end" : "middle";
         const textX = x;
         const labelY = xTickLabelY;
-        const transform = angleXLabels ? ` transform="rotate(-28 ${textX} ${labelY})"` : "";
+        const transform = angleXLabels ? ` transform="rotate(-34 ${textX} ${labelY})"` : "";
         xLabels.push(
           `<text x="${textX}" y="${labelY}" text-anchor="${anchor}" fill="#94a3b8" font-size="${labelFontSize}"${transform}>${escapeSvgText(
             timelineXLabel(entry, i)
@@ -18393,17 +20494,23 @@
         );
       });
 
+      const showPointDots = options.showPoints === true;
+      const pointDotRadius = Number(options.pointRadius) || (isPhoneMainLineChart ? 5.5 : 4);
+      const pointDotClass = showPointDots ? " line-chart-point-dot--visible" : "";
       const pointCircles = interactiveTooltipEl
         ? pointMeta
             .map(
               (m) => `
         <circle class="line-chart-hit-point" cx="${m.cx}" cy="${m.cy}" r="16" fill="transparent" pointer-events="all" />
-        <circle class="line-chart-point-dot line-chart-point-dot--bankroll" cx="${m.cx}" cy="${m.cy}" r="4" pointer-events="none" />`
+        <circle class="line-chart-point-dot line-chart-point-dot--bankroll${pointDotClass}" cx="${m.cx}" cy="${m.cy}" r="${pointDotRadius}" pointer-events="none" />`
             )
             .join("")
         : "";
 
       const midY = yTop + plotH / 2;
+      const yAxisLabelMarkup = isPhoneMainLineChart
+        ? `<text x="${leftGutter}" y="16" text-anchor="start" fill="#cbd5e1" font-size="${labelFontSize}" font-weight="700">${escapeSvgText(yAxisLabel)}</text>`
+        : `<text x="14" y="${midY}" text-anchor="middle" fill="#cbd5e1" font-size="${labelFontSize}" font-weight="700" transform="rotate(-90, 14, ${midY})">${escapeSvgText(yAxisLabel)}</text>`;
       svgEl.innerHTML = `
         <rect x="0" y="0" width="${width}" height="${height}" fill="transparent" />
         ${xGridLines.join("")}
@@ -18414,7 +20521,7 @@
         ${pointCircles}
         ${xLabels.join("")}
         <text x="${(leftGutter + width - rightGutter) / 2}" y="${height - 6}" text-anchor="middle" fill="#cbd5e1" font-size="${labelFontSize}" font-weight="700">Date</text>
-        <text x="14" y="${midY}" text-anchor="middle" fill="#cbd5e1" font-size="${labelFontSize}" font-weight="700" transform="rotate(-90, 14, ${midY})">${escapeSvgText(yAxisLabel)}</text>
+        ${yAxisLabelMarkup}
       `;
 
       if (interactiveTooltipEl) {
@@ -18428,11 +20535,11 @@
     }
 
     function renderBankrollCharts() {
-      drawAnalyticsBankrollChart(bankrollChart, bankrollTimeline, bankrollChartTooltip, "bankrollView");
+      drawAnalyticsBankrollChart(bankrollChart, bankrollTimeline, null, "bankrollView");
       drawAnalyticsBankrollChart(
         analyticsBankrollChart,
         buildAllTimeProfitTimeline(),
-        analyticsBankrollTooltip,
+        null,
         "analyticsView",
         {
           includeNegativeValues: true,
@@ -18449,6 +20556,25 @@
       if (!session.date || session.date === UNKNOWN) return null;
       const d = new Date(`${session.date} 00:00:00`);
       return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    function formatSessionDateShort(session) {
+      const d = parseSessionDate(session);
+      if (!d) return "--/--/----";
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${mm}/${dd}/${yyyy}`;
+    }
+
+    function formatDateMsShort(dateMs) {
+      if (dateMs == null) return "--/--/----";
+      const d = new Date(dateMs);
+      if (Number.isNaN(d.getTime())) return "--/--/----";
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yyyy = d.getFullYear();
+      return `${mm}/${dd}/${yyyy}`;
     }
 
     function getHourlyRate(session) {
@@ -19043,22 +21169,9 @@
     }
 
     function renderAnalyticsRangeControls(model) {
-      const orderedEntries = [...model.sessionEntries].filter((entry) => entry.chartDate).sort((a, b) => a.chartDate - b.chartDate);
-      const firstDate = orderedEntries[0]?.chartDate || null;
-      const lastDate = orderedEntries[orderedEntries.length - 1]?.chartDate || null;
-      const startLabel = analyticsRangeState.startIso
-        ? new Date(`${analyticsRangeState.startIso}T00:00:00`).toLocaleDateString()
-        : firstDate
-          ? firstDate.toLocaleDateString()
-          : "Start";
-      const endLabel = analyticsRangeState.endIso
-        ? new Date(`${analyticsRangeState.endIso}T00:00:00`).toLocaleDateString()
-        : lastDate
-          ? lastDate.toLocaleDateString()
-          : "End";
       if (analyticsRangeSummary) {
         analyticsRangeSummary.textContent = analyticsRangeState.startIso || analyticsRangeState.endIso
-          ? `Selected range: ${startLabel} to ${endLabel}`
+          ? "Custom range"
           : "All time";
       }
       if (analyticsRangeClearBtn) {
@@ -19121,6 +21234,7 @@
     let analyticsExpandReturnFocus = null;
     let analyticsExpandReturnViewId = null;
     let analyticsExpandReturnScrollTop = null;
+    let analyticsExpandHistoryFallbackTimer = 0;
     let lastAnalyticsDashboardModel = null;
 
     function isAnalyticsExpandHistoryState(state = window.history.state) {
@@ -19133,6 +21247,12 @@
         ? window.history.state
         : {};
       window.history.pushState({ ...baseState, analyticsExpandOpen: true }, "", window.location.pathname);
+    }
+
+    function clearAnalyticsExpandHistoryState() {
+      if (!isAnalyticsExpandHistoryState()) return;
+      const { analyticsExpandOpen, ...rest } = window.history.state || {};
+      window.history.replaceState(rest, "", window.location.pathname);
     }
 
     function getAnalyticsExpandableTarget(target) {
@@ -19162,8 +21282,402 @@
 
     function hideAnalyticsExpand() {
       if (!analyticsExpandOverlay) return;
+      if (analyticsExpandHistoryFallbackTimer) {
+        window.clearTimeout(analyticsExpandHistoryFallbackTimer);
+        analyticsExpandHistoryFallbackTimer = 0;
+      }
       setAnalyticsExpandOpen(false);
       analyticsExpandContent.innerHTML = "";
+    }
+
+    function renderZoomableLineGraph(container, config) {
+      if (!container) return;
+      const title = config.title || "Graph";
+      const zoomId = config.id || "lineGraph";
+      container.innerHTML = `
+        <div class="chart-card chart-with-tooltip analytics-expand-chart-card">
+          <div class="analytics-expand-chart-title-row">
+            <p class="chart-title">${escapeHtml(title)}</p>
+            <div class="analytics-scatter-zoom-controls" aria-label="${escapeHtml(title)} zoom controls">
+              <button id="${zoomId}ZoomOutBtn" class="secondary-btn analytics-scatter-zoom-btn" type="button" aria-label="Zoom out">−</button>
+              <input id="${zoomId}ZoomInput" class="analytics-scatter-zoom-input" type="text" inputmode="numeric" value="100%" aria-label="${escapeHtml(title)} zoom percentage" readonly />
+              <button id="${zoomId}ZoomInBtn" class="secondary-btn analytics-scatter-zoom-btn" type="button" aria-label="Zoom in">+</button>
+            </div>
+          </div>
+          <p class="hint" style="margin: 0 0 8px; font-size: 0.85rem;">Points open session details when available.</p>
+          <div id="${zoomId}Tooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
+          <div id="${zoomId}Scroll" class="analytics-line-zoom-scroll">
+            <div id="${zoomId}Content" class="analytics-line-zoom-content">
+              <svg id="${zoomId}Chart" aria-label="${escapeHtml(title)} chart"></svg>
+            </div>
+          </div>
+        </div>
+      `;
+      const svgEl = container.querySelector(`#${zoomId}Chart`);
+      const contentEl = container.querySelector(`#${zoomId}Content`);
+      const tooltipEl = container.querySelector(`#${zoomId}Tooltip`);
+      const scrollEl = container.querySelector(`#${zoomId}Scroll`);
+      const zoomInput = container.querySelector(`#${zoomId}ZoomInput`);
+      const zoomInBtn = container.querySelector(`#${zoomId}ZoomInBtn`);
+      const zoomOutBtn = container.querySelector(`#${zoomId}ZoomOutBtn`);
+      if (!svgEl || !contentEl || !scrollEl) return;
+
+      const minZoom = 100;
+      const maxZoom = 10000;
+      const zoomStep = 25;
+      let zoomPercent = 100;
+      let renderedWidth = 0;
+      let renderedHeight = 0;
+      let activeLiveScale = 1;
+      let liveStrokeTargets = [];
+      let livePointTargets = [];
+      const clampZoom = (value) => Math.max(minZoom, Math.min(maxZoom, Number(value) || 100));
+      const snapButtonZoom = (value) => Math.round(clampZoom(value) / 5) * 5;
+      const parseZoomInput = () => clampZoom(String(zoomInput?.value || "").replace(/[^0-9.]/g, ""));
+      const syncZoomInput = (value = zoomPercent) => {
+        if (!zoomInput) return;
+        const numericValue = clampZoom(value);
+        const formattedValue = isPhonePointerLayout() && numericValue < 1000
+          ? (Math.round(numericValue * 10) / 10).toFixed(1).replace(/\.0$/, "")
+          : String(Math.round(numericValue));
+        zoomInput.value = `${formattedValue}%`;
+      };
+      const prepareLiveSizingTargets = () => {
+        liveStrokeTargets = [...svgEl.querySelectorAll("line, polyline")].map((el) => ({
+          el,
+          strokeWidth: Number(el.getAttribute("stroke-width")) || 1,
+          dashArray: el.getAttribute("stroke-dasharray") || ""
+        }));
+        livePointTargets = [...svgEl.querySelectorAll(".line-chart-point-dot--visible")].map((el) => ({
+          el,
+          radius: Number(el.getAttribute("r")) || 4,
+          strokeWidth: parseFloat(window.getComputedStyle(el).strokeWidth) || Number(el.getAttribute("stroke-width")) || 0
+        }));
+      };
+      const render = (preserveCenter = true, anchor = null) => {
+        const previous = {
+          x: preserveCenter ? (scrollEl.scrollLeft + (scrollEl.clientWidth / 2)) / Math.max(1, scrollEl.scrollWidth) : 0,
+          y: preserveCenter ? (scrollEl.scrollTop + (scrollEl.clientHeight / 2)) / Math.max(1, scrollEl.scrollHeight) : 0
+        };
+        const restoreScrollPosition = () => {
+          if (!preserveCenter) return;
+          if (anchor) {
+            const layout = svgEl._lineChartLayout;
+            if (layout && Number.isFinite(anchor.chartX) && Number.isFinite(anchor.chartY)) {
+              const chartX = layout.leftGutter + (anchor.chartX * layout.plotW);
+              const chartY = layout.topGutter + (anchor.chartY * layout.plotH);
+              scrollEl.scrollLeft = Math.max(0, chartX - anchor.localX);
+              scrollEl.scrollTop = Math.max(0, chartY - anchor.localY);
+              return;
+            }
+            scrollEl.scrollLeft = Math.max(0, (anchor.x * scrollEl.scrollWidth) - anchor.localX);
+            scrollEl.scrollTop = Math.max(0, (anchor.y * scrollEl.scrollHeight) - anchor.localY);
+            return;
+          }
+          scrollEl.scrollLeft = Math.max(0, (previous.x * scrollEl.scrollWidth) - (scrollEl.clientWidth / 2));
+          scrollEl.scrollTop = Math.max(0, (previous.y * scrollEl.scrollHeight) - (scrollEl.clientHeight / 2));
+        };
+        const viewportW = Math.max(360, scrollEl.clientWidth || (window.innerWidth - 96));
+        const viewportH = Math.max(320, scrollEl.clientHeight || (window.innerHeight - 260));
+        const zoom = zoomPercent / 100;
+        const contentW = Math.max(viewportW, Math.round(viewportW * zoom));
+        const contentH = Math.max(viewportH, Math.round(viewportH * zoom));
+        scrollEl.classList.remove("is-live-pinching");
+        svgEl.style.transform = "";
+        svgEl.style.transformOrigin = "";
+        svgEl.style.setProperty("--line-chart-live-inverse-scale", "1");
+        activeLiveScale = 1;
+        drawAnalyticsBankrollChart(
+          svgEl,
+          config.timeline || [],
+          tooltipEl,
+          config.navigateReturnView || "analyticsView",
+          {
+            includeNegativeValues: config.includeNegativeValues === true,
+            yAxisLabel: config.yAxisLabel || "Value",
+            noDataText: config.noDataText || "No data yet",
+            strokeColor: config.strokeColor || chartGreenColor(),
+            buildTooltipHtml: config.buildTooltipHtml,
+            clickBehavior: config.clickBehavior || "navigate",
+            width: contentW,
+            height: contentH,
+            showPoints: true,
+            pointRadius: 5.5
+          }
+        );
+        svgEl.setAttribute("width", String(contentW));
+        svgEl.setAttribute("height", String(contentH));
+        svgEl.style.width = `${contentW}px`;
+        svgEl.style.height = `${contentH}px`;
+        contentEl.style.width = `${contentW}px`;
+        contentEl.style.height = `${contentH}px`;
+        renderedWidth = contentW;
+        renderedHeight = contentH;
+        prepareLiveSizingTargets();
+        restoreScrollPosition();
+        requestAnimationFrame(restoreScrollPosition);
+      };
+      const applyZoom = (nextZoom, anchor = null) => {
+        zoomPercent = clampZoom(nextZoom);
+        syncZoomInput();
+        render(true, anchor);
+      };
+      zoomInBtn?.addEventListener("click", () => applyZoom(snapButtonZoom(zoomPercent + zoomStep)));
+      zoomOutBtn?.addEventListener("click", () => applyZoom(snapButtonZoom(zoomPercent - zoomStep)));
+      zoomInput?.addEventListener("change", () => applyZoom(parseZoomInput()));
+      zoomInput?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        applyZoom(parseZoomInput());
+        zoomInput.blur();
+      });
+
+      let pinchLastDistance = 0;
+      let gestureStartZoom = 100;
+      let activePinchMode = null;
+      let pendingPinchZoom = null;
+      let pendingPinchAnchor = null;
+      let pinchFrame = 0;
+      let panTouchId = null;
+      let panLastX = 0;
+      let panLastY = 0;
+      let panMoved = false;
+      let suppressNextLineClick = false;
+      let suppressLineClickTimer = 0;
+      const touchPinchSensitivity = 2.6;
+      const gesturePinchSensitivity = 2.4;
+      const getTouchDistance = (touches) => {
+        const dx = touches[0].clientX - touches[1].clientX;
+        const dy = touches[0].clientY - touches[1].clientY;
+        return Math.hypot(dx, dy);
+      };
+      const getTouchAnchor = (touches) => {
+        const rect = scrollEl.getBoundingClientRect();
+        const localX = ((touches[0].clientX + touches[1].clientX) / 2) - rect.left;
+        const localY = ((touches[0].clientY + touches[1].clientY) / 2) - rect.top;
+        const layout = svgEl._lineChartLayout;
+        const svgX = (scrollEl.scrollLeft + localX) / Math.max(0.01, activeLiveScale);
+        const svgY = (scrollEl.scrollTop + localY) / Math.max(0.01, activeLiveScale);
+        const anchor = {
+          localX,
+          localY,
+          x: (scrollEl.scrollLeft + localX) / Math.max(1, scrollEl.scrollWidth),
+          y: (scrollEl.scrollTop + localY) / Math.max(1, scrollEl.scrollHeight)
+        };
+        if (layout && layout.plotW > 0 && layout.plotH > 0) {
+          anchor.chartX = (svgX - layout.leftGutter) / layout.plotW;
+          anchor.chartY = (svgY - layout.topGutter) / layout.plotH;
+        }
+        return anchor;
+      };
+      const getGestureAnchor = (event) => {
+        const rect = scrollEl.getBoundingClientRect();
+        const localX = (event.clientX || (rect.left + rect.width / 2)) - rect.left;
+        const localY = (event.clientY || (rect.top + rect.height / 2)) - rect.top;
+        const layout = svgEl._lineChartLayout;
+        const svgX = (scrollEl.scrollLeft + localX) / Math.max(0.01, activeLiveScale);
+        const svgY = (scrollEl.scrollTop + localY) / Math.max(0.01, activeLiveScale);
+        const anchor = {
+          localX,
+          localY,
+          x: (scrollEl.scrollLeft + localX) / Math.max(1, scrollEl.scrollWidth),
+          y: (scrollEl.scrollTop + localY) / Math.max(1, scrollEl.scrollHeight)
+        };
+        if (layout && layout.plotW > 0 && layout.plotH > 0) {
+          anchor.chartX = (svgX - layout.leftGutter) / layout.plotW;
+          anchor.chartY = (svgY - layout.topGutter) / layout.plotH;
+        }
+        return anchor;
+      };
+      const applyLiveStrokeSizing = (liveScale) => {
+        const inverseScale = 1 / Math.max(0.01, liveScale);
+        liveStrokeTargets.forEach(({ el, strokeWidth, dashArray }) => {
+          el.style.strokeWidth = `${strokeWidth * inverseScale}px`;
+          if (dashArray && dashArray !== "none") {
+            el.style.strokeDasharray = dashArray
+              .split(/[\s,]+/)
+              .map((part) => {
+                const value = Number(part);
+                return Number.isFinite(value) ? `${value * inverseScale}px` : part;
+              })
+              .join(" ");
+          }
+        });
+        livePointTargets.forEach(({ el, radius, strokeWidth }) => {
+          el.setAttribute("r", String(radius * inverseScale));
+          if (strokeWidth > 0) el.style.strokeWidth = `${strokeWidth * inverseScale}px`;
+        });
+      };
+      const applyLivePinchZoom = (nextZoom, anchor) => {
+        const liveZoom = clampZoom(nextZoom);
+        const baseZoom = Math.max(1, zoomPercent);
+        const liveScale = Math.max(0.01, liveZoom / baseZoom);
+        const nextWidth = Math.max(scrollEl.clientWidth || 360, Math.round((renderedWidth || scrollEl.clientWidth || 360) * liveScale));
+        const nextHeight = Math.max(scrollEl.clientHeight || 320, Math.round((renderedHeight || scrollEl.clientHeight || 320) * liveScale));
+        const layout = svgEl._lineChartLayout;
+        let nextScrollLeft = anchor ? Math.max(0, (anchor.x * nextWidth) - anchor.localX) : scrollEl.scrollLeft;
+        let nextScrollTop = anchor ? Math.max(0, (anchor.y * nextHeight) - anchor.localY) : scrollEl.scrollTop;
+        if (anchor && layout && Number.isFinite(anchor.chartX) && Number.isFinite(anchor.chartY)) {
+          const chartX = layout.leftGutter + (anchor.chartX * layout.plotW);
+          const chartY = layout.topGutter + (anchor.chartY * layout.plotH);
+          nextScrollLeft = Math.max(0, (chartX * liveScale) - anchor.localX);
+          nextScrollTop = Math.max(0, (chartY * liveScale) - anchor.localY);
+        }
+        contentEl.style.width = `${nextWidth}px`;
+        contentEl.style.height = `${nextHeight}px`;
+        svgEl.style.transform = "";
+        svgEl.style.transformOrigin = "";
+        svgEl.style.width = `${nextWidth}px`;
+        svgEl.style.height = `${nextHeight}px`;
+        svgEl.style.setProperty("--line-chart-live-inverse-scale", String(1 / liveScale));
+        activeLiveScale = liveScale;
+        applyLiveStrokeSizing(liveScale);
+        scrollEl.classList.add("is-live-pinching");
+        scrollEl.scrollLeft = nextScrollLeft;
+        scrollEl.scrollTop = nextScrollTop;
+      };
+      const flushPendingPinchZoom = () => {
+        if (pinchFrame) {
+          cancelAnimationFrame(pinchFrame);
+          pinchFrame = 0;
+        }
+        if (pendingPinchZoom == null || !pendingPinchAnchor) return;
+        zoomPercent = pendingPinchZoom;
+        syncZoomInput();
+        render(true, pendingPinchAnchor);
+      };
+      const schedulePinchZoom = (nextZoom, anchor) => {
+        pendingPinchZoom = clampZoom(nextZoom);
+        pendingPinchAnchor = anchor;
+        syncZoomInput(pendingPinchZoom);
+        if (pinchFrame) return;
+        pinchFrame = requestAnimationFrame(() => {
+          pinchFrame = 0;
+          if (pendingPinchZoom == null || !pendingPinchAnchor) return;
+          applyLivePinchZoom(pendingPinchZoom, pendingPinchAnchor);
+        });
+      };
+      const resetPinchState = (flush = false) => {
+        if (flush) flushPendingPinchZoom();
+        else if (pinchFrame) {
+          cancelAnimationFrame(pinchFrame);
+          pinchFrame = 0;
+        }
+        pinchLastDistance = 0;
+        activePinchMode = null;
+        pendingPinchZoom = null;
+        pendingPinchAnchor = null;
+      };
+      const getPanTouch = (touches) => {
+        if (panTouchId == null) return touches[0] || null;
+        return [...touches].find((touch) => touch.identifier === panTouchId) || null;
+      };
+      const canPanGraph = () => (
+        isPhonePointerLayout()
+        && zoomPercent > minZoom
+        && (scrollEl.scrollWidth > scrollEl.clientWidth || scrollEl.scrollHeight > scrollEl.clientHeight)
+      );
+      scrollEl.addEventListener("touchstart", (event) => {
+        if (isPhonePointerLayout() && event.touches.length === 1 && activePinchMode == null && canPanGraph()) {
+          const touch = event.touches[0];
+          panTouchId = touch.identifier;
+          panLastX = touch.clientX;
+          panLastY = touch.clientY;
+          panMoved = false;
+          event.preventDefault();
+          return;
+        }
+        if (!isPhonePointerLayout() || event.touches.length !== 2) return;
+        if (activePinchMode === "gesture") return;
+        panTouchId = null;
+        panMoved = false;
+        event.preventDefault();
+        activePinchMode = "touch";
+        pinchLastDistance = getTouchDistance(event.touches);
+        pendingPinchZoom = zoomPercent;
+        pendingPinchAnchor = getTouchAnchor(event.touches);
+      }, { passive: false });
+      scrollEl.addEventListener("touchmove", (event) => {
+        if (isPhonePointerLayout() && panTouchId != null && event.touches.length === 1) {
+          const touch = getPanTouch(event.touches);
+          if (!touch) return;
+          event.preventDefault();
+          const dx = touch.clientX - panLastX;
+          const dy = touch.clientY - panLastY;
+          if (Math.abs(dx) > 2 || Math.abs(dy) > 2) panMoved = true;
+          scrollEl.scrollLeft -= dx;
+          scrollEl.scrollTop -= dy;
+          panLastX = touch.clientX;
+          panLastY = touch.clientY;
+          return;
+        }
+        if (!isPhonePointerLayout() || event.touches.length !== 2 || activePinchMode !== "touch" || !pinchLastDistance) return;
+        panTouchId = null;
+        event.preventDefault();
+        const nextDistance = getTouchDistance(event.touches);
+        if (!nextDistance) return;
+        const distanceRatio = nextDistance / pinchLastDistance;
+        pinchLastDistance = nextDistance;
+        const baseZoom = pendingPinchZoom == null ? zoomPercent : pendingPinchZoom;
+        schedulePinchZoom(baseZoom * Math.pow(distanceRatio, touchPinchSensitivity), getTouchAnchor(event.touches));
+      }, { passive: false });
+      scrollEl.addEventListener("touchend", (event) => {
+        if (panTouchId != null && !getPanTouch(event.touches)) {
+          if (panMoved) {
+            suppressNextLineClick = true;
+            window.clearTimeout(suppressLineClickTimer);
+            suppressLineClickTimer = window.setTimeout(() => {
+              suppressNextLineClick = false;
+            }, 450);
+          }
+          panTouchId = null;
+          panMoved = false;
+        }
+        if (event.touches.length >= 2) return;
+        if (activePinchMode === "touch") resetPinchState(true);
+      }, { passive: true });
+      scrollEl.addEventListener("touchcancel", () => {
+        panTouchId = null;
+        panMoved = false;
+        resetPinchState(false);
+      }, { passive: true });
+      scrollEl.addEventListener("click", (event) => {
+        if (!suppressNextLineClick) return;
+        event.preventDefault();
+        event.stopPropagation();
+        suppressNextLineClick = false;
+        window.clearTimeout(suppressLineClickTimer);
+      }, true);
+      scrollEl.addEventListener("gesturestart", (event) => {
+        if (!isPhonePointerLayout()) return;
+        event.preventDefault();
+        panTouchId = null;
+        panMoved = false;
+        resetPinchState(false);
+        activePinchMode = "gesture";
+        gestureStartZoom = zoomPercent;
+      }, { passive: false });
+      scrollEl.addEventListener("gesturechange", (event) => {
+        if (!isPhonePointerLayout() || activePinchMode !== "gesture") return;
+        event.preventDefault();
+        schedulePinchZoom(
+          gestureStartZoom * Math.pow(Number(event.scale) || 1, gesturePinchSensitivity),
+          getGestureAnchor(event)
+        );
+      }, { passive: false });
+      scrollEl.addEventListener("gestureend", (event) => {
+        if (!isPhonePointerLayout()) return;
+        event.preventDefault();
+        if (activePinchMode === "gesture") resetPinchState(true);
+      }, { passive: false });
+      scrollEl.addEventListener("gesturecancel", (event) => {
+        if (!isPhonePointerLayout()) return;
+        event.preventDefault();
+        resetPinchState(false);
+      }, { passive: false });
+      window.addEventListener("resize", () => render(true), { passive: true });
+      syncZoomInput();
+      render(false);
     }
 
     function openAnalyticsExpand(target, returnViewId = "analyticsView") {
@@ -19186,37 +21700,31 @@
         : target?.querySelector?.("svg") || null;
       const chartKey = chartSvg?.id || "";
       if (target && target.classList.contains("analytics-main-chart")) {
-        const wrap = document.createElement("div");
-        wrap.className = "chart-card chart-with-tooltip analytics-expand-chart-card";
-        wrap.innerHTML = `
-          <p class="chart-title">${escapeHtml(title)}</p>
-          <p class="hint" style="margin: 0 0 8px; font-size: 0.85rem;">Hover the line for values; session points open full session.</p>
-          <div id="analyticsExpandBankrollTooltip" class="chart-tooltip" role="status" aria-live="polite"></div>
-          <svg id="analyticsExpandBankrollChart" aria-label="${escapeHtml(title)} chart"></svg>
-        `;
-        analyticsExpandContent.appendChild(wrap);
-        const expandSvg = wrap.querySelector("#analyticsExpandBankrollChart");
-        const expandTooltip = wrap.querySelector("#analyticsExpandBankrollTooltip");
-        if (expandSvg) {
-          const expandWidth = Math.max(860, Math.min(1400, window.innerWidth - 96));
-          const expandHeight = Math.max(460, Math.min(680, window.innerHeight - 150));
-          drawAnalyticsBankrollChart(
-            expandSvg,
-            buildAllTimeProfitTimeline(),
-            expandTooltip,
-            "analyticsView",
-            {
-              includeNegativeValues: true,
-              yAxisLabel: "All Time Profit",
-              noDataText: "No profit data in this range yet",
-              strokeColor: "#38bdf8",
-              buildTooltipHtml: (m) => buildBankrollLineTooltipHtml(m, "All Time Profit", "Starting point"),
-              clickBehavior: "navigate",
-              width: expandWidth,
-              height: expandHeight
-            }
-          );
-        }
+        renderZoomableLineGraph(analyticsExpandContent, {
+          id: "analyticsExpandBankroll",
+          title: "All Time Profit",
+          timeline: buildAllTimeProfitTimeline(model.sessionEntries.map((entry) => entry.session)),
+          navigateReturnView: "analyticsView",
+          includeNegativeValues: true,
+          yAxisLabel: "All Time Profit",
+          noDataText: "No profit data in this range yet",
+          strokeColor: "#38bdf8",
+          buildTooltipHtml: (m) => buildBankrollLineTooltipHtml(m, "All Time Profit", "Starting point"),
+          clickBehavior: "navigate"
+        });
+      } else if (chartKey === "bankrollChart") {
+        renderZoomableLineGraph(analyticsExpandContent, {
+          id: "bankrollExpand",
+          title: "Bankroll over time",
+          timeline: bankrollTimeline,
+          navigateReturnView: "bankrollView",
+          includeNegativeValues: false,
+          yAxisLabel: "Bankroll",
+          noDataText: "No bankroll data yet",
+          strokeColor: chartGreenColor(),
+          buildTooltipHtml: (m) => buildBankrollLineTooltipHtml(m, "Bankroll"),
+          clickBehavior: "navigate"
+        });
       } else if (chartKey === "analyticsOutcomeChart") {
         const wrap = document.createElement("div");
         wrap.className = "chart-card chart-with-tooltip analytics-expand-chart-card analytics-expand-donut-card";
@@ -19423,7 +21931,15 @@
         }
         if (options.useHistory !== false && isAnalyticsExpandHistoryState()) {
           window.history.back();
+          analyticsExpandHistoryFallbackTimer = window.setTimeout(() => {
+            analyticsExpandHistoryFallbackTimer = 0;
+            if (!analyticsExpandOverlay || analyticsExpandOverlay.classList.contains("hidden")) return;
+            closeAnalyticsExpand({ useHistory: false });
+          }, 250);
           return;
+        }
+        if (options.useHistory === false) {
+          clearAnalyticsExpandHistoryState();
         }
         analyticsExpandReturnViewId = null;
         hideAnalyticsExpand();
@@ -19467,13 +21983,15 @@
     function renderAnalyticsBarChart(svgEl, items, options = {}) {
       if (!svgEl) return;
       const compactBars = options.minimalBars === true;
+      const isPhoneExpandedChart =
+        isPhonePointerLayout() && Boolean(svgEl.closest(".analytics-expand-content"));
       const width = options.width || 700;
       const topGutter = options.topGutter || (compactBars ? 10 : 18);
       const bottomGutter = options.bottomGutter || (compactBars ? 26 : 36);
       const leftGutter = options.leftGutter || (compactBars ? 130 : 178);
       const rightGutter = options.rightGutter || 16;
       const rowHeight = options.rowHeight || (compactBars ? 34 : 34);
-      const tickFontSize = options.tickFontSize || analyticsScaledSvgFontSize(svgEl, 14, width, topGutter + Math.max(60, items.length * rowHeight) + bottomGutter);
+      const tickFontSize = options.tickFontSize || (isPhoneExpandedChart ? 11 : analyticsScaledSvgFontSize(svgEl, 14, width, topGutter + Math.max(60, items.length * rowHeight) + bottomGutter));
       const labelFontSize = options.labelFontSize || tickFontSize;
       const axisLabelFontSize = options.axisLabelFontSize || tickFontSize;
       const minimumRowHeight = Math.max(rowHeight, labelFontSize + 12);
@@ -19521,7 +22039,7 @@
       const values = items.map((item) => Number(item.value) || 0);
       const rawMinValue = Math.min(0, ...values);
       const rawMaxValue = Math.max(0, ...values);
-      const requestedTicks = Math.min(options.xTicks || 4, Math.max(1, maxVisibleTickLabels - 1));
+      const requestedTicks = Math.min(isPhoneExpandedChart ? 2 : (options.xTicks || 4), Math.max(1, maxVisibleTickLabels - 1));
       const axisTicks = buildAnalyticsTickValues(rawMinValue, rawMaxValue, requestedTicks, {
         integer: options.integerTicks === true,
         includeZero: true
@@ -19795,6 +22313,8 @@
     function renderAnalyticsZoomableScatterChart(elements, points, options = {}) {
       const { svgEl, scrollEl, xAxisEl, yAxisEl, tooltipEl: providedTooltipEl, zoomInput, zoomInBtn, zoomOutBtn } = elements || {};
       if (!svgEl || !scrollEl || !xAxisEl || !yAxisEl) return;
+      const isPhoneExpandedChart =
+        isPhonePointerLayout() && Boolean(svgEl.closest(".analytics-expand-content"));
       const tooltipEl = options.interactive === false ? null : (providedTooltipEl || ensureAnalyticsChartTooltip(svgEl, options.tooltipKey || "scatter-zoom"));
       const clickBehavior = options.clickBehavior || "popup";
       const navigateReturnView = options.navigateReturnView || "analyticsView";
@@ -19822,7 +22342,7 @@
       const yMax = fullYTicks[fullYTicks.length - 1] ?? rawMaxY;
       const xSpan = Math.max(1, xMax - xMin);
       const ySpan = Math.max(1, yMax - yMin);
-      const tickFontSize = Number(options.tickFontSize) || 14;
+      const tickFontSize = Number(options.tickFontSize) || (isPhoneExpandedChart ? 11 : 14);
       const axisLabelFontSize = Number(options.axisLabelFontSize) || tickFontSize;
       const dotRadius = options.dotRadius || 5.6;
       const yValueLabel = options.yValueLabel || options.yLabel || "Profit";
@@ -19839,8 +22359,8 @@
         const rightData = xMin + ((scrollEl.scrollLeft + viewportW) / Math.max(1, contentW)) * xSpan;
         const topData = yMax - (scrollEl.scrollTop / Math.max(1, contentH)) * ySpan;
         const bottomData = yMax - ((scrollEl.scrollTop + viewportH) / Math.max(1, contentH)) * ySpan;
-        const visibleXTicks = buildAnalyticsTickValues(leftData, rightData, 4, { includeZero: false });
-        const visibleYTicks = buildAnalyticsTickValues(bottomData, topData, 4, { includeZero: false });
+        const visibleXTicks = buildAnalyticsTickValues(leftData, rightData, isPhoneExpandedChart ? 2 : 4, { includeZero: false });
+        const visibleYTicks = buildAnalyticsTickValues(bottomData, topData, isPhoneExpandedChart ? 3 : 4, { includeZero: false });
 
         xAxisEl.setAttribute("viewBox", `0 0 ${viewportW} 64`);
         xAxisEl.setAttribute("width", String(viewportW));
@@ -20233,7 +22753,7 @@
       drawAnalyticsBankrollChart(
         analyticsBankrollChart,
         buildAllTimeProfitTimeline(model.sessionEntries.map((entry) => entry.session)),
-        analyticsBankrollTooltip,
+        null,
         "analyticsView",
         {
           includeNegativeValues: true,
@@ -20714,7 +23234,9 @@
     }
 
     function openLatestHandFromHome() {
-      showView("handHistoryView", { restoreScroll: true });
+      dismissHandFloatingUi();
+      closeHandReplay();
+      showView("handHistoryView", { restoreScroll: true, immediateRender: true });
     }
 
     function renderAll() {
@@ -20894,6 +23416,7 @@
     }
     homeAddSessionBtn.addEventListener("click", () => openAddSessionNew());
     historyAddSessionBtn.addEventListener("click", () => openAddSessionNew());
+    homeBankrollBtn.addEventListener("click", () => showView("bankrollView"));
     homeHistoryBtn.addEventListener("click", () => showView("historyView"));
     if (handHistorySearchBtn) {
       handHistorySearchBtn.addEventListener("click", () => applyHandHistorySearch());
@@ -20951,13 +23474,23 @@
         renderHandHistory();
       });
     }
-    if (backFromHandDetailBtn) {
-      backFromHandDetailBtn.addEventListener("click", () => {
-        showView(handDetailReturnViewId || "handHistoryView", { restoreScroll: true, replaceRoute: true });
-      });
-    }
+    bindHandDetailViewActions();
+    bindHandSeatPhoneUiOnce();
+    bindHandTableLayoutObserver();
     if (handReplayCloseBtn) {
-      handReplayCloseBtn.addEventListener("click", closeHandReplay);
+      const closeHandReplayFromControl = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeHandReplay();
+      };
+      handReplayCloseBtn.addEventListener("pointerdown", (event) => {
+        event.stopPropagation();
+      });
+      handReplayCloseBtn.addEventListener("pointerup", (event) => {
+        if (event.pointerType === "mouse") return;
+        closeHandReplayFromControl(event);
+      });
+      handReplayCloseBtn.addEventListener("click", closeHandReplayFromControl);
     }
     if (handReplaySpeedSelect) {
       handReplaySpeedSelect.addEventListener("change", () => {
@@ -21371,7 +23904,15 @@
       return tip;
     }
 
+    function isPhonePointerLayout() {
+      return window.matchMedia && window.matchMedia("(hover: none) and (pointer: coarse) and (max-width: 767px)").matches;
+    }
+
     function showFloatingHoverTooltip(text, clientX, clientY) {
+      if (isPhonePointerLayout()) {
+        hideFloatingHoverTooltip();
+        return;
+      }
       const tip = ensureFloatingHoverTooltip();
       if (!tip) return;
       tip.style.removeProperty("display");
@@ -21385,6 +23926,10 @@
     }
 
     function showFloatingHoverTooltipAboveButton(text, buttonEl) {
+      if (isPhonePointerLayout()) {
+        hideFloatingHoverTooltip();
+        return;
+      }
       const tip = ensureFloatingHoverTooltip();
       if (!tip || !buttonEl) return;
       tip.style.removeProperty("display");
@@ -21460,6 +24005,11 @@
     }
 
     function showDelegatedHoverTooltip(target) {
+      if (isPhonePointerLayout()) {
+        activeHoverTooltipTarget = null;
+        hideFloatingHoverTooltip();
+        return;
+      }
       if (!target) return;
       ensureHoverTooltipLabel(target);
       const text = getHoverTooltipText(target);
@@ -21592,6 +24142,10 @@
       }
     });
     backFromStakeDetailBtn.addEventListener("click", () => showView("analyticsView", { restoreScroll: true, replaceRoute: true }));
+    backFromBankrollChangeDetailBtn?.addEventListener("click", () => {
+      activeBankrollChangeId = null;
+      showView("bankrollView", { restoreScroll: true, replaceRoute: true });
+    });
     openCreateAccountBtn.addEventListener("click", () => showAuthScreen("create"));
     backToLoginBtn.addEventListener("click", () => showAuthScreenAfterBackTarget("login"));
     if (needHelpSigningInBtn) {
@@ -21786,6 +24340,22 @@
         openAnalyticsExpand(target);
       });
     }
+    if (bankrollChart) {
+      const openBankrollGraphView = (event) => {
+        if (analyticsExpandOverlay && !analyticsExpandOverlay.classList.contains("hidden")) return;
+        const target = bankrollChart.closest(".chart-card") || bankrollChart;
+        event.preventDefault();
+        openAnalyticsExpand(target, "bankrollView");
+      };
+      bankrollChart.addEventListener("click", openBankrollGraphView);
+      bankrollChart.closest(".chart-card")?.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        openBankrollGraphView(event);
+      });
+      bankrollChart.closest(".chart-card")?.setAttribute("tabindex", "0");
+      bankrollChart.closest(".chart-card")?.setAttribute("role", "button");
+      bankrollChart.closest(".chart-card")?.setAttribute("aria-label", "Expand Bankroll over time");
+    }
     if (analyticsOutcomeChart) {
       const openOutcomeExpand = (event) => {
         if (analyticsExpandOverlay && !analyticsExpandOverlay.classList.contains("hidden")) return;
@@ -21822,7 +24392,7 @@
         closeHandStackPanel();
         initAddHandScreen();
         showView("addHandView");
-        window.scrollTo({ top: 0, behavior: "auto" });
+        scrollPageToTop();
       });
     }
 
@@ -21896,26 +24466,28 @@
       });
     }
 
-    if (handButtonToken && handTableVisual) {
+    if (handButtonToken && handTableVisual && handTableFelt) {
       const moveTokenToTableFromHolder = () => {
         if (!handButtonHolder) return;
         if (handButtonToken.parentElement === handTableVisual) return;
         const holderRect = handButtonHolder.getBoundingClientRect();
-        const tableRect = handTableVisual.getBoundingClientRect();
-        const cxPct = ((holderRect.left + holderRect.width / 2 - tableRect.left) / tableRect.width) * 100;
-        const cyPct = ((holderRect.top + holderRect.height / 2 - tableRect.top) / tableRect.height) * 100;
+        const feltRect = handTableFelt.getBoundingClientRect();
+        const cxPct = ((holderRect.left + holderRect.width / 2 - feltRect.left) / feltRect.width) * 100;
+        const cyPct = ((holderRect.top + holderRect.height / 2 - feltRect.top) / feltRect.height) * 100;
         handButtonToken.classList.add("hand-button-on-table");
-        handTableVisual.appendChild(handButtonToken);
+        setHandButtonOnTableUiActive(true);
+        ensureHandButtonTokenOnVisual();
         handButtonDrag.xPct = cxPct;
         handButtonDrag.yPct = cyPct;
         renderButtonToken();
       };
       const moveToken = (clientX, clientY) => {
-        const r = handTableVisual.getBoundingClientRect();
-        const x = ((clientX - r.left) / r.width) * 100;
-        const y = ((clientY - r.top) / r.height) * 100;
-        handButtonDrag.xPct = Math.max(-6, Math.min(106, x));
-        handButtonDrag.yPct = Math.max(-12, Math.min(106, y));
+        const visualRect = handTableVisual.getBoundingClientRect();
+        const visualX = ((clientX - visualRect.left) / visualRect.width) * 100;
+        const visualY = ((clientY - visualRect.top) / visualRect.height) * 100;
+        const feltPos = handTableVisualPointToFeltPercent(visualX, visualY, handTableFelt, handTableVisual);
+        handButtonDrag.xPct = Math.max(-6, Math.min(106, feltPos.xPct));
+        handButtonDrag.yPct = Math.max(-12, Math.min(106, feltPos.yPct));
         renderButtonToken();
       };
       const snapToNearestSeat = () => {
@@ -22135,28 +24707,6 @@
     if (handSaveToSessionBtn) {
       handSaveToSessionBtn.addEventListener("click", () => {
         saveCurrentHandToSessionDraft();
-      });
-    }
-
-    if (handUndoBtn) {
-      handUndoBtn.addEventListener("click", () => {
-        if (!handUndoStack.length) return;
-        handRedoStack.push(snapshotHandActionState());
-        const snap = handUndoStack.pop();
-        restoreHandActionState(snap);
-        renderHandStreetUI();
-        renderHandTable();
-      });
-    }
-
-    if (handRedoBtn) {
-      handRedoBtn.addEventListener("click", () => {
-        if (!handRedoStack.length) return;
-        handUndoStack.push(snapshotHandActionState());
-        const snap = handRedoStack.pop();
-        restoreHandActionState(snap);
-        renderHandStreetUI();
-        renderHandTable();
       });
     }
 
