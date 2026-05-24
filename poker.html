@@ -6159,6 +6159,25 @@
       white-space: nowrap;
     }
 
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .session-hand-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 4px;
+      }
+
+      .session-hand-title {
+        overflow-wrap: anywhere;
+        word-break: normal;
+      }
+
+      .session-hand-row .hint {
+        text-align: left;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.25;
+      }
+    }
+
     .hand-detail-session-btn {
       width: auto;
       min-width: 0;
@@ -7099,9 +7118,21 @@
       flex: 0 0 auto;
     }
 
+    .hand-button-dock,
+    .hand-button-holder {
+      touch-action: none;
+    }
+
     .hand-button-prompt {
       margin: 0;
       white-space: nowrap;
+    }
+
+    .hand-button-reset-btn {
+      width: auto;
+      margin: 0;
+      padding: 7px 10px;
+      font-size: 0.82rem;
     }
 
     .hand-nav-row {
@@ -7295,10 +7326,19 @@
       cursor: grab;
       z-index: 7;
       user-select: none;
+      touch-action: none;
+      will-change: left, top, transform;
     }
 
     .hand-button-token.dragging {
       cursor: grabbing;
+      z-index: 2300;
+    }
+
+    .hand-button-token.hand-button-floating {
+      position: fixed;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
       z-index: 2300;
     }
 
@@ -7314,6 +7354,12 @@
 
     .hand-button-token.hand-button-locked {
       cursor: not-allowed;
+    }
+
+    body.hand-button-touch-lock,
+    body.hand-button-touch-lock * {
+      touch-action: none !important;
+      overscroll-behavior: contain;
     }
 
     .hand-replay-button-token {
@@ -7563,13 +7609,30 @@
 
       .hand-table-felt .hand-seat-action-row {
         z-index: 6;
-        gap: 3px;
+        gap: 6px;
       }
 
       .hand-table-felt .hand-seat-action-btn {
-        min-width: 30px;
-        padding: 2px 5px;
-        font-size: 0.58rem;
+        min-width: 52px;
+        min-height: 38px;
+        padding: 7px 10px;
+        font-size: 0.76rem;
+        line-height: 1;
+      }
+
+      body > .hand-stack-panel.floating {
+        position: fixed;
+        left: 50% !important;
+        top: 50% !important;
+        width: min(340px, calc(100vw - 28px));
+        max-width: calc(100vw - 28px);
+        max-height: calc(100dvh - 32px);
+        overflow-y: auto;
+        background: #0f172a;
+        border-color: #64748b;
+        transform: translate(-50%, -50%);
+        z-index: 2600;
+        -webkit-overflow-scrolling: touch;
       }
 
       .hand-table-visual .hand-board-wrap {
@@ -7834,12 +7897,18 @@
       border: 1px solid #475569;
       border-radius: 8px;
       padding: 6px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
     }
 
     .hand-inline-amount-editor input {
       margin: 0;
-      width: 100px;
-      padding: 5px 6px;
+      width: 112px;
+      padding: 8px 9px;
+      background: #ffffff;
+      color: #111827;
+      caret-color: #111827;
+      font-size: 16px;
+      line-height: 1.2;
     }
 
     .hand-commit-action-menu {
@@ -8072,27 +8141,47 @@
       }
 
       #addHandRight > .hand-table-wrap {
-        order: 1;
+        order: 2;
         margin-top: 0;
         padding-top: 0;
       }
 
       #handStreetNavRow {
-        order: 2;
+        order: 3;
         margin-top: 8px;
         margin-bottom: 10px;
       }
 
       #addHandGameTypeLine {
-        order: 3;
-      }
-
-      #addHandRight > .field {
         order: 4;
       }
 
-      #addHandRight > .hand-setup-top-row {
+      #addHandRight > .field {
         order: 5;
+      }
+
+      #addHandRight > .hand-setup-top-row {
+        order: 1;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        width: 100%;
+      }
+
+      #addHandRight > .hand-setup-top-row > .field {
+        display: none;
+      }
+
+      #addHandRight .hand-button-dock {
+        justify-content: center;
+        max-width: min(100%, 320px);
+        touch-action: none;
+      }
+
+      #addHandRight .hand-button-prompt {
+        white-space: normal;
+        line-height: 1.2;
       }
 
       #addHandRight > .hand-street-status {
@@ -8101,6 +8190,24 @@
 
       #handActionPanel {
         order: 7;
+      }
+
+      #handActionButtonsRow {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      #handActionButtonsRow.hidden {
+        display: none;
+      }
+
+      #handActionButtonsRow .hand-action-btn {
+        min-height: 44px;
+        width: 100%;
+        margin: 0;
+        justify-content: center;
+        font-size: 0.95rem;
       }
 
       #handStackPanel {
@@ -8826,6 +8933,10 @@
       background: #ffffff;
       border-color: rgba(148, 163, 184, 0.32);
       color: #000000;
+    }
+
+    body[data-theme="light"] .session-draft-label {
+      color: #dc2626;
     }
 
     body[data-theme="light"] .analytics-range-date-input::-webkit-calendar-picker-indicator {
@@ -9613,7 +9724,7 @@
             <aside id="handSummaryPane" class="hand-summary-pane" aria-label="Current hand information">
               <p class="hand-summary-title">Current hand information</p>
               <ul class="hand-summary-list">
-                <li>Title<span id="handSummaryStreet" class="value">Setup</span></li>
+                <li>Street<span id="handSummaryStreet" class="value">Setup</span></li>
                 <li>Seat to act<span id="handSummaryActor" class="value">—</span></li>
                 <li>Effective stack size<span id="handSummaryEffective" class="value">—</span></li>
                 <li>Pot size<span id="handSummaryPot" class="value">$0.00</span></li>
@@ -9641,7 +9752,8 @@
               <div id="handButtonHolder" class="hand-button-holder" aria-hidden="true">
                 <div id="handButtonToken" class="hand-button-token" title="Drag button to a seat">B</div>
               </div>
-              <p class="hint hand-button-prompt">Drag B to a seat to set button.</p>
+              <p id="handButtonPrompt" class="hint hand-button-prompt">Drag B to a seat to set button.</p>
+              <button type="button" id="handButtonResetBtn" class="inline-btn hand-button-reset-btn hidden">Reset button</button>
             </div>
           </div>
           <div class="hand-table-wrap">
@@ -10143,7 +10255,8 @@
                       </button>
                       <div class="history-toolbar-col--sort history-sort-field">
                         <select id="handHistorySortSelect" aria-label="Sort hand list">
-                          <option value="session-date-desc" selected>Session date · newest first</option>
+                          <option value="recently-edited" selected>Default</option>
+                          <option value="session-date-desc">Session date · newest first</option>
                           <option value="session-date-asc">Session date · oldest first</option>
                           <option value="hand-name-asc">Hand name · A to Z</option>
                           <option value="hand-name-desc">Hand name · Z to A</option>
@@ -10833,6 +10946,8 @@
     const handTableVisual = document.getElementById("handTableVisual");
     const handButtonHolder = document.getElementById("handButtonHolder");
     const handButtonToken = document.getElementById("handButtonToken");
+    const handButtonPrompt = document.getElementById("handButtonPrompt");
+    const handButtonResetBtn = document.getElementById("handButtonResetBtn");
     const handTableFelt = document.getElementById("handTableFelt");
     const handBoardWrap = document.getElementById("handBoardWrap");
     const handCenterStreetInfo = document.getElementById("handCenterStreetInfo");
@@ -10849,6 +10964,7 @@
     const addHandRight = document.getElementById("addHandRight");
     const handSummaryPane = document.getElementById("handSummaryPane");
     const handActionPanel = document.getElementById("handActionPanel");
+    const handActionButtonsRow = document.getElementById("handActionButtonsRow");
     const handInlineAmountEditor = document.getElementById("handInlineAmountEditor");
     const handInlineAmountInput = document.getElementById("handInlineAmountInput");
     const handInlineAmountSaveBtn = document.getElementById("handInlineAmountSaveBtn");
@@ -13429,6 +13545,19 @@
       return false;
     }
 
+    function cardUsedOnBoard(rank, suit) {
+      if (!rank || !suit) return false;
+      const code = `${rank}${suit}`;
+      return ["flop", "turn", "river"].some((street) => (
+        (handBoardCards[street] || []).some((cardVal) => cardVal === code)
+      ));
+    }
+
+    function cardUnavailableForSeat(rank, suit, excludeSeatIndex, excludeCardIndex) {
+      return cardUsedByOtherSeat(rank, suit, excludeSeatIndex, excludeCardIndex)
+        || cardUsedOnBoard(rank, suit);
+    }
+
     function getSeatCardsLabel(seatIndex) {
       if (handHeroSeatIndex === seatIndex) return "Your cards";
       const nickRaw = handStackNicknameInput ? handStackNicknameInput.value.trim() : "";
@@ -13485,25 +13614,47 @@
         suit.innerHTML = suitOptions.map((o) => `<option value="${o.value}">${o.label}</option>`).join("");
         suit.value = card.suit || "";
 
-        Array.from(suit.options).forEach((opt) => {
-          if (!opt.value) return;
-          const inUse = cardUsedByOtherSeat(rank.value, opt.value, seatIndex, idx);
-          opt.disabled = inUse;
-        });
-        if (suit.value && suit.selectedOptions[0] && suit.selectedOptions[0].disabled) {
-          suit.value = "";
-        }
+        const syncDisabledOptions = () => {
+          const selectedRank = rank.value;
+          const selectedSuit = suit.value;
+
+          Array.from(suit.options).forEach((opt) => {
+            const v = opt.value;
+            if (!v) {
+              opt.disabled = false;
+              return;
+            }
+            opt.disabled = selectedRank ? cardUnavailableForSeat(selectedRank, v, seatIndex, idx) : false;
+          });
+
+          Array.from(rank.options).forEach((opt) => {
+            const v = opt.value;
+            if (!v) {
+              opt.disabled = false;
+              return;
+            }
+            opt.disabled = selectedSuit ? cardUnavailableForSeat(v, selectedSuit, seatIndex, idx) : false;
+          });
+
+          const rankOpt = Array.from(rank.options).find((opt) => opt.value === rank.value);
+          if (rankOpt && rankOpt.disabled) rank.value = "";
+          const suitOpt = Array.from(suit.options).find((opt) => opt.value === suit.value);
+          if (suitOpt && suitOpt.disabled) suit.value = "";
+        };
 
         rank.addEventListener("change", () => {
+          syncDisabledOptions();
           handSeatCards[seatIndex][idx] = { rank: rank.value, suit: suit.value };
           renderSeatCardInputs(seatIndex);
           renderHandTable();
         });
         suit.addEventListener("change", () => {
+          syncDisabledOptions();
           handSeatCards[seatIndex][idx] = { rank: rank.value, suit: suit.value };
           renderSeatCardInputs(seatIndex);
           renderHandTable();
         });
+        syncDisabledOptions();
 
         updateSelectPlaceholderStyle(rank);
         updateSelectPlaceholderStyle(suit);
@@ -13545,6 +13696,21 @@
       const idx = handStageIndex - 1;
       if (idx < 0 || idx >= streets.length) return null;
       return streets[idx];
+    }
+
+    function inferSavedHandStageIndex(hand) {
+      const stored = Number(hand && hand.stageIndex);
+      if (Number.isInteger(stored) && stored >= 0 && stored <= 4) return stored;
+      const currentStreet = hand && typeof hand.currentStreet === "string" ? hand.currentStreet : "";
+      const streetIdx = getStreetKeysForGame().indexOf(currentStreet);
+      if (streetIdx >= 0) return streetIdx + 1;
+      const actions = hand && hand.streetActions ? hand.streetActions : {};
+      const board = hand && hand.boardCards ? hand.boardCards : {};
+      if ((actions.river || []).length || (Array.isArray(board.river) && board.river.some(Boolean))) return 4;
+      if ((actions.turn || []).length || (Array.isArray(board.turn) && board.turn.some(Boolean))) return 3;
+      if ((actions.flop || []).length || (Array.isArray(board.flop) && board.flop.some(Boolean))) return 2;
+      if ((actions.preflop || []).length || hand && hand.buttonSeatIndex != null) return 1;
+      return 0;
     }
 
     function getHandWinnerSeatIndex() {
@@ -13730,7 +13896,7 @@
       handStreetNeedSeats = [];
       handCurrentActorIndex = null;
 
-      applyBlindsFromButton();
+      applyBlindsFromButton({ force: true });
 
       for (let i = 0; i < targetIdx; i += 1) {
         replayStreetActionsIntoCurrentState(streets[i]);
@@ -14902,7 +15068,9 @@
       return 100;
     }
 
-    function applyBlindsFromButton() {
+    function applyBlindsFromButton(options = {}) {
+      const force = options.force === true;
+      if (!force && handStageIndex > 1) return;
       handSeatBlindPosted.forEach((amt, idx) => {
         if (!amt) return;
         if (handSeatStacks[idx] != null) {
@@ -15065,6 +15233,7 @@
       handButtonToken.style.left = `${visualPos.xPct}%`;
       handButtonToken.style.top = `${visualPos.yPct}%`;
       handButtonToken.style.zIndex = handButtonDrag.dragging ? "2300" : "";
+      updateHandButtonDockUi();
     }
 
     function syncHandButtonTokenToSeat() {
@@ -15082,17 +15251,45 @@
       handButtonToken.style.zIndex = "";
       handTableVisual.classList.remove("button-dragging");
       renderButtonToken();
+      updateHandButtonDockUi();
     }
 
     function resetButtonTokenToHolder() {
       if (!handButtonToken || !handButtonHolder) return;
-      handButtonToken.classList.remove("hand-button-on-table", "dragging");
+      handButtonToken.classList.remove("hand-button-on-table", "hand-button-floating", "dragging");
       handButtonToken.style.left = "";
       handButtonToken.style.top = "";
       handButtonToken.style.zIndex = "";
       handTableVisual?.classList.remove("button-dragging");
       setHandButtonOnTableUiActive(false);
       handButtonHolder.appendChild(handButtonToken);
+      updateHandButtonDockUi();
+    }
+
+    function updateHandButtonDockUi() {
+      const phonePlaced = isHandTablePhoneLayout()
+        && handButtonSeatIndex != null
+        && handButtonToken
+        && handButtonToken.classList.contains("hand-button-on-table")
+        && handStageIndex < 2;
+      if (handButtonPrompt) handButtonPrompt.classList.toggle("hidden", Boolean(phonePlaced));
+      if (handButtonResetBtn) handButtonResetBtn.classList.toggle("hidden", !phonePlaced);
+      if (handButtonToken) {
+        handButtonToken.classList.toggle("hand-button-locked", handStageIndex >= 2 || Boolean(phonePlaced));
+      }
+    }
+
+    function resetPlacedHandButtonForPhone() {
+      if (!isHandTablePhoneLayout()) return;
+      handButtonSeatIndex = null;
+      handWinnerSeatIndex = null;
+      applyBlindsFromButton();
+      handSetupConfirmed = false;
+      handStreetNeedSeats = [];
+      handStreetCurrentBet = 0;
+      resetButtonTokenToHolder();
+      renderHandStreetUI();
+      renderHandTable();
     }
 
     function showButtonDropPrompt() {
@@ -15510,6 +15707,42 @@
       });
     }
 
+    function openHandAmountEditor(action, actorIndex, anchorEl) {
+      if (!handInlineAmountEditor || !handInlineAmountInput || !action) return;
+      const actor = actorIndex != null ? actorIndex : handCurrentActorIndex;
+      if (actor == null) return;
+      handPendingAmountAction = action;
+      handPendingAmountActorIndex = actor;
+      if (handInlineAmountEditor.parentElement !== document.body) {
+        document.body.appendChild(handInlineAmountEditor);
+      }
+      handInlineAmountEditor.dataset.action = action;
+      handInlineAmountEditor.dataset.actorIndex = String(actor);
+      handInlineAmountEditor.style.position = "absolute";
+      handInlineAmountEditor.classList.remove("hidden");
+      handInlineAmountInput.value = "";
+
+      const anchorRect = anchorEl && typeof anchorEl.getBoundingClientRect === "function"
+        ? anchorEl.getBoundingClientRect()
+        : handTableVisual.getBoundingClientRect();
+      const editorRect = handInlineAmountEditor.getBoundingClientRect();
+      const pad = 8;
+      const gap = 6;
+      const viewportLeft = pad;
+      const viewportRight = window.innerWidth - editorRect.width - pad;
+      let left = anchorRect.left + (anchorRect.width / 2) - (editorRect.width / 2);
+      let top = anchorRect.bottom + gap;
+      if (isHandTablePhoneLayout()) {
+        top = anchorRect.top - editorRect.height - gap;
+        if (top < pad) top = anchorRect.bottom + gap;
+        top = Math.max(pad, Math.min(top, window.innerHeight - editorRect.height - pad));
+      }
+      left = Math.max(viewportLeft, Math.min(left, viewportRight));
+      handInlineAmountEditor.style.left = `${Math.round(left + window.scrollX)}px`;
+      handInlineAmountEditor.style.top = `${Math.round(top + window.scrollY)}px`;
+      handInlineAmountInput.focus();
+    }
+
     function renderHandStreetUI() {
       const street = getCurrentStreetKey();
       const streets = getStreetKeysForGame();
@@ -15522,6 +15755,7 @@
       handStreetTitle.textContent = setup ? "Setup" : getStreetTitle(street);
       const setupReady = getActiveHandSeatIndices().length >= 2;
       handActionPanel.classList.add("hidden");
+      if (handActionButtonsRow) handActionButtonsRow.classList.add("hidden");
       updateHandSaveButtonLabel();
       updateHandPotLabel();
       renderBoardInputs();
@@ -15608,6 +15842,9 @@
       }
       if (handSeatActionEditWrap) handSeatActionEditWrap.classList.add("hidden");
       const allowed = getAllowedActionsForSeat(handCurrentActorIndex);
+      const showActionControls = !handConcluded && handSetupConfirmed && boardReady && !handAwaitingUndoAfterBack && allowed.length > 0;
+      if (handActionPanel) handActionPanel.classList.toggle("hidden", !showActionControls);
+      if (handActionButtonsRow) handActionButtonsRow.classList.toggle("hidden", !showActionControls);
       document.querySelectorAll(".hand-action-btn").forEach((btn) => {
         const act = btn.getAttribute("data-action");
         btn.classList.toggle("hidden", handConcluded || !handSetupConfirmed || !boardReady || handAwaitingUndoAfterBack || !allowed.includes(act));
@@ -15799,6 +16036,15 @@
       return id;
     }
 
+    function handEditedAtMs(entry) {
+      const hand = entry && entry.hand ? entry.hand : null;
+      const raw = hand && (hand.editedAt || hand.updatedAt || hand.savedAt || hand.createdAt);
+      const parsed = raw ? Date.parse(String(raw)) : Number.NaN;
+      if (Number.isFinite(parsed)) return parsed;
+      const sessionMs = handHistorySessionDateMs(entry);
+      return sessionMs == null ? Number.NEGATIVE_INFINITY : sessionMs;
+    }
+
     function replaySpeedMultiplier() {
       const value = handReplaySpeedSelect && handReplaySpeedSelect.value ? Number.parseFloat(handReplaySpeedSelect.value) : 1;
       return Number.isFinite(value) && value > 0 ? value : 1;
@@ -15877,18 +16123,22 @@
     function saveHandDetailTitle() {
       if (!currentHandDetailEntry || !currentHandDetailEntry.hand || !handDetailTitleInput) return;
       const nextName = handDetailTitleInput.value.trim();
+      const editedAt = new Date().toISOString();
       currentHandDetailEntry.hand.name = nextName;
       currentHandDetailEntry.hand.title = nextName;
+      currentHandDetailEntry.hand.editedAt = editedAt;
       if (currentHandDetailEntry.sessionIndex != null) {
         const session = sessions[currentHandDetailEntry.sessionIndex];
         const sessionHand = session && Array.isArray(session.hands) ? session.hands[currentHandDetailEntry.handIndex] : null;
         if (sessionHand) {
           sessionHand.name = nextName;
           sessionHand.title = nextName;
+          sessionHand.editedAt = editedAt;
         }
       } else if (pendingSessionHands[currentHandDetailEntry.handIndex]) {
         pendingSessionHands[currentHandDetailEntry.handIndex].name = nextName;
         pendingSessionHands[currentHandDetailEntry.handIndex].title = nextName;
+        pendingSessionHands[currentHandDetailEntry.handIndex].editedAt = editedAt;
       }
       renderHandDetail(currentHandDetailEntry, handDetailReturnViewId);
     }
@@ -15962,9 +16212,10 @@
           ? JSON.parse(JSON.stringify(hand.streetActions))
           : { preflop: [], flop: [], turn: [], river: [] };
       const savedPotBreakdown = normalizePotBreakdown(hand.grossPotBreakdown || hand.potBreakdown);
+      const savedStageIndex = inferSavedHandStageIndex(hand);
       handStreetEquitySnapshots = { preflop: null, flop: null, turn: null, river: null };
       handSetupConfirmed = true;
-      handStageIndex = 4;
+      handStageIndex = savedStageIndex;
       handCurrentActorIndex = null;
       handStreetNeedSeats = [];
       handStreetCurrentBet = 0;
@@ -15976,13 +16227,13 @@
       editingHandSessionIndex = entry.sessionIndex;
       editingHandIndex = entry.handIndex;
       const savedSidePotInfo = handSidePotInfo ? { ...handSidePotInfo } : null;
-      rebuildHandStateForStreet(4);
+      rebuildHandStateForStreet(savedStageIndex);
       handSidePotInfo = savedSidePotInfo;
       handLastPotBreakdown = savedPotBreakdown;
       handCurrentActorIndex = null;
       handStreetNeedSeats = [];
       handStreetCurrentBet = 0;
-      if (handWinnerSeatIndex == null) {
+      if (!isHandDraft(hand) && handWinnerSeatIndex == null) {
         handWinnerSeatIndex = finalizeHandWinnerFromCurrentState();
       }
       updateHandPotLabel();
@@ -16986,10 +17237,12 @@
     function renderHandHistoryFlat(entries) {
       return entries.map((x, i) => {
         const session = x.sessionIndex != null ? sessions[x.sessionIndex] : null;
+        const handTitleHtml = escapeHtml(getHandDisplayName(x.hand, "Untitled hand"));
+        const draftLabelHtml = isHandDraft(x.hand) ? ` <span class="session-draft-label">draft</span>` : "";
         return `
         <article class="history-item">
           <button type="button" class="hand-history-row" data-hand-history-index="${i}" data-tooltip="Open hand details" aria-label="Open hand details">
-            <span class="history-col-date hand-history-col hand-history-col--hand">${escapeHtml(getHandDisplayName(x.hand, "Untitled hand"))}</span>
+            <span class="history-col-date hand-history-col hand-history-col--hand">${handTitleHtml}${draftLabelHtml}</span>
             <span class="mobile-history-date">${escapeHtml(formatSessionDateShort(session))}</span>
             <span class="history-col-location hand-history-col hand-history-col--session">${escapeHtml(String(x.sessionTitle || ""))}</span>
             <span class="history-col-duration hand-history-col hand-history-col--summary">${escapeHtml(String(x.hand.summary || ""))}</span>
@@ -17143,6 +17396,9 @@
       const streets = getStreetKeysForGame();
       const streetName = handStageIndex === 0 ? "setup" : getStreetTitle(getCurrentStreetKey()).toLowerCase();
       const winnerSeatIndex = getHandWinnerSeatIndex();
+      let savedHandIndex = editingHandSessionIndex != null && editingHandIndex != null
+        ? editingHandIndex
+        : pendingSessionHands.length;
       const existingHand = editingHandSessionIndex != null && editingHandIndex != null
         ? pendingSessionHands[editingHandIndex]
         : null;
@@ -17151,8 +17407,12 @@
         : "";
       const netPotBreakdown = applyRakeToPotBreakdown(handLastPotBreakdown);
       const hand = {
+        id: existingHand && existingHand.id ? existingHand.id : null,
         name: existingName,
         title: existingName,
+        editedAt: new Date().toISOString(),
+        stageIndex: handStageIndex,
+        currentStreet: getCurrentStreetKey(),
         draft: !isHandConcludedEnough(),
         summary: `${getActiveHandSeatIndices().length} players · ${streets.map((k) => handStreetActions[k].length).reduce((a, b) => a + b, 0)} actions`,
         seatStacks: handSeatStacks.slice(),
@@ -17172,15 +17432,68 @@
       };
       if (editingHandSessionIndex != null && editingHandIndex != null && pendingSessionHands[editingHandIndex]) {
         pendingSessionHands[editingHandIndex] = hand;
+        savedHandIndex = editingHandIndex;
         editingHandSessionIndex = null;
         editingHandIndex = null;
       } else {
         pendingSessionHands.push(hand);
+        savedHandIndex = pendingSessionHands.length - 1;
       }
       handSaveMessage.textContent = "Hand saved to current session draft.";
       handSaveMessage.style.color = "#86efac";
+      ensureHandHistoryId(hand, editingSessionIndex != null && sessions[editingSessionIndex] ? sessions[editingSessionIndex].id : "pending", savedHandIndex);
+      return {
+        sessionIndex: editingSessionIndex,
+        handIndex: savedHandIndex,
+        handId: hand.id,
+        hand
+      };
+    }
+
+    function refreshHandHistoryAfterSave() {
+      handHistorySessionPickerMode = false;
+      handHistoryDisplayMode = "list";
+      if (handHistorySortSelect) handHistorySortSelect.value = "recently-edited";
       renderHandHistory();
-      openDraftSessionDetailView(lastViewBeforeAddHand || "addSessionView");
+    }
+
+    async function saveCurrentHandDraftAndOpenHistory() {
+      const saved = saveCurrentHandToSessionDraft();
+      if (!saved) return;
+      let sessionToPersist = null;
+      if (Number.isInteger(editingSessionIndex) && sessions[editingSessionIndex]) {
+        const session = sessions[editingSessionIndex];
+        session.hands = pendingSessionHands.map((h) => JSON.parse(JSON.stringify(h)));
+        sessionToPersist = session;
+      }
+      handHistorySessionPickerMode = false;
+      handHistoryDisplayMode = "list";
+      try {
+        clearHandHistoryFiltersForSavedHand();
+      } catch (err) {
+        console.error("Could not clear hand history filters", err);
+      }
+      try {
+        showView("handHistoryView", { immediateRender: true });
+        refreshHandHistoryAfterSave();
+      } catch (err) {
+        console.error("Could not navigate to hand history", err);
+        forceHandHistoryViewAfterSave();
+        refreshHandHistoryAfterSave();
+      }
+      window.requestAnimationFrame(() => {
+        const activeViewId = document.querySelector("#homeScreen .view.active")?.id;
+        if (activeViewId !== "handHistoryView") {
+          forceHandHistoryViewAfterSave();
+        }
+        refreshHandHistoryAfterSave();
+        scrollPageToTop();
+      });
+      if (sessionToPersist && supabaseClient && currentUserId) {
+        saveSessionToSupabase(sessionToPersist, sessionToPersist.hands || []).catch((err) => {
+          console.error("Could not persist saved hand", err);
+        });
+      }
     }
 
     function renderHandTable() {
@@ -17296,24 +17609,7 @@
             ab.addEventListener("click", (event) => {
               event.stopPropagation();
               if (act === "bet" || act === "raise") {
-                handPendingAmountAction = act;
-                handPendingAmountActorIndex = i;
-                if (handInlineAmountEditor && handInlineAmountInput) {
-                  // Render on body so edge seats don't clip the editor behind table layers.
-                  if (handInlineAmountEditor.parentElement !== document.body) {
-                    document.body.appendChild(handInlineAmountEditor);
-                  }
-                  handInlineAmountEditor.dataset.action = act;
-                  handInlineAmountEditor.dataset.actorIndex = String(i);
-                  const btnRect = ab.getBoundingClientRect();
-                  const leftPx = btnRect.left + window.scrollX;
-                  const topPx = btnRect.bottom + window.scrollY + 4;
-                  handInlineAmountEditor.style.left = `${leftPx}px`;
-                  handInlineAmountEditor.style.top = `${topPx}px`;
-                  handInlineAmountEditor.classList.remove("hidden");
-                  handInlineAmountInput.value = "";
-                  handInlineAmountInput.focus();
-                }
+                openHandAmountEditor(act, i, ab);
               } else {
                 addCurrentStreetAction(act);
               }
@@ -17379,6 +17675,7 @@
             renderButtonToken();
           }
         }
+        updateHandButtonDockUi();
       }
       if (isHandTablePhoneLayout() && handExpandedSeatIndex != null && handExpandedSeatIndex < n) {
         applyHandSeatExpandedState(handTableFelt, handExpandedSeatIndex);
@@ -17442,6 +17739,13 @@
       handStackPanel.classList.add("floating");
       // Attach to body so it isn't clipped by the table oval (overflow hidden) and doesn't shift the felt.
       document.body.appendChild(handStackPanel);
+      if (isHandTablePhoneLayout()) {
+        handStackPanel.style.position = "fixed";
+        handStackPanel.style.left = "50%";
+        handStackPanel.style.top = "50%";
+      } else {
+        handStackPanel.style.position = "absolute";
+      }
       handStackPanel.classList.remove("hidden");
       handStackInput.focus();
     }
@@ -17710,6 +18014,12 @@
       const aSessionTitle = String(a && a.sessionTitle ? a.sessionTitle : "").trim().toLowerCase();
       const bSessionTitle = String(b && b.sessionTitle ? b.sessionTitle : "").trim().toLowerCase();
       switch (sortMode) {
+        case "recently-edited": {
+          const va = handEditedAtMs(a);
+          const vb = handEditedAtMs(b);
+          if (va !== vb) return vb - va;
+          return (a.handIndex || 0) - (b.handIndex || 0);
+        }
         case "session-date-asc": {
           const va = aDate == null ? Number.POSITIVE_INFINITY : aDate;
           const vb = bDate == null ? Number.POSITIVE_INFINITY : bDate;
@@ -17735,7 +18045,7 @@
     }
 
     function getSortedHandHistoryEntries() {
-      const mode = handHistorySortSelect && handHistorySortSelect.value ? handHistorySortSelect.value : "session-date-desc";
+      const mode = handHistorySortSelect && handHistorySortSelect.value ? handHistorySortSelect.value : "recently-edited";
       const list = getHandHistoryEntries().slice();
       list.sort((a, b) => compareHandHistoryEntries(a, b, mode));
       return list;
@@ -17876,6 +18186,28 @@
       if (handAdvStakeSelect) handAdvStakeSelect.value = "";
       handHistoryAdvancedCriteria = emptyHandHistoryAdvancedCriteria();
       populateHandHistoryAdvancedGameStakeSelects();
+    }
+
+    function clearHandHistoryFiltersForSavedHand() {
+      handHistoryActiveTitleSearch = "";
+      if (handHistorySearchInput) handHistorySearchInput.value = "";
+      if (handHistorySortSelect) handHistorySortSelect.value = "recently-edited";
+      clearHandHistoryAdvancedFilterInputs();
+      closeHandHistoryAdvancedDropdown();
+    }
+
+    function forceHandHistoryViewAfterSave() {
+      const viewId = "handHistoryView";
+      views.forEach((view) => {
+        view.classList.toggle("active", view.id === viewId);
+      });
+      panelLinks.forEach((link) => {
+        link.classList.toggle("active", link.dataset.view === viewId);
+      });
+      document.body.classList.toggle("home-layout", false);
+      safeRenderViewContent(viewId);
+      syncRoute(getRouteForView(viewId), false);
+      scrollPageToTop();
     }
 
     function updateHandHistoryModeToggleButton() {
@@ -19819,7 +20151,7 @@
           ${hands.length
             ? hands.map((h, i) => {
                 const handName = getHandDisplayName(h, "Untitled hand");
-                const handIsDraft = isHandDraft(h);
+                const handIsDraft = isDraftSession || isHandDraft(h);
                 const handTitleHtml = escapeHtml(handName);
                 const draftLabelHtml = handIsDraft ? ` <span class="session-draft-label">draft</span>` : "";
                 return `
@@ -24419,8 +24751,9 @@
         handStreetEquitySnapshots = { preflop: null, flop: null, turn: null, river: null };
         if (handStageIndex === 0) {
           handStageIndex = 1;
-          handStreetNeedSeats = [];
-          handStreetCurrentBet = 0;
+          initializeStreetNeedState();
+        } else if (!handStreetNeedSeats.length) {
+          initializeStreetNeedState();
         }
         renderHandStreetUI();
         renderHandTable();
@@ -24467,30 +24800,38 @@
     }
 
     if (handButtonToken && handTableVisual && handTableFelt) {
-      const moveTokenToTableFromHolder = () => {
-        if (!handButtonHolder) return;
-        if (handButtonToken.parentElement === handTableVisual) return;
-        const holderRect = handButtonHolder.getBoundingClientRect();
-        const feltRect = handTableFelt.getBoundingClientRect();
-        const cxPct = ((holderRect.left + holderRect.width / 2 - feltRect.left) / feltRect.width) * 100;
-        const cyPct = ((holderRect.top + holderRect.height / 2 - feltRect.top) / feltRect.height) * 100;
-        handButtonToken.classList.add("hand-button-on-table");
-        setHandButtonOnTableUiActive(true);
-        ensureHandButtonTokenOnVisual();
-        handButtonDrag.xPct = cxPct;
-        handButtonDrag.yPct = cyPct;
-        renderButtonToken();
-      };
-      const moveToken = (clientX, clientY) => {
+      const moveFloatingToken = (clientX, clientY) => {
+        const x = clientX + (handButtonDrag.offsetXPx || 0);
+        const y = clientY + (handButtonDrag.offsetYPx || 0);
+        handButtonToken.style.left = `${x}px`;
+        handButtonToken.style.top = `${y}px`;
         const visualRect = handTableVisual.getBoundingClientRect();
-        const visualX = ((clientX - visualRect.left) / visualRect.width) * 100;
-        const visualY = ((clientY - visualRect.top) / visualRect.height) * 100;
+        const visualX = ((x - visualRect.left) / visualRect.width) * 100;
+        const visualY = ((y - visualRect.top) / visualRect.height) * 100;
         const feltPos = handTableVisualPointToFeltPercent(visualX, visualY, handTableFelt, handTableVisual);
         handButtonDrag.xPct = Math.max(-6, Math.min(106, feltPos.xPct));
         handButtonDrag.yPct = Math.max(-12, Math.min(106, feltPos.yPct));
-        renderButtonToken();
+      };
+      const startFloatingTokenDrag = (event) => {
+        const rect = handButtonToken.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        handButtonDrag.offsetXPx = centerX - event.clientX;
+        handButtonDrag.offsetYPx = centerY - event.clientY;
+        handButtonToken.classList.remove("hand-button-on-table");
+        handButtonToken.classList.add("hand-button-floating", "dragging");
+        handButtonToken.style.left = `${centerX}px`;
+        handButtonToken.style.top = `${centerY}px`;
+        document.body.appendChild(handButtonToken);
+        setHandButtonOnTableUiActive(true);
+      };
+      const setButtonDragTouchLock = (locked) => {
+        document.body.classList.toggle("hand-button-touch-lock", Boolean(locked));
       };
       const snapToNearestSeat = () => {
+        handButtonToken.classList.remove("hand-button-floating");
+        handButtonToken.classList.add("hand-button-on-table");
+        ensureHandButtonTokenOnVisual();
         let bestIdx = null;
         let bestDist = Infinity;
         handSeatPoints.forEach((p, idx) => {
@@ -24527,34 +24868,57 @@
       };
       const onMove = (event) => {
         if (!handButtonDrag.dragging) return;
-        moveToken(event.clientX, event.clientY);
+        moveFloatingToken(event.clientX, event.clientY);
       };
       const onUp = () => {
         if (!handButtonDrag.dragging) return;
         handButtonDrag.dragging = false;
+        if (handButtonDrag.pointerId != null && handButtonToken.hasPointerCapture?.(handButtonDrag.pointerId)) {
+          handButtonToken.releasePointerCapture(handButtonDrag.pointerId);
+        }
+        handButtonDrag.pointerId = null;
+        handButtonDrag.offsetXPx = 0;
+        handButtonDrag.offsetYPx = 0;
         handButtonToken.classList.remove("dragging");
         handButtonToken.style.zIndex = "";
         handTableVisual.classList.remove("button-dragging");
         document.removeEventListener("pointermove", onMove);
         document.removeEventListener("pointerup", onUp);
+        document.removeEventListener("pointercancel", onUp);
+        setButtonDragTouchLock(false);
         snapToNearestSeat();
       };
       handButtonToken.addEventListener("pointerdown", (event) => {
         event.preventDefault();
+        event.stopPropagation();
+        if (isHandTablePhoneLayout() && handButtonSeatIndex != null && handButtonToken.classList.contains("hand-button-on-table")) {
+          return;
+        }
         if (handStageIndex >= 2) {
           // Button position is fixed once flop action begins.
           return;
         }
-        moveTokenToTableFromHolder();
         handButtonDrag.dragging = true;
+        handButtonDrag.pointerId = event.pointerId;
+        setButtonDragTouchLock(true);
+        startFloatingTokenDrag(event);
+        handButtonToken.setPointerCapture?.(event.pointerId);
         handButtonSeatIndex = null;
         handWinnerSeatIndex = null;
         handTableVisual.classList.add("button-dragging");
         applyBlindsFromButton();
-        handButtonToken.classList.add("dragging");
-        moveToken(event.clientX, event.clientY);
+        moveFloatingToken(event.clientX, event.clientY);
         document.addEventListener("pointermove", onMove);
         document.addEventListener("pointerup", onUp);
+        document.addEventListener("pointercancel", onUp);
+      });
+    }
+
+    if (handButtonResetBtn) {
+      handButtonResetBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        resetPlacedHandButtonForPhone();
       });
     }
 
@@ -24609,6 +24973,10 @@
     document.querySelectorAll(".hand-action-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
         handSelectedAction = btn.getAttribute("data-action") || "";
+        if (handSelectedAction === "bet" || handSelectedAction === "raise") {
+          openHandAmountEditor(handSelectedAction, handCurrentActorIndex, btn);
+          return;
+        }
         addCurrentStreetAction(handSelectedAction);
       });
     });
@@ -24705,8 +25073,15 @@
     }
 
     if (handSaveToSessionBtn) {
-      handSaveToSessionBtn.addEventListener("click", () => {
-        saveCurrentHandToSessionDraft();
+      handSaveToSessionBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        saveCurrentHandDraftAndOpenHistory().catch((err) => {
+          console.error("Could not save hand", err);
+          if (handSaveMessage) {
+            handSaveMessage.textContent = err.message || "Could not save hand.";
+            handSaveMessage.style.color = "#fca5a5";
+          }
+        });
       });
     }
 
