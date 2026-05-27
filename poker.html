@@ -12987,7 +12987,7 @@
         showAuthScreen("login");
         return;
       }
-      const resp = await fetch("/.netlify/functions/create-checkout-session", {
+      const resp = await fetch("/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -13405,7 +13405,7 @@
       const accessToken = data?.session?.access_token;
       if (!accessToken) return null;
       console.log("Checking live subscription status");
-      const resp = await fetch("/.netlify/functions/get-subscription-status", {
+      const resp = await fetch("/get-subscription-status", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

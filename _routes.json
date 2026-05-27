@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "include": [
+    "/create-checkout-session",
+    "/get-subscription-status",
+    "/stripe-webhook"
+  ],
+  "exclude": []
+}
