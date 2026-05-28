@@ -1,30 +1,18 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
-const DEFAULT_SUPABASE_URL = "https://gaobxnzfiogklkoueldd.supabase.co";
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
 
 function getRuntime(env) {
   const stripeSecretKey = env.STRIPE_SECRET_KEY;
-  const supabaseUrl = env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
+  const supabaseUrl = env.SUPABASE_URL;
   const supabaseServiceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
   const stripe = stripeSecretKey
     ? new Stripe(stripeSecretKey, { httpClient: Stripe.createFetchHttpClient() })
     : null;
   const adminSupabase = (supabaseUrl && supabaseServiceRoleKey)
-    ? createClient(supabaseUrl, supabaseServiceRoleKey, {
-        global: {
-          headers: {
-            apikey: supabaseServiceRoleKey,
-            Authorization: `Bearer ${supabaseServiceRoleKey}`
-          }
-        },
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false
-        }
-      })
+    ? createClient(supabaseUrl, supabaseServiceRoleKey)
     : null;
 
   return {
