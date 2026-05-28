@@ -30,13 +30,6 @@ function normalizePremiumValue(value) {
 async function syncPremiumFlag(adminSupabase, userId, premiumValue) {
   if (!userId) return;
   console.log("[get-subscription-status] syncPremiumFlag");
-  const { error: adminSupabaseTestError } = await adminSupabase
-    .from("profiles")
-    .select("user_id")
-    .limit(1);
-  if (adminSupabaseTestError) {
-    console.error("[adminSupabase test]", adminSupabaseTestError);
-  }
   const { error } = await adminSupabase
     .from("profiles")
     .update({
