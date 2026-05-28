@@ -19,29 +19,17 @@ function normalizePremiumValue(value) {
   return normalized === "true" || normalized === "1" || normalized === "premium" || normalized === "paid";
 }
 
-async function syncPremiumFlag(userId, premiumValue, token) {
+async function syncPremiumFlag(userId, premiumValue) {
   if (!userId) return;
   console.log("[get-subscription-status] syncPremiumFlag");
-  if (!supabaseAnonKey) {
-    throw new Error("Missing Supabase anon/publishable key");
-  }
-  const userSupabase = createClient(supabaseUrl, supabaseAnonKey, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    },
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false
-    }
-  });
-  const { error } = await userSupabase
+
+  const { error } = await adminSupabase
     .from("profiles")
     .update({
       premium: premiumValue
     })
     .eq("user_id", userId);
+
   if (error) {
     throw new Error(`Supabase profile update failed: ${error.message}`);
   }
@@ -131,7 +119,7 @@ exports.handler = async (event) => {
   const email = String(user.email || "").trim();
   if (!email) {
     console.log("[get-subscription-status] no email on user, syncing free plan");
-    await syncPremiumFlag(user.id, false, token);
+    await syncPremiumFlag(user.id, false);
     const hasPremiumAccess = await getProfilePremiumAccess(user.id, false);
     console.log("[get-subscription-status] successful return: free plan with no email");
     return {
@@ -143,7 +131,7 @@ exports.handler = async (event) => {
   try {
     console.log("[get-subscription-status] lookupSubscriptionForEmail");
     const result = await lookupSubscriptionForEmail(email);
-    await syncPremiumFlag(user.id, result.hasSubscription, token);
+    await syncPremiumFlag(user.id, result.hasSubscription);
     result.hasSubscription = await getProfilePremiumAccess(user.id, result.hasSubscription);
     console.log("[get-subscription-status] successful return");
     return {
