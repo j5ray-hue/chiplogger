@@ -7,20 +7,22 @@ const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
 function getRuntime(env) {
   const stripeSecretKey = env.STRIPE_SECRET_KEY;
   const supabaseUrl = env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
-  const supabaseAnonKey = env.SUPABASE_ANON_KEY || env.SUPABASE_PUBLISHABLE_KEY;
   const supabaseServiceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
   const stripe = stripeSecretKey
     ? new Stripe(stripeSecretKey, { httpClient: Stripe.createFetchHttpClient() })
     : null;
   const adminSupabase = (supabaseUrl && supabaseServiceRoleKey)
-    ? createClient(supabaseUrl, supabaseServiceRoleKey)
+    ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false
+        }
+      })
     : null;
 
   return {
     stripe,
-    supabaseUrl,
-    supabaseAnonKey,
     adminSupabase
   };
 }
@@ -31,24 +33,10 @@ function normalizePremiumValue(value) {
   return normalized === "true" || normalized === "1" || normalized === "premium" || normalized === "paid";
 }
 
-async function syncPremiumFlag(runtime, userId, premiumValue, token) {
+async function syncPremiumFlag(adminSupabase, userId, premiumValue) {
   if (!userId) return;
   console.log("[get-subscription-status] syncPremiumFlag");
-  if (!runtime.supabaseAnonKey) {
-    throw new Error("Missing Supabase anon/publishable key");
-  }
-  const userSupabase = createClient(runtime.supabaseUrl, runtime.supabaseAnonKey, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    },
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false
-    }
-  });
-  const { error } = await userSupabase
+  const { error } = await adminSupabase
     .from("profiles")
     .update({
       premium: premiumValue
@@ -147,7 +135,7 @@ export async function onRequest(context) {
   const email = String(user.email || "").trim();
   if (!email) {
     console.log("[get-subscription-status] no email on user, syncing free plan");
-    await syncPremiumFlag(runtime, user.id, false, token);
+    await syncPremiumFlag(adminSupabase, user.id, false);
     const hasPremiumAccess = await getProfilePremiumAccess(adminSupabase, user.id, false);
     console.log("[get-subscription-status] successful return: free plan with no email");
     return new Response(
@@ -159,7 +147,7 @@ export async function onRequest(context) {
   try {
     console.log("[get-subscription-status] lookupSubscriptionForEmail");
     const result = await lookupSubscriptionForEmail(stripe, email);
-    await syncPremiumFlag(runtime, user.id, result.hasSubscription, token);
+    await syncPremiumFlag(adminSupabase, user.id, result.hasSubscription);
     result.hasSubscription = await getProfilePremiumAccess(adminSupabase, user.id, result.hasSubscription);
     console.log("[get-subscription-status] successful return");
     return new Response(JSON.stringify(result), { status: 200 });
