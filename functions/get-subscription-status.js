@@ -14,6 +14,12 @@ function getRuntime(env) {
     : null;
   const adminSupabase = (supabaseUrl && supabaseServiceRoleKey)
     ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+        global: {
+          headers: {
+            apikey: supabaseServiceRoleKey,
+            Authorization: `Bearer ${supabaseServiceRoleKey}`
+          }
+        },
         auth: {
           persistSession: false,
           autoRefreshToken: false
