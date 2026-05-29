@@ -150,7 +150,7 @@ export async function onRequest(context) {
     console.error("[get-subscription-status] message:", err && err.message ? err.message : err);
     console.error("[get-subscription-status] stack:", err && err.stack ? err.stack : "(no stack trace available)");
     return new Response(
-      `${err && err.message ? err.message : "Could not verify subscription."}\n\n${err && err.stack ? err.stack : ""}`,
+      err && err.message ? err.message : "Could not verify subscription.",
       {
         status: 500,
         headers: { "Content-Type": "text/plain" }

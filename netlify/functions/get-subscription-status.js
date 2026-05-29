@@ -145,7 +145,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: { "Content-Type": "text/plain" },
-      body: `${err && err.message ? err.message : "Could not verify subscription."}\n\n${err && err.stack ? err.stack : ""}`
+      body: err && err.message ? err.message : "Could not verify subscription."
     };
   }
 };
