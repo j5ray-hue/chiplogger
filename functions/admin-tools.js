@@ -95,6 +95,11 @@ function countSavedLocations(value) {
   return 0;
 }
 
+function isMissingSavedLocationsColumnError(error) {
+  const message = String(error && error.message ? error.message : error || "").toLowerCase();
+  return message.includes("saved_locations") && (message.includes("schema cache") || message.includes("column"));
+}
+
 async function getAuthedUser(adminSupabase, request) {
   const authHeader = request.headers.get("authorization") || "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
@@ -113,15 +118,28 @@ async function getAuthedUser(adminSupabase, request) {
 }
 
 async function getProfileRow(adminSupabase, userId) {
+  const selectColumns = "user_id, name, phone, premium, manual_premium, starting_bankroll, saved_locations";
+  const baseColumns = "user_id, name, phone, premium, manual_premium, starting_bankroll";
   const { data, error } = await adminSupabase
     .from("profiles")
-    .select("user_id, name, phone, premium, manual_premium, starting_bankroll")
+    .select(selectColumns)
     .eq("user_id", userId)
     .maybeSingle();
-  if (error) {
-    throw new Error(`Supabase profile lookup failed: ${error.message}`);
+  if (!error) {
+    return data || null;
   }
-  return data || null;
+  if (isMissingSavedLocationsColumnError(error)) {
+    const fallback = await adminSupabase
+      .from("profiles")
+      .select(baseColumns)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (fallback.error) {
+      throw new Error(`Supabase profile lookup failed: ${fallback.error.message}`);
+    }
+    return fallback.data || null;
+  }
+  throw new Error(`Supabase profile lookup failed: ${error.message}`);
 }
 
 async function updateProfileRow(adminSupabase, userId, patch) {
@@ -307,7 +325,11 @@ async function buildSummary(adminSupabase, user) {
       subscription_status: override ? (override === "premium" ? "developer_premium" : "developer_free") : null,
       current_plan: currentPlan,
       starting_bankroll: Number(profile?.starting_bankroll || 0),
-      saved_locations: []
+      saved_locations: Array.isArray(profile?.saved_locations)
+        ? profile.saved_locations
+        : typeof profile?.saved_locations === "string"
+          ? (() => { try { const parsed = JSON.parse(profile.saved_locations); return Array.isArray(parsed) ? parsed : []; } catch (_) { return []; } })()
+          : []
     },
     plan: {
       currentPlan,
@@ -373,28 +395,43 @@ async function handleSeedData(adminSupabase, user, body = {}, mode = "random") {
 }
 
 async function handleClearAccountData(adminSupabase, user) {
+  const profile = await getProfileRow(adminSupabase, user.id);
   const [existingSessions, existingHands, existingChanges] = await Promise.all([
     countRows(adminSupabase, "sessions", "session_id", user.id).catch(() => 0),
     countRows(adminSupabase, "hands", "id", user.id).catch(() => 0),
     countRows(adminSupabase, "bankroll_changes", "change_id", user.id).catch(() => 0)
   ]);
-  const deleteHands = adminSupabase.from("hands").delete().eq("user_id", user.id);
-  const deleteChanges = adminSupabase.from("bankroll_changes").delete().eq("user_id", user.id);
-  const deleteSessions = adminSupabase.from("sessions").delete().eq("user_id", user.id);
-  const [handsResult, changesResult, sessionsResult] = await Promise.all([deleteHands, deleteChanges, deleteSessions]);
-  const err = handsResult.error || changesResult.error || sessionsResult.error;
-  if (err) {
-    throw new Error(`Supabase account cleanup failed: ${err.message}`);
+  const existingSavedLocations = countSavedLocations(profile?.saved_locations);
+  const { error: unlinkErr } = await adminSupabase
+    .from("sessions")
+    .update({ bankroll_change_id: null })
+    .eq("user_id", user.id);
+  if (unlinkErr) {
+    throw new Error(`Supabase account cleanup failed: ${unlinkErr.message}`);
+  }
+  const { error: handsErr } = await adminSupabase.from("hands").delete().eq("user_id", user.id);
+  if (handsErr) {
+    throw new Error(`Supabase account cleanup failed: ${handsErr.message}`);
+  }
+  const { error: changesErr } = await adminSupabase.from("bankroll_changes").delete().eq("user_id", user.id);
+  if (changesErr) {
+    throw new Error(`Supabase account cleanup failed: ${changesErr.message}`);
+  }
+  const { error: sessionsErr } = await adminSupabase.from("sessions").delete().eq("user_id", user.id);
+  if (sessionsErr) {
+    throw new Error(`Supabase account cleanup failed: ${sessionsErr.message}`);
   }
   await updateProfileRow(adminSupabase, user.id, {
-    starting_bankroll: 0
+    starting_bankroll: 0,
+    saved_locations: []
   });
   return {
     ...(await buildSummary(adminSupabase, user)),
     removed: {
       sessions: existingSessions,
       hands: existingHands,
-      bankrollChanges: existingChanges
+      bankrollChanges: existingChanges,
+      savedLocations: existingSavedLocations
     }
   };
 }
