@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chip Logger</title>
-    <meta http-equiv="refresh" content="0; url=/poker.html" />
     <script>
-      window.location.replace("/poker.html");
+      (function () {
+        const currentPath = window.location.pathname || "/";
+        if (currentPath === "/" || currentPath === "/index.html") {
+          window.location.replace("/poker.html");
+          return;
+        }
+        window.location.replace(`/poker.html?path=${encodeURIComponent(currentPath)}`);
+      }());
     </script>
   </head>
   <body>

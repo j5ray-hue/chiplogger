@@ -5609,6 +5609,130 @@
       box-sizing: border-box;
     }
 
+    .admin-page {
+      width: min(1080px, 100%);
+      margin: 24px auto;
+      padding: 0 16px 32px;
+      box-sizing: border-box;
+      display: grid;
+      gap: 16px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .admin-card {
+      display: grid;
+      gap: 14px;
+    }
+
+    .admin-card--full {
+      grid-column: 1 / -1;
+    }
+
+    .admin-card h4 {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .admin-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--cardBorder);
+      background: rgba(15, 23, 42, 0.34);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .admin-field-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .admin-field-grid .field {
+      margin: 0;
+    }
+
+    .admin-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .admin-actions button {
+      width: auto;
+    }
+
+    .admin-summary-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .admin-summary-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      border: 1px solid var(--cardBorder);
+      background: rgba(15, 23, 42, 0.28);
+    }
+
+    .admin-summary-label {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .admin-summary-value {
+      color: var(--text);
+      font-weight: 700;
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .admin-status {
+      min-height: 1.25em;
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .admin-status.is-success {
+      color: #86efac;
+    }
+
+    .admin-status.is-error {
+      color: #fca5a5;
+    }
+
+    @media (max-width: 900px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-field-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .profile-header {
       display: flex;
       flex-direction: column;
@@ -9380,6 +9504,7 @@
           <div id="profileMenu" class="profile-menu" role="menu">
             <button class="menu-item" type="button" data-view="profileView" role="menuitem">Profile</button>
             <button class="menu-item" type="button" data-view="settingsView" role="menuitem">Settings</button>
+            <button id="adminMenuItem" class="menu-item hidden" type="button" data-view="adminView" role="menuitem">Developer Tools</button>
             <button class="menu-item" type="button" data-view="contactView" role="menuitem">Contact</button>
             <button id="logoutBtn" class="menu-item" type="button" role="menuitem">Log out</button>
           </div>
@@ -9570,6 +9695,62 @@
             </div>
           </div>
 
+        </div>
+      </section>
+
+      <section id="adminView" class="view">
+        <div class="admin-page">
+          <div class="inline-row" style="margin-bottom: 4px; align-items: center; gap: 10px;">
+            <button type="button" id="adminBackBtn" class="secondary-btn" style="width: auto; margin: 0;">← Back</button>
+            <div style="display: grid; gap: 4px;">
+              <h3 class="session-title" style="margin: 0;">Developer Tools</h3>
+              <span class="admin-badge">Personal account only · jadenbray@gmail.com</span>
+            </div>
+          </div>
+          <p class="hint" style="margin: 0;">Use these controls to seed data, clear test data, and hard-switch the account between free and premium for testing.</p>
+
+          <div class="admin-grid">
+            <div class="app-panel-card admin-card">
+              <h4>Plan Overrides</h4>
+              <p id="adminPlanStatusText">Loading plan details...</p>
+              <div class="admin-actions">
+                <button id="adminSetFreeBtn" type="button" class="secondary-btn">Set Free</button>
+                <button id="adminSetPremiumBtn" type="button">Set Premium</button>
+                <button id="adminClearOverrideBtn" type="button" class="secondary-btn">Clear Override</button>
+              </div>
+            </div>
+
+            <div class="app-panel-card admin-card">
+              <h4>Data Tools</h4>
+              <p>Seed poker sessions, hands, and bankroll changes into your own account.</p>
+              <div class="admin-field-grid">
+                <div class="field">
+                  <label for="adminRandomSessionsInput">Random sessions</label>
+                  <input id="adminRandomSessionsInput" type="number" min="1" max="50" value="5" />
+                </div>
+                <div class="field">
+                  <label for="adminHandsPerSessionInput">Hands per session</label>
+                  <input id="adminHandsPerSessionInput" type="number" min="1" max="10" value="3" />
+                </div>
+                <div class="field">
+                  <label for="adminBulkSessionsInput">Bulk sessions</label>
+                  <input id="adminBulkSessionsInput" type="number" min="1" max="100" value="20" />
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button id="adminAddSampleBtn" type="button" class="secondary-btn">Add Sample Data</button>
+                <button id="adminAddRandomBtn" type="button">Add Random Data</button>
+                <button id="adminAddBulkBtn" type="button">Add Bulk Data</button>
+                <button id="adminClearDataBtn" type="button" class="secondary-btn">Remove Account Data</button>
+              </div>
+            </div>
+
+            <div class="app-panel-card admin-card admin-card--full">
+              <h4>Account Snapshot</h4>
+              <div id="adminSummaryList" class="admin-summary-list"></div>
+              <p id="adminStatusMessage" class="admin-status" aria-live="polite"></p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -10717,6 +10898,22 @@
     const authSupportNameInput = document.getElementById("authSupportName");
     const supportMessageInput = document.getElementById("supportMessage");
     const supportBotField = document.getElementById("supportBotField");
+    const adminMenuItem = document.getElementById("adminMenuItem");
+    const adminView = document.getElementById("adminView");
+    const adminBackBtn = document.getElementById("adminBackBtn");
+    const adminPlanStatusText = document.getElementById("adminPlanStatusText");
+    const adminRandomSessionsInput = document.getElementById("adminRandomSessionsInput");
+    const adminHandsPerSessionInput = document.getElementById("adminHandsPerSessionInput");
+    const adminBulkSessionsInput = document.getElementById("adminBulkSessionsInput");
+    const adminAddSampleBtn = document.getElementById("adminAddSampleBtn");
+    const adminAddRandomBtn = document.getElementById("adminAddRandomBtn");
+    const adminAddBulkBtn = document.getElementById("adminAddBulkBtn");
+    const adminClearDataBtn = document.getElementById("adminClearDataBtn");
+    const adminSetFreeBtn = document.getElementById("adminSetFreeBtn");
+    const adminSetPremiumBtn = document.getElementById("adminSetPremiumBtn");
+    const adminClearOverrideBtn = document.getElementById("adminClearOverrideBtn");
+    const adminSummaryList = document.getElementById("adminSummaryList");
+    const adminStatusMessage = document.getElementById("adminStatusMessage");
     const emailInput = document.getElementById("email");
     const passwordInput = document.getElementById("password");
     const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
@@ -11240,6 +11437,9 @@
     let currentPlan = "free";
     let isSignedIn = false;
     let currentUserId = null;
+    let currentUserEmail = "";
+    let currentProfileSubscriptionStatus = "";
+    const ADMIN_EMAIL = "jadenbray@gmail.com";
     let nextSessionId = 1;
     let nextChangeId = 1;
     let editingSessionIndex = null;
@@ -11250,6 +11450,7 @@
     let lastViewBeforeSettings = "homeView";
     let lastViewBeforeProfile = "homeView";
     let lastViewBeforeContact = "homeView";
+    let lastViewBeforeAdmin = "homeView";
     let lastViewBeforeAccountViews = "homeView";
     let sessionDetailReturnViewId = "analyticsView";
     let sessionDetailReturnFolderId = null;
@@ -11310,6 +11511,7 @@
       handDetailView: "/hand-detail",
       bankrollView: "/bankroll",
       analyticsView: "/analytics",
+      adminView: "/admin",
       sessionDetailView: "/session-detail",
       bankrollChangeDetailView: "/bankroll-change-detail",
       stakeDetailView: "/stake-detail"
@@ -11474,14 +11676,14 @@
         return {
           type: "landing",
           landingScrollTop: landingScroll ? landingScroll.scrollTop : 0,
-          route: normalizePathname(window.location.pathname)
+          route: getCurrentAppRoutePath()
         };
       }
       const activeView = document.querySelector("#homeScreen .view.active");
       return {
         type: "app",
         viewId: activeView ? activeView.id : "homeView",
-        route: normalizePathname(window.location.pathname)
+        route: getCurrentAppRoutePath()
       };
     }
 
@@ -11521,6 +11723,27 @@
       const clean = pathname.split("?")[0].split("#")[0];
       if (clean.length > 1 && clean.endsWith("/")) return clean.slice(0, -1);
       return clean;
+    }
+
+    function getStartupRouteOverride() {
+      try {
+        const params = new URLSearchParams(window.location.search || "");
+        const requested = params.get("path") || params.get("route") || "";
+        const normalized = normalizePathname(requested);
+        return normalized && normalized !== "/poker.html" ? normalized : "";
+      } catch (_) {
+        return "";
+      }
+    }
+
+    const startupRouteOverride = getStartupRouteOverride();
+
+    function getCurrentAppRoutePath() {
+      const currentPath = normalizePathname(window.location.pathname);
+      if ((currentPath === "/poker.html" || currentPath === "/poker" || currentPath === "/index.html") && startupRouteOverride) {
+        return startupRouteOverride;
+      }
+      return currentPath;
     }
 
     function getRouteForView(viewId) {
@@ -12113,6 +12336,8 @@
       } else if (viewId === "bankrollView") {
         renderBankrollCharts();
         renderBankrollChangesTable();
+      } else if (viewId === "adminView") {
+        renderAdminDashboard();
       } else if (viewId === "homeView") {
         renderHomeDashboard();
         const homeDashboard = document.querySelector(".app-home-dashboard-card");
@@ -12154,6 +12379,9 @@
     function showView(viewId, options = {}) {
       clearMotionBackdropBlur("app");
       hideViewLoading();
+      if (viewId === "adminView" && !isDeveloperAccount()) {
+        viewId = "homeView";
+      }
       if (viewId !== "addHandView") {
         dismissHandFloatingUi();
         closeHandReplay();
@@ -12202,6 +12430,13 @@
           lastViewBeforeAccountViews = p || "homeView";
         }
         lastViewBeforeContact = lastViewBeforeAccountViews;
+      }
+      if (viewId === "adminView" && prevActive && prevActive.id && prevActive.id !== "adminView") {
+        const p = prevActive.id;
+        if (p !== "profileView" && p !== "settingsView" && p !== "contactView") {
+          lastViewBeforeAccountViews = p || "homeView";
+        }
+        lastViewBeforeAdmin = lastViewBeforeAccountViews;
       }
       if (viewId === "addSessionView" && prevActive && prevActive.id !== "addSessionView") {
         if (prevActive.id !== "addHandView") {
@@ -12294,6 +12529,9 @@
       const renderToken = ++pendingViewRenderToken;
       const finishViewEnter = () => {
         safeRenderViewContent(viewId);
+        if (viewId === "adminView") {
+          void refreshAdminDashboard();
+        }
         animateHomeBackdropBlur();
         startMotionBackdropBlur("app");
         restoreViewScrollAfterRender(viewId, targetScrollTop);
@@ -12783,6 +13021,18 @@
       return `chiplogger_hand_folders_${currentUserId || "guest"}`;
     }
 
+    function clearDeveloperLocalCaches() {
+      try {
+        window.localStorage.removeItem(folderStorageKey());
+        window.localStorage.removeItem(handFolderStorageKey());
+        clearAdminSeedStore();
+      } catch (_) {
+        // ignore storage errors
+      }
+      sessionFolders = [];
+      handFolders = [];
+    }
+
     function loadHandFoldersFromStorage() {
       try {
         const raw = window.localStorage.getItem(handFolderStorageKey());
@@ -12871,6 +13121,8 @@
     async function loadDataFromSupabase() {
       if (!supabaseClient || !currentUserId) return;
       savedLocations = [];
+      currentProfileSubscriptionStatus = "";
+      currentPlan = "free";
       const { data: profileData } = await supabaseClient
         .from("profiles")
         .select("*")
@@ -12885,12 +13137,14 @@
         startingBankroll = Number(profileData.starting_bankroll || 0);
         bankroll = startingBankroll;
         const hasManualPremium = normalizePremiumValue(profileData.manual_premium);
-        currentPlan = (normalizePremiumValue(profileData.premium) || hasManualPremium) ? "premium" : "free";
-        const subscriptionStatus = normalizeSubscriptionStatus(profileData.subscription_status);
-        if (subscriptionStatus === "active" || subscriptionStatus === "trialing" || subscriptionStatus === "past_due") {
-          currentPlan = "premium";
-        } else if (!hasManualPremium && (subscriptionStatus === "canceled" || subscriptionStatus === "unpaid" || subscriptionStatus === "incomplete_expired" || subscriptionStatus === "paused")) {
-          currentPlan = "free";
+        const developerPlanOverride = getDeveloperPlanOverride(profileData);
+        currentProfileSubscriptionStatus = developerPlanOverride
+          ? (developerPlanOverride === "premium" ? "developer_premium" : "developer_free")
+          : null;
+        if (developerPlanOverride) {
+          currentPlan = developerPlanOverride;
+        } else {
+          currentPlan = normalizePremiumValue(profileData.premium) ? "premium" : "free";
         }
         if (themeSelect) themeSelect.value = normalizeThemeValue(profileData.theme || "dark");
         if (profileData.saved_locations != null) {
@@ -12912,9 +13166,12 @@
         }
       }
       writeStoredThemePreference(themeSelect ? themeSelect.value : "dark");
-      const livePlan = await fetchLivePlanStatus().catch(() => null);
-      if (livePlan) {
-        currentPlan = livePlan;
+      const overridePlan = getDeveloperPlanOverride(currentProfileSubscriptionStatus);
+      if (!overridePlan) {
+        const livePlan = await fetchLivePlanStatus().catch(() => null);
+        if (livePlan) {
+          currentPlan = livePlan;
+        }
       }
 
       const [{ data: sessionRows }, { data: handRows }, { data: changeRows }] = await Promise.all([
@@ -12939,6 +13196,7 @@
 
       bankrollChanges.length = 0;
       (changeRows || []).forEach((row) => bankrollChanges.push(fromDbBankrollChange(row)));
+      mergeAdminSeedStoreIntoState();
       sessionFolders = loadSessionFoldersFromStorage();
       handFolders = loadHandFoldersFromStorage();
       recomputeBankroll();
@@ -12971,6 +13229,8 @@
       if (nextEmail) {
         const { error } = await supabaseClient.auth.updateUser({ email: nextEmail });
         if (error) throw error;
+        currentUserEmail = nextEmail;
+        updateDeveloperControlsVisibility();
       }
     }
 
@@ -13099,7 +13359,10 @@
 
     async function enterApp(user = null, options = {}) {
       if (user) currentUserId = user.id;
-      if (user?.email) profileEmailInput.value = user.email;
+      if (user?.email) {
+        currentUserEmail = user.email;
+        profileEmailInput.value = user.email;
+      }
       syncProfileViewFromState({ name: "", phone: "" }, user?.email || profileEmailInput.value || "");
       isSignedIn = true;
       landingScreen.classList.add("hidden");
@@ -13114,7 +13377,8 @@
       sidebarToggleBtn.setAttribute("aria-expanded", "false");
       closeProfileMenu();
       setTopBarMode("app");
-      const requestedView = getViewForRoute(window.location.pathname);
+      updateDeveloperControlsVisibility();
+      const requestedView = getViewForRoute(getCurrentAppRoutePath());
       const initialView = requestedView || "homeView";
       showView(initialView, { syncRoute: options.syncRoute !== false, replaceRoute: Boolean(options.replaceRoute) });
       await loadDataFromSupabase();
@@ -13381,6 +13645,428 @@
       return String(value || "").trim().toLowerCase();
     }
 
+    function getDeveloperPlanOverride(subscriptionStatus) {
+      if (subscriptionStatus && typeof subscriptionStatus === "object") {
+        const profile = subscriptionStatus;
+        if (normalizePremiumValue(profile?.manual_premium)) {
+          return normalizePremiumValue(profile?.premium) ? "premium" : "free";
+        }
+        return null;
+      }
+      const normalized = normalizeSubscriptionStatus(subscriptionStatus);
+      if (normalized === "developer_premium") return "premium";
+      if (normalized === "developer_free") return "free";
+      return null;
+    }
+
+    function isDeveloperAccount(email = currentUserEmail) {
+      return String(email || "").trim().toLowerCase() === ADMIN_EMAIL;
+    }
+
+    const adminDashboardState = {
+      loading: false,
+      summary: null
+    };
+
+    function setAdminStatus(message = "", kind = "") {
+      if (!adminStatusMessage) return;
+      adminStatusMessage.textContent = message || "";
+      adminStatusMessage.classList.remove("is-success", "is-error");
+      if (kind) {
+        adminStatusMessage.classList.add(kind);
+      }
+    }
+
+    function updateDeveloperControlsVisibility() {
+      const visible = isSignedIn && isDeveloperAccount();
+      if (adminMenuItem) {
+        adminMenuItem.classList.toggle("hidden", !visible);
+      }
+    }
+
+    function parsePositiveIntInput(inputEl, fallback, min, max) {
+      const value = Number.parseInt(inputEl && inputEl.value ? inputEl.value : "", 10);
+      if (Number.isNaN(value)) return fallback;
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function getLegacyDateStringForOffsetDays(daysAgo = 0) {
+      const date = new Date();
+      date.setHours(12, 0, 0, 0);
+      date.setDate(date.getDate() - daysAgo);
+      return isoDateStringToLegacySessionDate(date.toISOString().slice(0, 10));
+    }
+
+    function createAdminId(prefix = "admin") {
+      const randomPart = Math.random().toString(36).slice(2, 8);
+      return `${prefix}-${Date.now()}-${randomPart}`;
+    }
+
+    function clampMoney(value) {
+      return Math.round(Number(value || 0) * 100) / 100;
+    }
+
+    function buildAdminSessionPayload(index, totalCount, mode = "random") {
+      const gameTypes = ["Texas Hold'em", "Pot Limit Omaha", "No Limit Hold'em"];
+      const stakes = ["$1/$2", "$2/$5", "$2/$4", "$5/$10", "$1/$3"];
+      const locations = ["Home Game", "The Lodge", "MGM Grand", "Bellagio", "Aria", "Casino Night"];
+      const titles = ["Session", "Cash Game", "Home Game", "Table Time", "Late Night Grind"];
+      const titleSuffix = `${index + 1}`;
+      const date = getLegacyDateStringForOffsetDays(index % 14);
+      const startHour = `${String(6 + ((index * 2) % 7)).padStart(2, "0")}:00 PM`;
+      const endHour = `${String(9 + ((index * 2) % 4)).padStart(2, "0")}:30 PM`;
+      const buyIn = clampMoney(100 + (Math.random() * 700));
+      const winSwing = mode === "sample"
+        ? 120
+        : Math.round((Math.random() * 2 - 0.45) * 300);
+      const cashOut = clampMoney(buyIn + winSwing);
+      const profit = clampMoney(cashOut - buyIn);
+      const gameType = gameTypes[index % gameTypes.length];
+      const stake = stakes[(index + totalCount) % stakes.length];
+      const location = locations[(index * 2 + totalCount) % locations.length];
+      const sessionId = createAdminId("session");
+      const hands = [];
+      const handCount = mode === "sample"
+        ? 1
+        : Math.max(1, parsePositiveIntInput(adminHandsPerSessionInput, 3, 1, 10));
+      for (let handIndex = 0; handIndex < handCount; handIndex += 1) {
+        const handProfit = handIndex === 0 ? profit : clampMoney((Math.random() * 2 - 0.65) * 90);
+        hands.push({
+          id: createAdminId("hand"),
+          name: `${titles[index % titles.length]} ${titleSuffix}.${handIndex + 1}`,
+          summary: `${gameType} at ${stake} ${handProfit >= 0 ? "wins" : "loses"} ${Math.abs(handProfit).toFixed(2)}`,
+          mode,
+          result: handProfit,
+          table: location,
+          notes: `Seeded by developer tools on ${new Date().toISOString()}`,
+          streetActions: [
+            { street: "preflop", action: "raise", amount: Math.abs(handProfit) > 0 ? 2 : 1 },
+            { street: "flop", action: "bet", amount: Math.abs(handProfit) > 0 ? 5 : 2 }
+          ]
+        });
+      }
+
+      return {
+        session: {
+          session_id: sessionId,
+          user_id: currentUserId,
+          title: `${titles[index % titles.length]} ${titleSuffix}`,
+          date,
+          time_started: startHour,
+          time_ended: endHour,
+          duration: "3h 30m",
+          duration_minutes: 210,
+          game_type: gameType,
+          stake,
+          buy_in: buyIn,
+          cash_out: cashOut,
+          profit,
+          bankroll_change_id: null,
+          location
+        },
+        hands,
+        bankrollChange: {
+          change_id: createAdminId("change"),
+          user_id: currentUserId,
+          amount: profit,
+          description: `${titles[index % titles.length]} ${titleSuffix} · ${gameType} · ${stake}`,
+          type: "session",
+          session_id: sessionId,
+          manual_date: null
+        }
+      };
+    }
+
+    function adminSeedStorageKey() {
+      return `chiplogger_admin_seed_data_${currentUserId || "guest"}`;
+    }
+
+    function loadAdminSeedStore() {
+      try {
+        const raw = window.localStorage.getItem(adminSeedStorageKey());
+        if (!raw) return { sessions: [], bankrollChanges: [] };
+        const parsed = JSON.parse(raw);
+        return {
+          sessions: Array.isArray(parsed && parsed.sessions) ? parsed.sessions : [],
+          bankrollChanges: Array.isArray(parsed && parsed.bankrollChanges) ? parsed.bankrollChanges : []
+        };
+      } catch (_) {
+        return { sessions: [], bankrollChanges: [] };
+      }
+    }
+
+    function persistAdminSeedStore(store) {
+      try {
+        window.localStorage.setItem(adminSeedStorageKey(), JSON.stringify({
+          sessions: Array.isArray(store && store.sessions) ? store.sessions : [],
+          bankrollChanges: Array.isArray(store && store.bankrollChanges) ? store.bankrollChanges : []
+        }));
+      } catch (_) {
+        // ignore storage write errors
+      }
+    }
+
+    function clearAdminSeedStore() {
+      try {
+        window.localStorage.removeItem(adminSeedStorageKey());
+      } catch (_) {
+        // ignore storage errors
+      }
+    }
+
+    function getAdminSeedCounts() {
+      const store = loadAdminSeedStore();
+      const hands = store.sessions.reduce((sum, session) => sum + (Array.isArray(session && session.hands) ? session.hands.length : 0), 0);
+      return {
+        sessions: store.sessions.length,
+        hands,
+        bankrollChanges: store.bankrollChanges.length
+      };
+    }
+
+    function normalizeAdminSeedHand(hand, fallbackId) {
+      const normalizedHand = hand && typeof hand === "object" ? JSON.parse(JSON.stringify(hand)) : {};
+      if (!normalizedHand.id) normalizedHand.id = fallbackId;
+      if (normalizedHand.name == null && normalizedHand.title != null) normalizedHand.name = normalizedHand.title;
+      if (normalizedHand.title == null && normalizedHand.name != null) normalizedHand.title = normalizedHand.name;
+      return normalizedHand;
+    }
+
+    function buildLocalAdminSeedBundle(payloadBundle, mode, sessionIndex, handCount) {
+      const sessionPayload = payloadBundle.session || {};
+      const hands = Array.isArray(payloadBundle.hands) ? payloadBundle.hands : [];
+      const session = {
+        id: String(sessionPayload.session_id || createAdminId("session")),
+        title: sessionPayload.title || "",
+        date: sessionPayload.date || "",
+        timeStarted: sessionPayload.time_started || "",
+        timeEnded: sessionPayload.time_ended || "",
+        duration: sessionPayload.duration || "",
+        durationMinutes: Number(sessionPayload.duration_minutes || 0),
+        gameType: sessionPayload.game_type || "",
+        stake: sessionPayload.stake || "",
+        buyIn: Number(sessionPayload.buy_in || 0),
+        cashOut: Number(sessionPayload.cash_out || 0),
+        profit: Number(sessionPayload.profit || 0),
+        bankrollChangeId: sessionPayload.bankroll_change_id || null,
+        location: sessionPayload.location != null ? String(sessionPayload.location).trim() : "",
+        hands: hands.map((handRow, handIndex) => normalizeAdminSeedHand(handRow.hand || {}, handRow.id || createAdminId(`hand-${sessionIndex}-${handIndex}`)))
+      };
+      const bankrollChange = {
+        id: String((payloadBundle.bankrollChange && payloadBundle.bankrollChange.change_id) || createAdminId("change")),
+        amount: Number(payloadBundle.bankrollChange && payloadBundle.bankrollChange.amount || 0),
+        description: payloadBundle.bankrollChange && payloadBundle.bankrollChange.description ? String(payloadBundle.bankrollChange.description) : "",
+        type: payloadBundle.bankrollChange && payloadBundle.bankrollChange.type ? String(payloadBundle.bankrollChange.type) : "session",
+        sessionId: session.id,
+        manualDate: payloadBundle.bankrollChange && payloadBundle.bankrollChange.manual_date != null
+          ? payloadBundle.bankrollChange.manual_date
+          : null
+      };
+      return { session, bankrollChange, mode, handCount };
+    }
+
+    function mergeAdminSeedStoreIntoState() {
+      const store = loadAdminSeedStore();
+      if (!store.sessions.length && !store.bankrollChanges.length) return { sessions: 0, hands: 0, bankrollChanges: 0 };
+      const existingSessionIds = new Set(sessions.map((session) => String(session.id)));
+      const existingChangeIds = new Set(bankrollChanges.map((change) => String(change.id)));
+      let addedSessions = 0;
+      let addedHands = 0;
+      let addedChanges = 0;
+      store.sessions.forEach((seedSession) => {
+        const sessionId = String(seedSession && seedSession.id ? seedSession.id : "");
+        if (!sessionId || existingSessionIds.has(sessionId)) return;
+        const sessionClone = JSON.parse(JSON.stringify(seedSession));
+        sessionClone.id = sessionId;
+        sessionClone.hands = Array.isArray(sessionClone.hands) ? sessionClone.hands.map((hand, handIndex) => normalizeAdminSeedHand(hand, hand && hand.id ? hand.id : createAdminId(`hand-${sessionId}-${handIndex}`))) : [];
+        sessions.push(sessionClone);
+        existingSessionIds.add(sessionId);
+        addedSessions += 1;
+        addedHands += sessionClone.hands.length;
+      });
+      store.bankrollChanges.forEach((seedChange) => {
+        const changeId = String(seedChange && seedChange.id ? seedChange.id : "");
+        if (!changeId || existingChangeIds.has(changeId)) return;
+        bankrollChanges.push(JSON.parse(JSON.stringify(seedChange)));
+        existingChangeIds.add(changeId);
+        addedChanges += 1;
+      });
+      if (addedSessions || addedHands || addedChanges) {
+        recomputeBankroll();
+      }
+      return { sessions: addedSessions, hands: addedHands, bankrollChanges: addedChanges };
+    }
+
+    function seedAdminDataLocally(action, payload = {}) {
+      const mode = action === "seed-sample-data" ? "sample" : "random";
+      const sessionCount = action === "seed-sample-data"
+        ? 1
+        : Math.max(1, Math.min(100, Number.parseInt(payload.sessionCount, 10) || 1));
+      const handsPerSession = Math.max(1, Math.min(10, Number.parseInt(payload.handsPerSession, 10) || 3));
+      const store = loadAdminSeedStore();
+      const seededSessions = [];
+      const seededChanges = [];
+      for (let index = 0; index < sessionCount; index += 1) {
+        const payloadBundle = buildAdminSessionPayload(index, sessionCount, mode);
+        const localBundle = buildLocalAdminSeedBundle(payloadBundle, mode, store.sessions.length + index, handsPerSession);
+        seededSessions.push(localBundle.session);
+        seededChanges.push(localBundle.bankrollChange);
+      }
+      store.sessions = [...store.sessions, ...seededSessions];
+      store.bankrollChanges = [...store.bankrollChanges, ...seededChanges];
+      persistAdminSeedStore(store);
+      const applied = mergeAdminSeedStoreIntoState();
+      return {
+        ok: true,
+        summary: buildAdminDashboardSummaryFromCurrentState(),
+        inserted: {
+          sessions: seededSessions.length,
+          hands: seededSessions.reduce((sum, session) => sum + (Array.isArray(session.hands) ? session.hands.length : 0), 0),
+          bankrollChanges: seededChanges.length
+        },
+        localSeed: applied
+      };
+    }
+
+    function buildAdminDashboardSummaryFromCurrentState() {
+      const baseSummary = adminDashboardState.summary || {};
+      const baseCounts = baseSummary.counts || {};
+      const localCounts = getAdminSeedCounts();
+      return {
+        ...baseSummary,
+        counts: {
+          ...baseCounts,
+          sessions: Number(baseCounts.sessions || 0) + localCounts.sessions,
+          hands: Number(baseCounts.hands || 0) + localCounts.hands,
+          bankrollChanges: Number(baseCounts.bankrollChanges || 0) + localCounts.bankrollChanges
+        }
+      };
+    }
+
+    async function postAdminTools(payload) {
+      if (!supabaseClient || !isSignedIn) {
+        throw new Error("Sign in first.");
+      }
+      const { data: sessionData } = await supabaseClient.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+      if (!accessToken) {
+        throw new Error("Your session expired. Please sign in again.");
+      }
+      const resp = await fetch("/admin-tools", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(payload || {})
+      });
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok) {
+        throw new Error(data?.error || "Developer action failed.");
+      }
+      return data || {};
+    }
+
+    function renderAdminDashboard() {
+      if (!adminSummaryList) return;
+      const summary = buildAdminDashboardSummaryFromCurrentState();
+      const profile = summary.profile || {};
+      const counts = summary.counts || {};
+      const plan = summary.plan || {};
+      const lines = [
+        ["Signed in as", currentUserEmail || profile.email || "Unknown"],
+        ["Plan", plan.currentPlan || currentPlan || "free"],
+        ["Override", profile.subscription_status || currentProfileSubscriptionStatus || "none"],
+        ["Premium flag", String(Boolean(profile.premium))],
+        ["Manual premium", String(Boolean(profile.manual_premium))],
+        ["Starting bankroll", formatMoney(Number(profile.starting_bankroll || 0))],
+        ["Saved locations", String(counts.savedLocations ?? 0)],
+        ["Sessions", String(counts.sessions ?? 0)],
+        ["Hands", String(counts.hands ?? 0)],
+        ["Bankroll changes", String(counts.bankrollChanges ?? 0)]
+      ];
+      adminSummaryList.innerHTML = lines.map(([label, value]) => `
+        <div class="admin-summary-row">
+          <span class="admin-summary-label">${escapeHtml(label)}</span>
+          <span class="admin-summary-value">${escapeHtml(String(value))}</span>
+        </div>
+      `).join("");
+      if (adminPlanStatusText) {
+        if (adminDashboardState.loading) {
+          adminPlanStatusText.textContent = "Loading plan details...";
+        } else {
+          const overrideLabel = plan.override || currentProfileSubscriptionStatus || "none";
+          adminPlanStatusText.textContent = `Current plan: ${plan.currentPlan || currentPlan || "free"} · override: ${overrideLabel}`;
+        }
+      }
+    }
+
+    async function refreshAdminDashboard() {
+      if (!isSignedIn || !isDeveloperAccount()) return null;
+      adminDashboardState.loading = true;
+      renderAdminDashboard();
+      try {
+        const summary = await postAdminTools({ action: "summary" });
+        adminDashboardState.summary = summary;
+        setAdminStatus("Developer snapshot refreshed.", "is-success");
+        return summary;
+      } catch (err) {
+        setAdminStatus(err && err.message ? err.message : "Could not load developer snapshot.", "is-error");
+        return null;
+      } finally {
+        adminDashboardState.loading = false;
+        renderAdminDashboard();
+      }
+    }
+
+    async function applyAdminAction(action, payload = {}, successMessage = "") {
+      if (!isDeveloperAccount()) {
+        window.alert("Developer tools are only available on your personal account.");
+        return null;
+      }
+      setAdminStatus("Working...", "");
+      try {
+        const data = await postAdminTools({ action, ...payload });
+        if (action === "clear-account-data") {
+          clearDeveloperLocalCaches();
+        }
+        await loadDataFromSupabase();
+        recomputeBankroll();
+        renderAll();
+        adminDashboardState.summary = data.summary || data || adminDashboardState.summary;
+        await refreshAdminDashboard();
+        setAdminStatus(successMessage || data?.message || "Action completed.", "is-success");
+        return data;
+      } catch (err) {
+        const message = err && err.message ? err.message : "";
+        const lowerMessage = message.toLowerCase();
+        const isPermissionProblem = lowerMessage.includes("permission denied") || lowerMessage.includes("row-level security") || lowerMessage.includes("insufficient privilege");
+        if ((action === "seed-sample-data" || action === "seed-random-data") && isPermissionProblem) {
+          const localResult = seedAdminDataLocally(action, payload);
+          renderAll();
+          renderAdminDashboard();
+          const localCountLabel = localResult.inserted?.sessions === 1 ? "sample session locally" : "sample sessions locally";
+          setAdminStatus(successMessage || `Added ${localResult.inserted?.sessions || 0} ${localCountLabel}.`, "is-success");
+          return localResult;
+        }
+        if (action === "clear-account-data" && isPermissionProblem) {
+          clearAdminSeedStore();
+          sessions.length = 0;
+          bankrollChanges.length = 0;
+          await loadDataFromSupabase();
+          recomputeBankroll();
+          renderAll();
+          adminDashboardState.summary = buildAdminDashboardSummaryFromCurrentState();
+          renderAdminDashboard();
+          setAdminStatus(successMessage || "Removed local developer test data.", "is-success");
+          return { ok: true, localOnly: true };
+        }
+        console.error(err);
+        setAdminStatus(message || "Action failed.", "is-error");
+        throw err;
+      }
+    }
+
     const THEME_PREFERENCE_STORAGE_KEY = "chipLoggerThemePreference";
 
     function readStoredThemePreference() {
@@ -13415,6 +14101,8 @@
       if (!resp.ok) return null;
       const payload = await resp.json().catch(() => null);
       if (!payload || typeof payload.hasSubscription !== "boolean") return null;
+      const override = getDeveloperPlanOverride(payload.status);
+      if (override) return override;
       return payload.hasSubscription ? "premium" : "free";
     }
 
@@ -23582,6 +24270,10 @@
       renderBankrollChangesTable();
       renderHomeDashboard();
       updatePlanUI();
+      updateDeveloperControlsVisibility();
+      if (document.querySelector("#homeScreen .view.active")?.id === "adminView") {
+        renderAdminDashboard();
+      }
     }
 
     signInBtn.addEventListener("click", async () => {
@@ -24565,6 +25257,12 @@
         showView(target, { restoreScroll: true, replaceRoute: true });
       });
     }
+    if (adminBackBtn) {
+      adminBackBtn.addEventListener("click", () => {
+        const target = lastViewBeforeAdmin || "homeView";
+        showView(target, { restoreScroll: true, replaceRoute: true });
+      });
+    }
     if (supportForm) {
       supportForm.addEventListener("submit", submitSupportMessage);
     }
@@ -24643,6 +25341,52 @@
     if (paymentPlanPurchaseBtn) {
       paymentPlanPurchaseBtn.addEventListener("click", async () => {
         await startStripeCheckout();
+      });
+    }
+    if (adminSetFreeBtn) {
+      adminSetFreeBtn.addEventListener("click", async () => {
+        await applyAdminAction("set-plan-override", { plan: "developer_free" }, "Set to free plan override.");
+      });
+    }
+    if (adminSetPremiumBtn) {
+      adminSetPremiumBtn.addEventListener("click", async () => {
+        await applyAdminAction("set-plan-override", { plan: "developer_premium" }, "Set to premium plan override.");
+      });
+    }
+    if (adminClearOverrideBtn) {
+      adminClearOverrideBtn.addEventListener("click", async () => {
+        await applyAdminAction("clear-plan-override", {}, "Cleared the developer plan override.");
+      });
+    }
+    if (adminAddSampleBtn) {
+      adminAddSampleBtn.addEventListener("click", async () => {
+        await applyAdminAction("seed-sample-data", { sessionCount: 1 }, "Added sample data.");
+      });
+    }
+    if (adminAddRandomBtn) {
+      adminAddRandomBtn.addEventListener("click", async () => {
+        const sessionsToAdd = parsePositiveIntInput(adminRandomSessionsInput, 5, 1, 50);
+        const handsPerSession = parsePositiveIntInput(adminHandsPerSessionInput, 3, 1, 10);
+        await applyAdminAction("seed-random-data", {
+          sessionCount: sessionsToAdd,
+          handsPerSession
+        }, `Added ${sessionsToAdd} random session${sessionsToAdd === 1 ? "" : "s"}.`);
+      });
+    }
+    if (adminAddBulkBtn) {
+      adminAddBulkBtn.addEventListener("click", async () => {
+        const sessionsToAdd = parsePositiveIntInput(adminBulkSessionsInput, 20, 1, 100);
+        const handsPerSession = parsePositiveIntInput(adminHandsPerSessionInput, 3, 1, 10);
+        await applyAdminAction("seed-random-data", {
+          sessionCount: sessionsToAdd,
+          handsPerSession
+        }, `Added ${sessionsToAdd} bulk session${sessionsToAdd === 1 ? "" : "s"}.`);
+      });
+    }
+    if (adminClearDataBtn) {
+      adminClearDataBtn.addEventListener("click", async () => {
+        if (!window.confirm("Remove all sessions, hands, and bankroll changes from this account?")) return;
+        await applyAdminAction("clear-account-data", {}, "Removed account data.");
       });
     }
 
@@ -25221,6 +25965,8 @@
       }
       isSignedIn = false;
       currentUserId = null;
+      currentUserEmail = "";
+      currentProfileSubscriptionStatus = "";
       currentPlan = "free";
       sessions.length = 0;
       bankrollChanges.length = 0;
@@ -25242,6 +25988,7 @@
       setSessionLocationPanelOpen(false);
       if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
       if (sessionLocationNewInput) sessionLocationNewInput.value = "";
+      updateDeveloperControlsVisibility();
       showLanding({ replaceRoute: true, resetTheme: true });
       showLandingAuthActionsInstant();
       playLandingIntroAnimationWithDelay(1000);
@@ -25455,12 +26202,17 @@
 
     function applyRouteForCurrentAuthState(options = {}) {
       const restoreScroll = options.restoreScroll === true;
-      const path = normalizePathname(window.location.pathname);
+      const path = getCurrentAppRoutePath();
       if (path === "/auth/reset") {
         showAuthScreen("reset", { syncRoute: false });
         return;
       }
       if (isSignedIn) {
+        if (path === "/admin" && !isDeveloperAccount()) {
+          showView("homeView", { syncRoute: false, restoreScroll });
+          replaceCurrentRoute("/home");
+          return;
+        }
         const targetView = getViewForRoute(path) || "homeView";
         showView(targetView, { syncRoute: false, restoreScroll });
         return;
@@ -25511,11 +26263,12 @@
 
     async function restoreAuthSessionOnLoad() {
       if (!supabaseClient) return;
-      const path = normalizePathname(window.location.pathname);
+      const path = getCurrentAppRoutePath();
       const { data } = await supabaseClient.auth.getSession();
       if (data?.session?.user) {
         const user = data.session.user;
         currentUserId = user.id;
+        currentUserEmail = user.email || currentUserEmail || "";
         if (path === "/auth/reset") {
           showAuthScreen("reset", { syncRoute: false, replaceRoute: true });
           return;
