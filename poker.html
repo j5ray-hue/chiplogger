@@ -5723,6 +5723,57 @@
       color: #fca5a5;
     }
 
+    .admin-clear-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(2, 6, 23, 0.72);
+      backdrop-filter: blur(6px);
+    }
+
+    .admin-clear-modal.hidden {
+      display: none;
+    }
+
+    .admin-clear-modal-card {
+      width: min(480px, 100%);
+      border: 1px solid var(--cardBorder);
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.98);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      padding: 20px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .admin-clear-modal-title {
+      margin: 0;
+      font-size: 1.08rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .admin-clear-modal-body {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .admin-clear-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .admin-clear-modal-actions button {
+      width: auto;
+      min-width: 120px;
+    }
+
     @media (max-width: 900px) {
       .admin-grid {
         grid-template-columns: 1fr;
@@ -9752,6 +9803,16 @@
             </div>
           </div>
         </div>
+        <div id="adminClearModal" class="admin-clear-modal hidden" role="dialog" aria-modal="true" aria-labelledby="adminClearModalTitle" aria-describedby="adminClearModalBody">
+          <div class="admin-clear-modal-card">
+            <h4 id="adminClearModalTitle" class="admin-clear-modal-title">Remove account data?</h4>
+            <p id="adminClearModalBody" class="admin-clear-modal-body">This will remove all sessions, hands, and bankroll changes from the current account. This cannot be undone.</p>
+            <div class="admin-clear-modal-actions">
+              <button id="adminClearCancelBtn" type="button" class="secondary-btn">Cancel</button>
+              <button id="adminClearConfirmBtn" type="button">Remove Data</button>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="contactView" class="view">
@@ -10909,6 +10970,9 @@
     const adminAddRandomBtn = document.getElementById("adminAddRandomBtn");
     const adminAddBulkBtn = document.getElementById("adminAddBulkBtn");
     const adminClearDataBtn = document.getElementById("adminClearDataBtn");
+    const adminClearModal = document.getElementById("adminClearModal");
+    const adminClearCancelBtn = document.getElementById("adminClearCancelBtn");
+    const adminClearConfirmBtn = document.getElementById("adminClearConfirmBtn");
     const adminSetFreeBtn = document.getElementById("adminSetFreeBtn");
     const adminSetPremiumBtn = document.getElementById("adminSetPremiumBtn");
     const adminClearOverrideBtn = document.getElementById("adminClearOverrideBtn");
@@ -13998,6 +14062,19 @@
           const overrideLabel = plan.override || currentProfileSubscriptionStatus || "none";
           adminPlanStatusText.textContent = `Current plan: ${plan.currentPlan || currentPlan || "free"} · override: ${overrideLabel}`;
         }
+      }
+    }
+
+    function closeAdminClearModal() {
+      if (!adminClearModal) return;
+      adminClearModal.classList.add("hidden");
+    }
+
+    function openAdminClearModal() {
+      if (!adminClearModal) return;
+      adminClearModal.classList.remove("hidden");
+      if (adminClearCancelBtn) {
+        adminClearCancelBtn.focus();
       }
     }
 
@@ -25385,8 +25462,25 @@
     }
     if (adminClearDataBtn) {
       adminClearDataBtn.addEventListener("click", async () => {
-        if (!window.confirm("Remove all sessions, hands, and bankroll changes from this account?")) return;
+        openAdminClearModal();
+      });
+    }
+    if (adminClearCancelBtn) {
+      adminClearCancelBtn.addEventListener("click", () => {
+        closeAdminClearModal();
+      });
+    }
+    if (adminClearConfirmBtn) {
+      adminClearConfirmBtn.addEventListener("click", async () => {
+        closeAdminClearModal();
         await applyAdminAction("clear-account-data", {}, "Removed account data.");
+      });
+    }
+    if (adminClearModal) {
+      adminClearModal.addEventListener("click", (event) => {
+        if (event.target === adminClearModal) {
+          closeAdminClearModal();
+        }
       });
     }
 
