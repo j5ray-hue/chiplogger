@@ -2,7 +2,8 @@ const Stripe = require("stripe");
 const { createClient } = require("@supabase/supabase-js");
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-const supabaseUrl = process.env.SUPABASE_URL || "https://gaobxnzfiogklkoueldd.supabase.co";
+const DEFAULT_SUPABASE_URL = "https://gaobxnzfiogklkoueldd.supabase.co";
+const supabaseUrl = process.env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -25,6 +26,10 @@ function normalizePremiumValue(value) {
   if (value === true || value === 1) return true;
   const normalized = String(value || "").trim().toLowerCase();
   return normalized === "true" || normalized === "1" || normalized === "premium" || normalized === "paid";
+}
+
+function normalizeSubscriptionStatus(value) {
+  return String(value || "").trim().toLowerCase();
 }
 
 function getDeveloperPlanOverride(subscriptionStatus) {
