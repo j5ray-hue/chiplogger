@@ -3,6 +3,7 @@
   "include": [
     "/create-checkout-session",
     "/get-subscription-status",
+    "/admin-tools",
     "/stripe-webhook"
   ],
   "exclude": []

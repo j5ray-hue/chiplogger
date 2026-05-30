@@ -23,19 +23,28 @@ function getRuntime(env) {
   };
 }
 
+function jsonResponse(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" }
+  });
+}
+
+function getPremiumValueForStatus(status) {
+  const normalized = String(status || "").trim().toLowerCase();
+  return normalized === "active" || normalized === "trialing" || normalized === "past_due";
+}
+
 async function setPremiumFlag(adminSupabase, userId, premiumValue) {
   if (!userId) return;
   const { error } = await adminSupabase
     .from("profiles")
-    .upsert(
-      {
-        user_id: userId,
-        premium: premiumValue
-      },
-      { onConflict: "user_id" }
-    );
+    .update({
+      premium: premiumValue
+    })
+    .eq("user_id", userId);
   if (error) {
-    throw new Error(`Supabase profile upsert failed: ${error.message}`);
+    throw new Error(`Supabase profile update failed: ${error.message}`);
   }
 }
 
@@ -44,15 +53,15 @@ export async function onRequest(context) {
   const { stripe, stripeWebhookSecret, adminSupabase } = getRuntime(env);
 
   if (request.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+    return jsonResponse({ error: "Method not allowed" }, 405);
   }
   if (!stripe || !adminSupabase || !stripeWebhookSecret) {
-    return new Response("Missing server configuration", { status: 500 });
+    return jsonResponse({ error: "Missing server configuration" }, 500);
   }
 
   const signature = request.headers.get("stripe-signature");
   if (!signature) {
-    return new Response("Missing stripe signature", { status: 400 });
+    return jsonResponse({ error: "Missing stripe signature" }, 400);
   }
 
   let stripeEvent;
@@ -66,7 +75,10 @@ export async function onRequest(context) {
       Stripe.createSubtleCryptoProvider()
     );
   } catch (err) {
-    return new Response(`Webhook Error: ${err.message}`, { status: 400 });
+    console.error("[stripe-webhook] signature verification failed");
+    console.error("[stripe-webhook] message:", err && err.message ? err.message : err);
+    console.error("[stripe-webhook] stack:", err && err.stack ? err.stack : "(no stack trace available)");
+    return jsonResponse({ error: "Webhook signature verification failed" }, 400);
   }
 
   try {
@@ -74,6 +86,14 @@ export async function onRequest(context) {
       const session = stripeEvent.data.object;
       const userId = session?.metadata?.supabase_user_id;
       await setPremiumFlag(adminSupabase, userId, true);
+    }
+
+    if (stripeEvent.type === "customer.subscription.created" || stripeEvent.type === "customer.subscription.updated") {
+      const subscription = stripeEvent.data.object;
+      const userId = subscription?.metadata?.supabase_user_id;
+      if (userId) {
+        await setPremiumFlag(adminSupabase, userId, getPremiumValueForStatus(subscription?.status));
+      }
     }
 
     if (
@@ -85,8 +105,11 @@ export async function onRequest(context) {
       await setPremiumFlag(adminSupabase, userId, false);
     }
 
-    return new Response(JSON.stringify({ received: true }), { status: 200 });
+    return jsonResponse({ received: true }, 200);
   } catch (err) {
-    return new Response(`Server Error: ${err.message}`, { status: 500 });
+    console.error("[stripe-webhook] event handling failed");
+    console.error("[stripe-webhook] message:", err && err.message ? err.message : err);
+    console.error("[stripe-webhook] stack:", err && err.stack ? err.stack : "(no stack trace available)");
+    return jsonResponse({ error: "Webhook processing failed" }, 500);
   }
 }

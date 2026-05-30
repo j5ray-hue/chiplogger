@@ -13,10 +13,32 @@ const adminSupabase = (supabaseUrl && supabaseServiceRoleKey)
 
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
 
+function jsonResponse(body, status = 200) {
+  return {
+    statusCode: status,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  };
+}
+
 function normalizePremiumValue(value) {
   if (value === true || value === 1) return true;
   const normalized = String(value || "").trim().toLowerCase();
   return normalized === "true" || normalized === "1" || normalized === "premium" || normalized === "paid";
+}
+
+function getDeveloperPlanOverride(subscriptionStatus) {
+  if (subscriptionStatus && typeof subscriptionStatus === "object") {
+    const profile = subscriptionStatus;
+    if (normalizePremiumValue(profile?.manual_premium)) {
+      return normalizePremiumValue(profile?.premium) ? "premium" : "free";
+    }
+    return null;
+  }
+  const normalized = normalizeSubscriptionStatus(subscriptionStatus);
+  if (normalized === "developer_premium") return "premium";
+  if (normalized === "developer_free") return "free";
+  return null;
 }
 
 async function syncPremiumFlag(userId, premiumValue) {
@@ -43,6 +65,10 @@ async function getProfilePremiumAccess(userId, stripeHasSubscription) {
     .maybeSingle();
   if (error) {
     throw new Error(`Supabase profile lookup failed: ${error.message}`);
+  }
+  const forcedPlan = getDeveloperPlanOverride(data);
+  if (forcedPlan) {
+    return forcedPlan === "premium";
   }
   return Boolean(
     stripeHasSubscription ||
@@ -87,7 +113,7 @@ exports.handler = async (event) => {
   console.log("[get-subscription-status] config check");
   if (event.httpMethod !== "POST") {
     console.error("[get-subscription-status] returning 405: method not allowed");
-    return { statusCode: 405, body: JSON.stringify({ error: "Method not allowed" }) };
+    return jsonResponse({ error: "Method not allowed" }, 405);
   }
   if (!stripe || !adminSupabase) {
     console.error("[get-subscription-status] returning 500: missing server configuration", {
@@ -97,7 +123,7 @@ exports.handler = async (event) => {
       hasStripeClient: Boolean(stripe),
       hasAdminSupabase: Boolean(adminSupabase)
     });
-    return { statusCode: 500, body: JSON.stringify({ error: "Missing server configuration" }) };
+    return jsonResponse({ error: "Missing server configuration" }, 500);
   }
 
   console.log("[get-subscription-status] auth header/token check");
@@ -105,27 +131,45 @@ exports.handler = async (event) => {
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
   if (!token) {
     console.error("[get-subscription-status] returning 401: missing auth token");
-    return { statusCode: 401, body: JSON.stringify({ error: "Missing auth token" }) };
+    return jsonResponse({ error: "Missing auth token" }, 401);
   }
 
   console.log("[get-subscription-status] adminSupabase.auth.getUser");
   const { data: authData, error: authErr } = await adminSupabase.auth.getUser(token);
   if (authErr || !authData?.user) {
     console.error("[get-subscription-status] returning 401: invalid auth token", authErr ? authErr.message : "");
-    return { statusCode: 401, body: JSON.stringify({ error: "Invalid auth token" }) };
+    return jsonResponse({ error: "Invalid auth token" }, 401);
   }
 
   const user = authData.user;
+  const { data: profileData, error: profileErr } = await adminSupabase
+    .from("profiles")
+    .select("premium, manual_premium")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (profileErr) {
+    throw new Error(`Supabase profile lookup failed: ${profileErr.message}`);
+  }
+  const forcedPlan = getDeveloperPlanOverride(profileData);
+  if (forcedPlan) {
+    const hasPremiumAccess = forcedPlan === "premium";
+    await syncPremiumFlag(user.id, hasPremiumAccess);
+    console.log("[get-subscription-status] successful return: developer override");
+    return jsonResponse({
+      hasSubscription: hasPremiumAccess,
+      status: hasPremiumAccess ? "developer_premium" : "developer_free",
+      customerId: "",
+      subscriptionId: ""
+    }, 200);
+  }
+
   const email = String(user.email || "").trim();
   if (!email) {
     console.log("[get-subscription-status] no email on user, syncing free plan");
     await syncPremiumFlag(user.id, false);
     const hasPremiumAccess = await getProfilePremiumAccess(user.id, false);
     console.log("[get-subscription-status] successful return: free plan with no email");
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ hasSubscription: hasPremiumAccess, status: "none", customerId: "", subscriptionId: "" })
-    };
+    return jsonResponse({ hasSubscription: hasPremiumAccess, status: "none", customerId: "", subscriptionId: "" }, 200);
   }
 
   try {
@@ -134,18 +178,11 @@ exports.handler = async (event) => {
     await syncPremiumFlag(user.id, result.hasSubscription);
     result.hasSubscription = await getProfilePremiumAccess(user.id, result.hasSubscription);
     console.log("[get-subscription-status] successful return");
-    return {
-      statusCode: 200,
-      body: JSON.stringify(result)
-    };
+    return jsonResponse(result, 200);
   } catch (err) {
     console.error("[get-subscription-status] subscription lookup failed");
     console.error("[get-subscription-status] message:", err && err.message ? err.message : err);
     console.error("[get-subscription-status] stack:", err && err.stack ? err.stack : "(no stack trace available)");
-    return {
-      statusCode: 500,
-      headers: { "Content-Type": "text/plain" },
-      body: `${err && err.message ? err.message : "Could not verify subscription."}\n\n${err && err.stack ? err.stack : ""}`
-    };
+    return jsonResponse({ error: "Could not verify subscription." }, 500);
   }
 };

@@ -23,53 +23,67 @@ function getRuntime(env) {
   };
 }
 
+function jsonResponse(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "Content-Type": "application/json" }
+  });
+}
+
 export async function onRequest(context) {
   const { request, env = {} } = context;
   const { stripe, stripePriceId, adminSupabase } = getRuntime(env);
 
   if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), { status: 405 });
+    return jsonResponse({ error: "Method not allowed" }, 405);
   }
   if (!stripe || !adminSupabase || !stripePriceId) {
-    return new Response(JSON.stringify({ error: "Missing server configuration" }), { status: 500 });
+    return jsonResponse({ error: "Missing server configuration" }, 500);
   }
 
   const authHeader = request.headers.get("authorization") || "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
   if (!token) {
-    return new Response(JSON.stringify({ error: "Missing auth token" }), { status: 401 });
+    return jsonResponse({ error: "Missing auth token" }, 401);
   }
 
-  const { data: authData, error: authErr } = await adminSupabase.auth.getUser(token);
-  if (authErr || !authData?.user) {
-    return new Response(JSON.stringify({ error: "Invalid auth token" }), { status: 401 });
-  }
-  const user = authData.user;
+  try {
+    const { data: authData, error: authErr } = await adminSupabase.auth.getUser(token);
+    if (authErr || !authData?.user) {
+      return jsonResponse({ error: "Invalid auth token" }, 401);
+    }
+    const user = authData.user;
 
-  const origin = request.headers.get("origin") || "https://chiplogger.com";
-  const successUrl = `${origin}/?checkout=success`;
-  const cancelUrl = `${origin}/?checkout=cancel`;
+    const origin = request.headers.get("origin") || "https://chiplogger.com";
+    const successUrl = `${origin}/?checkout=success`;
+    const cancelUrl = `${origin}/?checkout=cancel`;
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    mode: "subscription",
-    line_items: [
-      {
-        price: stripePriceId,
-        quantity: 1
-      }
-    ],
-    success_url: successUrl,
-    cancel_url: cancelUrl,
-    customer_email: user.email || undefined,
-    subscription_data: {
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: "subscription",
+      line_items: [
+        {
+          price: stripePriceId,
+          quantity: 1
+        }
+      ],
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      customer_email: user.email || undefined,
+      subscription_data: {
+        metadata: {
+          supabase_user_id: user.id
+        }
+      },
       metadata: {
         supabase_user_id: user.id
       }
-    },
-    metadata: {
-      supabase_user_id: user.id
-    }
-  });
+    });
 
-  return new Response(JSON.stringify({ url: checkoutSession.url }), { status: 200 });
+    return jsonResponse({ url: checkoutSession.url }, 200);
+  } catch (err) {
+    console.error("[create-checkout-session] checkout session creation failed");
+    console.error("[create-checkout-session] message:", err && err.message ? err.message : err);
+    console.error("[create-checkout-session] stack:", err && err.stack ? err.stack : "(no stack trace available)");
+    return jsonResponse({ error: "Could not start checkout." }, 500);
+  }
 }
