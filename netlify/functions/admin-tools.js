@@ -419,10 +419,21 @@ async function handleClearAccountData(user) {
   if (sessionsErr) {
     throw new Error(`Supabase account cleanup failed: ${sessionsErr.message}`);
   }
-  await updateProfileRow(user.id, {
-    starting_bankroll: 0,
-    saved_locations: []
-  });
+  try {
+    await updateProfileRow(user.id, {
+      starting_bankroll: 0,
+      saved_locations: []
+    });
+  } catch (err) {
+    const message = String(err && err.message ? err.message : err || "").toLowerCase();
+    if (message.includes("saved_locations") && (message.includes("column") || message.includes("schema cache"))) {
+      await updateProfileRow(user.id, {
+        starting_bankroll: 0
+      });
+    } else {
+      throw err;
+    }
+  }
   return {
     ...(await buildSummary(user)),
     removed: {
