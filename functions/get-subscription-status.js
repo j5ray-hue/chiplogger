@@ -2,10 +2,11 @@ import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
+const DEFAULT_SUPABASE_URL = "https://gaobxnzfiogklkoueldd.supabase.co";
 
 function getRuntime(env) {
   const stripeSecretKey = env.STRIPE_SECRET_KEY;
-  const supabaseUrl = env.SUPABASE_URL;
+  const supabaseUrl = env.SUPABASE_URL || DEFAULT_SUPABASE_URL;
   const supabaseServiceRoleKey = env.SUPABASE_SERVICE_ROLE_KEY;
 
   const stripe = stripeSecretKey
