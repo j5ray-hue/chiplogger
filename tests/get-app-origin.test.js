@@ -14,11 +14,12 @@ test("prefers the request URL origin over the Origin header", () => {
   assert.equal(origin, "https://app.chiplogger.com");
 });
 
-test("supports Netlify rawUrl requests", () => {
+test("supports Cloudflare forwarded host requests", () => {
   const origin = getAppOrigin({
-    rawUrl: "https://preview.chiplogger.com/.netlify/functions/create-checkout-session",
+    url: "https://preview.chiplogger.com/create-checkout-session",
     headers: {
-      host: "ignored.example"
+      "x-forwarded-host": "preview.chiplogger.com",
+      "x-forwarded-proto": "https"
     }
   });
 

@@ -1,0 +1,6 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
+
+name = "chiplogger-site"
+pages_build_output_dir = "."
+compatibility_date = "2026-05-31"
+compatibility_flags = ["nodejs_compat"]
