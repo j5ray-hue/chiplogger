@@ -14106,6 +14106,12 @@
         const data = await postAdminTools({ action, ...payload });
         if (action === "clear-account-data") {
           clearDeveloperLocalCaches();
+          sessions.length = 0;
+          bankrollChanges.length = 0;
+          pendingSessionHands = [];
+          savedLocations = [];
+          sessionFolders = [];
+          handFolders = [];
         }
         await loadDataFromSupabase();
         recomputeBankroll();
@@ -26382,6 +26388,11 @@
         return;
       }
       applyRouteForCurrentAuthState({ restoreScroll: true });
+    });
+
+    window.addEventListener("pageshow", (event) => {
+      if (!event.persisted) return;
+      restoreAuthSessionOnLoad();
     });
 
     if (supabaseClient) {
