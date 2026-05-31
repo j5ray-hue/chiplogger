@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import normalizeSubscriptionStatus from "../shared/normalize-subscription-status.cjs";
 
 const ACTIVE_STATUSES = new Set(["active", "trialing", "past_due"]);
 const DEFAULT_SUPABASE_URL = "https://gaobxnzfiogklkoueldd.supabase.co";

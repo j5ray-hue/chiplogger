@@ -1,5 +1,6 @@
 const Stripe = require("stripe");
 const { createClient } = require("@supabase/supabase-js");
+const getAppOrigin = require("../../shared/get-app-origin.cjs");
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripePriceId = process.env.STRIPE_PRICE_ID;
@@ -40,7 +41,7 @@ exports.handler = async (event) => {
     }
     const user = authData.user;
 
-    const origin = event.headers.origin || event.headers.Origin || "https://chiplogger.com";
+    const origin = getAppOrigin(event);
     const successUrl = `${origin}/?checkout=success`;
     const cancelUrl = `${origin}/?checkout=cancel`;
 

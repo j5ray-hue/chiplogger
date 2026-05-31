@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import getAppOrigin from "../shared/get-app-origin.cjs";
 
 const DEFAULT_SUPABASE_URL = "https://gaobxnzfiogklkoueldd.supabase.co";
 
@@ -54,7 +55,7 @@ export async function onRequest(context) {
     }
     const user = authData.user;
 
-    const origin = request.headers.get("origin") || "https://chiplogger.com";
+    const origin = getAppOrigin(request);
     const successUrl = `${origin}/?checkout=success`;
     const cancelUrl = `${origin}/?checkout=cancel`;
 
