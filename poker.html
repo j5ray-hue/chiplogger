@@ -9455,14 +9455,6 @@
           <input id="newPassword" type="password" placeholder="Minimum 6 characters" />
         </div>
 
-        <div class="field">
-          <label for="authMethod">Authenticate via</label>
-          <select id="authMethod">
-            <option value="text">Text</option>
-            <option value="email">Email</option>
-          </select>
-        </div>
-
         <div class="auth-actions">
           <button id="createAccountBtn" type="button">Create Account</button>
           <button id="backToLoginBtn" class="secondary-btn" type="button">Back</button>
@@ -9482,8 +9474,6 @@
           name="support"
           method="POST"
           action="/contact"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
         >
           <input type="hidden" name="form-name" value="support" />
           <input id="authSupportBotField" name="bot-field" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" hidden class="field--honeypot" />
@@ -9511,16 +9501,22 @@
     </main>
 
     <main id="authCodeScreen" class="screen hidden">
+      <button id="authPendingBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
       <div class="auth-wrap">
-        <h1 class="title">Authentication Code</h1>
-        <p class="subtitle">Enter the code from text or email.</p>
+        <h1 class="title">Check Your Email</h1>
+        <p id="authPendingMessage" class="subtitle">Use the confirmation link in your email to finish creating your account.</p>
 
         <div class="field">
-          <label for="authCodeInput">Code</label>
-          <input id="authCodeInput" type="text" placeholder="123456" />
+          <label for="authPendingEmailInput">Email</label>
+          <input id="authPendingEmailInput" type="email" placeholder="you@example.com" />
         </div>
 
-        <button id="completeAuthBtn" type="button">Continue to Home</button>
+        <div class="auth-actions">
+          <button id="authResendConfirmationBtn" type="button">Resend Confirmation</button>
+          <button id="completeAuthBtn" class="secondary-btn" type="button">Back to Sign In</button>
+        </div>
+        <button id="authPendingSupportBtn" class="forgot-password-link" type="button">Need help?</button>
+        <p id="authPendingStatus" class="save-message" aria-live="polite"></p>
       </div>
     </main>
 
@@ -9834,8 +9830,6 @@
             name="support"
             method="POST"
             action="/contact"
-            data-netlify="true"
-            netlify-honeypot="bot-field"
           >
             <input type="hidden" name="form-name" value="support" />
             <input id="supportBotField" name="bot-field" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" hidden class="field--honeypot" />
@@ -10946,6 +10940,12 @@
     const backToLoginBtn = document.getElementById("backToLoginBtn");
     const needHelpSigningInBtn = document.getElementById("needHelpSigningInBtn");
     const needHelpJoiningBtn = document.getElementById("needHelpJoiningBtn");
+    const authPendingBackBtn = document.getElementById("authPendingBackBtn");
+    const authPendingMessage = document.getElementById("authPendingMessage");
+    const authPendingEmailInput = document.getElementById("authPendingEmailInput");
+    const authResendConfirmationBtn = document.getElementById("authResendConfirmationBtn");
+    const authPendingSupportBtn = document.getElementById("authPendingSupportBtn");
+    const authPendingStatus = document.getElementById("authPendingStatus");
     const completeAuthBtn = document.getElementById("completeAuthBtn");
     const resetPasswordInput = document.getElementById("resetPasswordInput");
     const resetPasswordConfirmInput = document.getElementById("resetPasswordConfirmInput");
@@ -10992,7 +10992,6 @@
     const newPhoneInput = document.getElementById("newPhone");
     const newEmailInput = document.getElementById("newEmail");
     const newPasswordInput = document.getElementById("newPassword");
-    const authMethodSelect = document.getElementById("authMethod");
     const leftPanel = document.getElementById("leftPanel");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
     const avatarBtn = document.getElementById("avatarBtn");
@@ -11591,6 +11590,11 @@
     const supabaseClient = window.supabase && window.supabase.createClient
       ? window.supabase.createClient(supabaseProjectUrl, supabaseAnonKey)
       : null;
+    const AUTH_CONFIRMATION_RESEND_COOLDOWN_MS = 60 * 1000;
+    let pendingConfirmationEmail = "";
+    let confirmationResendAvailableAt = 0;
+    let confirmationResendTimerId = null;
+    let authSignedInEntryPending = false;
     const LANDING_TABLE_SCALE = 1.16;
     const LANDING_FEATURES_PEEK_MIN_PX = 52;
     const LANDING_FEATURES_PEEK_MAX_PX = 86;
@@ -12677,6 +12681,130 @@
       }
     }
 
+    function getAuthRedirectUrl(path = "/auth/login") {
+      const url = new URL("/poker.html", window.location.origin);
+      url.searchParams.set("path", path);
+      return url.toString();
+    }
+
+    function getAuthEmailRedirectUrl() {
+      return getAuthRedirectUrl("/auth/login");
+    }
+
+    function getAuthErrorText(error, fallback = "Authentication failed.") {
+      const raw = String(error && error.message ? error.message : error || "").trim();
+      const code = String(error && (error.code || error.error_code) ? (error.code || error.error_code) : "").trim();
+      const status = Number(error && error.status ? error.status : 0);
+      const lower = `${raw} ${code}`.toLowerCase();
+      if (status === 429 || lower.includes("rate limit") || lower.includes("over_email_send_rate_limit") || lower.includes("email rate")) {
+        return "Too many emails were requested. Wait a few minutes, then use Resend confirmation instead of creating another account.";
+      }
+      if (lower.includes("email not confirmed") || lower.includes("not confirmed")) {
+        return "This account still needs email confirmation. Check your inbox or resend the confirmation email.";
+      }
+      if (lower.includes("already registered") || lower.includes("already exists") || lower.includes("user exists")) {
+        return "This email may already have an account. Try signing in, or resend the confirmation email if you have not confirmed it yet.";
+      }
+      if (lower.includes("invalid login credentials")) {
+        return "The email or password does not match an account. If you just created this account, confirm your email first.";
+      }
+      return raw || fallback;
+    }
+
+    function isAuthRateLimitError(error) {
+      const raw = String(error && error.message ? error.message : error || "").toLowerCase();
+      const code = String(error && (error.code || error.error_code) ? (error.code || error.error_code) : "").toLowerCase();
+      const status = Number(error && error.status ? error.status : 0);
+      return status === 429 || raw.includes("rate limit") || code.includes("rate_limit") || code.includes("over_email_send_rate_limit");
+    }
+
+    function isEmailNotConfirmedError(error) {
+      const raw = String(error && error.message ? error.message : error || "").toLowerCase();
+      const code = String(error && (error.code || error.error_code) ? (error.code || error.error_code) : "").toLowerCase();
+      return raw.includes("email not confirmed") || raw.includes("not confirmed") || code.includes("email_not_confirmed");
+    }
+
+    function isExistingAccountSignupError(error) {
+      const raw = String(error && error.message ? error.message : error || "").toLowerCase();
+      const code = String(error && (error.code || error.error_code) ? (error.code || error.error_code) : "").toLowerCase();
+      return raw.includes("already registered") || raw.includes("already exists") || raw.includes("user exists") || code.includes("user_already_exists");
+    }
+
+    function getPendingConfirmationEmail() {
+      return String(
+        (authPendingEmailInput && authPendingEmailInput.value) ||
+        pendingConfirmationEmail ||
+        (newEmailInput && newEmailInput.value) ||
+        (emailInput && emailInput.value) ||
+        ""
+      ).trim();
+    }
+
+    function setAuthPendingStatus(message, kind = "") {
+      if (!authPendingStatus) return;
+      authPendingStatus.textContent = message || "";
+      authPendingStatus.style.color = kind === "success" ? "#86efac" : kind === "error" ? "#fca5a5" : "";
+    }
+
+    function syncConfirmationResendButton() {
+      if (!authResendConfirmationBtn) return;
+      const email = getPendingConfirmationEmail();
+      const remainingMs = Math.max(0, confirmationResendAvailableAt - Date.now());
+      if (remainingMs > 0) {
+        authResendConfirmationBtn.disabled = true;
+        authResendConfirmationBtn.textContent = `Resend in ${Math.ceil(remainingMs / 1000)}s`;
+        return;
+      }
+      if (confirmationResendTimerId) {
+        window.clearInterval(confirmationResendTimerId);
+        confirmationResendTimerId = null;
+      }
+      authResendConfirmationBtn.disabled = !email;
+      authResendConfirmationBtn.textContent = "Resend Confirmation";
+    }
+
+    function startConfirmationResendCooldown(durationMs = AUTH_CONFIRMATION_RESEND_COOLDOWN_MS) {
+      confirmationResendAvailableAt = Date.now() + durationMs;
+      if (confirmationResendTimerId) window.clearInterval(confirmationResendTimerId);
+      confirmationResendTimerId = window.setInterval(syncConfirmationResendButton, 500);
+      syncConfirmationResendButton();
+    }
+
+    function showPendingConfirmation(email, message = "", options = {}) {
+      pendingConfirmationEmail = String(email || "").trim();
+      if (authPendingEmailInput) {
+        authPendingEmailInput.value = pendingConfirmationEmail;
+      }
+      if (authPendingMessage) {
+        authPendingMessage.textContent = message || "Use the confirmation link in your email to finish creating your account.";
+      }
+      setAuthPendingStatus("", "");
+      showAuthScreen("code", {
+        replaceRoute: options.replaceRoute !== false,
+        preserveBackTarget: options.preserveBackTarget === true
+      });
+      syncConfirmationResendButton();
+    }
+
+    function showConfirmationResendProblem(error) {
+      const message = getAuthErrorText(error, "Could not resend the confirmation email.");
+      setAuthPendingStatus(message, "error");
+      if (isAuthRateLimitError(error)) {
+        startConfirmationResendCooldown(2 * AUTH_CONFIRMATION_RESEND_COOLDOWN_MS);
+      } else {
+        syncConfirmationResendButton();
+      }
+    }
+
+    function bindEnterToButton(inputEl, buttonEl) {
+      if (!inputEl || !buttonEl) return;
+      inputEl.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" || event.shiftKey || event.isComposing) return;
+        event.preventDefault();
+        buttonEl.click();
+      });
+    }
+
     let landingIntroTimerId = null;
     let landingAuthRevealTimerId = null;
     const LANDING_INTRO_ANIMATION_MS = 5000;
@@ -13103,6 +13231,118 @@
       handFolders = [];
     }
 
+    function getLoadedAccountSessionIds() {
+      return [...new Set(sessions
+        .map((session) => session && session.id ? String(session.id) : "")
+        .filter(Boolean))];
+    }
+
+    function chunkCleanupValues(values, size = 100) {
+      const chunks = [];
+      for (let index = 0; index < values.length; index += size) {
+        chunks.push(values.slice(index, index + size));
+      }
+      return chunks;
+    }
+
+    async function getSupabaseAccountSessionIds() {
+      if (!supabaseClient || !currentUserId) return getLoadedAccountSessionIds();
+      const { data, error } = await supabaseClient
+        .from("sessions")
+        .select("session_id")
+        .eq("user_id", currentUserId);
+      if (error) {
+        throw new Error(`Could not load account sessions for cleanup: ${error.message}`);
+      }
+      return [...new Set([
+        ...getLoadedAccountSessionIds(),
+        ...(data || []).map((row) => row && row.session_id ? String(row.session_id) : "")
+      ].filter(Boolean))];
+    }
+
+    async function runClientCleanupQuery(query, label) {
+      const { error } = await query;
+      if (error) {
+        throw new Error(`Could not remove ${label}: ${error.message}`);
+      }
+    }
+
+    async function deleteClientRowsByUserId(table, label) {
+      await runClientCleanupQuery(
+        supabaseClient.from(table).delete().eq("user_id", currentUserId),
+        label
+      );
+    }
+
+    async function deleteClientRowsBySessionIds(table, sessionIds, label) {
+      for (const chunk of chunkCleanupValues(sessionIds)) {
+        await runClientCleanupQuery(
+          supabaseClient.from(table).delete().in("session_id", chunk),
+          label
+        );
+      }
+    }
+
+    async function clearProfileAccountDataViaClient() {
+      if (!supabaseClient || !currentUserId) return;
+      let { error } = await supabaseClient.from("profiles").update({
+        starting_bankroll: 0,
+        saved_locations: []
+      }).eq("user_id", currentUserId);
+      if (error && isMissingSavedLocationsColumnError(error)) {
+        profileSavedLocationsSupported = false;
+        ({ error } = await supabaseClient.from("profiles").update({
+          starting_bankroll: 0
+        }).eq("user_id", currentUserId));
+      }
+      if (error) {
+        throw new Error(`Could not reset profile data: ${error.message}`);
+      }
+    }
+
+    async function clearAccountDataViaClientSupabase() {
+      if (!supabaseClient || !currentUserId) {
+        throw new Error("Sign in first.");
+      }
+      const sessionIds = await getSupabaseAccountSessionIds();
+      await runClientCleanupQuery(
+        supabaseClient.from("sessions").update({ bankroll_change_id: null }).eq("user_id", currentUserId),
+        "session bankroll links"
+      );
+      await deleteClientRowsByUserId("hands", "hands");
+      await deleteClientRowsBySessionIds("hands", sessionIds, "hands");
+      await deleteClientRowsByUserId("bankroll_changes", "bankroll changes");
+      await deleteClientRowsBySessionIds("bankroll_changes", sessionIds, "bankroll changes");
+      await deleteClientRowsByUserId("sessions", "sessions");
+      await clearProfileAccountDataViaClient();
+      return { ok: true };
+    }
+
+    function resetAccountDataState(options = {}) {
+      if (options.clearDeveloperCaches !== false) {
+        clearDeveloperLocalCaches();
+      }
+      sessions.length = 0;
+      bankrollChanges.length = 0;
+      pendingSessionHands = [];
+      savedLocations = [];
+      sessionFolders = [];
+      handFolders = [];
+      editingSessionIndex = null;
+      editingHandSessionIndex = null;
+      editingHandIndex = null;
+      currentHandDetailEntry = null;
+      activeBankrollChangeId = null;
+      sessionDetailReturnFolderId = null;
+      setSessionLocationPickerSelection("");
+      setSessionLocationPanelOpen(false);
+      if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
+      if (sessionLocationNewInput) sessionLocationNewInput.value = "";
+      recomputeBankroll();
+      populateHistoryToolbarLocationSelect();
+      renderSessionLocationPickerList();
+    }
+
     function loadHandFoldersFromStorage() {
       try {
         const raw = window.localStorage.getItem(handFolderStorageKey());
@@ -13280,7 +13520,7 @@
       const payload = {
         user_id: user.id,
         name: defaults.name || user.user_metadata?.full_name || "",
-        phone: defaults.phone || "",
+        phone: defaults.phone || user.user_metadata?.phone || "",
         theme: normalizeThemeValue(themeSelect ? themeSelect.value : "dark"),
         starting_bankroll: Number(defaults.startingBankroll || 0)
       };
@@ -14111,13 +14351,7 @@
       try {
         const data = await postAdminTools({ action, ...payload });
         if (action === "clear-account-data") {
-          clearDeveloperLocalCaches();
-          sessions.length = 0;
-          bankrollChanges.length = 0;
-          pendingSessionHands = [];
-          savedLocations = [];
-          sessionFolders = [];
-          handFolders = [];
+          resetAccountDataState();
         }
         await loadDataFromSupabase();
         recomputeBankroll();
@@ -14138,17 +14372,24 @@
           setAdminStatus(successMessage || `Added ${localResult.inserted?.sessions || 0} ${localCountLabel}.`, "is-success");
           return localResult;
         }
-        if (action === "clear-account-data" && isPermissionProblem) {
-          clearAdminSeedStore();
-          sessions.length = 0;
-          bankrollChanges.length = 0;
-          await loadDataFromSupabase();
-          recomputeBankroll();
-          renderAll();
-          adminDashboardState.summary = buildAdminDashboardSummaryFromCurrentState();
-          renderAdminDashboard();
-          setAdminStatus(successMessage || "Removed local developer test data.", "is-success");
-          return { ok: true, localOnly: true };
+        const isMissingServerConfig = lowerMessage.includes("missing server configuration");
+        if (action === "clear-account-data" && (isPermissionProblem || isMissingServerConfig)) {
+          try {
+            await clearAccountDataViaClientSupabase();
+            resetAccountDataState();
+            await loadDataFromSupabase();
+            recomputeBankroll();
+            renderAll();
+            adminDashboardState.summary = buildAdminDashboardSummaryFromCurrentState();
+            renderAdminDashboard();
+            setAdminStatus(successMessage || "Removed account data.", "is-success");
+            return { ok: true, clientFallback: true };
+          } catch (fallbackErr) {
+            console.error(fallbackErr);
+            const fallbackMessage = fallbackErr && fallbackErr.message ? fallbackErr.message : "Could not remove account data.";
+            setAdminStatus(fallbackMessage, "is-error");
+            throw fallbackErr;
+          }
         }
         console.error(err);
         setAdminStatus(message || "Action failed.", "is-error");
@@ -24378,13 +24619,19 @@
       }
       const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
       if (error || !data.user) {
-        window.alert(error?.message || "Sign in failed.");
+        if (isEmailNotConfirmedError(error)) {
+          showPendingConfirmation(email, "This account still needs email confirmation. Check your inbox or resend the confirmation email.");
+          return;
+        }
+        window.alert(getAuthErrorText(error, "Sign in failed."));
         return;
       }
       syncProfileViewFromState({ name: "", phone: "" }, data.user.email || "");
       await ensureProfileForUser(data.user);
       await enterApp(data.user);
     });
+    bindEnterToButton(emailInput, signInBtn);
+    bindEnterToButton(passwordInput, signInBtn);
     if (forgotPasswordBtn) {
       forgotPasswordBtn.addEventListener("click", async () => {
         if (!supabaseClient) {
@@ -24397,15 +24644,19 @@
           emailInput?.focus();
           return;
         }
-        const redirectTo = `${window.location.origin}/auth/reset`;
+        const redirectTo = getAuthRedirectUrl("/auth/reset");
         const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
         if (error) {
-          window.alert(error.message || "Could not send password reset email.");
+          window.alert(getAuthErrorText(error, "Could not send password reset email."));
           return;
         }
         window.alert("Password reset email sent. Check your inbox.");
       });
     }
+    bindEnterToButton(newNameInput, createAccountBtn);
+    bindEnterToButton(newPhoneInput, createAccountBtn);
+    bindEnterToButton(newEmailInput, createAccountBtn);
+    bindEnterToButton(newPasswordInput, createAccountBtn);
     topSignInBtn.addEventListener("click", () => showAuthScreen("login"));
     topCreateAccountBtn.addEventListener("click", () => showAuthScreen("create"));
     if (landingPlanSignInBtn) {
@@ -25267,6 +25518,54 @@
     if (needHelpJoiningBtn) {
       needHelpJoiningBtn.addEventListener("click", () => showAuthScreen("support"));
     }
+    if (authPendingBackBtn) {
+      authPendingBackBtn.addEventListener("click", restoreAuthBackState);
+    }
+    if (authPendingEmailInput) {
+      authPendingEmailInput.addEventListener("input", () => {
+        pendingConfirmationEmail = authPendingEmailInput.value.trim();
+        syncConfirmationResendButton();
+      });
+    }
+    if (authResendConfirmationBtn) {
+      authResendConfirmationBtn.addEventListener("click", async () => {
+        if (!supabaseClient) {
+          setAuthPendingStatus("Supabase is not loaded yet. Refresh and try again.", "error");
+          return;
+        }
+        const email = getPendingConfirmationEmail();
+        if (!email) {
+          setAuthPendingStatus("Enter your email first.", "error");
+          authPendingEmailInput?.focus();
+          syncConfirmationResendButton();
+          return;
+        }
+        if (confirmationResendAvailableAt > Date.now()) {
+          syncConfirmationResendButton();
+          return;
+        }
+        pendingConfirmationEmail = email;
+        authResendConfirmationBtn.disabled = true;
+        authResendConfirmationBtn.textContent = "Sending...";
+        setAuthPendingStatus("", "");
+        const { error } = await supabaseClient.auth.resend({
+          type: "signup",
+          email,
+          options: {
+            emailRedirectTo: getAuthEmailRedirectUrl()
+          }
+        });
+        if (error) {
+          showConfirmationResendProblem(error);
+          return;
+        }
+        setAuthPendingStatus("Confirmation email sent. Check your inbox.", "success");
+        startConfirmationResendCooldown();
+      });
+    }
+    if (authPendingSupportBtn) {
+      authPendingSupportBtn.addEventListener("click", () => showAuthScreen("support"));
+    }
     createAccountBtn.addEventListener("click", async () => {
       if (!supabaseClient) {
         window.alert("Supabase is not loaded yet. Refresh and try again.");
@@ -25276,11 +25575,6 @@
       const password = newPasswordInput?.value || "";
       const name = (newNameInput?.value || "").trim();
       const phone = (newPhoneInput?.value || "").trim();
-      const selectedMethod = authMethodSelect ? authMethodSelect.value : "email";
-      if (selectedMethod !== "email") {
-        window.alert("Only email/password sign-up is enabled right now.");
-        return;
-      }
       if (!email || !password) {
         window.alert("Enter email and password to create an account.");
         return;
@@ -25289,33 +25583,50 @@
         window.alert("Password must be at least 6 characters.");
         return;
       }
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: name
+      const originalButtonText = createAccountBtn.textContent;
+      createAccountBtn.disabled = true;
+      createAccountBtn.textContent = "Creating...";
+      try {
+        const { data, error } = await supabaseClient.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: getAuthEmailRedirectUrl(),
+            data: {
+              full_name: name,
+              phone
+            }
           }
+        });
+        if (error || !data.user) {
+          if (isAuthRateLimitError(error) || isExistingAccountSignupError(error)) {
+            showPendingConfirmation(email, getAuthErrorText(error, "Check your email to finish creating your account."));
+            if (isAuthRateLimitError(error)) {
+              startConfirmationResendCooldown(2 * AUTH_CONFIRMATION_RESEND_COOLDOWN_MS);
+            }
+            return;
+          }
+          window.alert(getAuthErrorText(error, "Could not create account."));
+          return;
         }
-      });
-      if (error || !data.user) {
-        window.alert(error?.message || "Could not create account.");
-        return;
-      }
-      await ensureProfileForUser(data.user, {
-        name,
-        phone
-      });
-      syncProfileViewFromState({ name, phone }, email);
-      if (data.session) {
-        await enterApp(data.user);
-      } else {
-        window.alert("Account created. Check your email to confirm, then sign in.");
-        showAuthScreenAfterBackTarget("login");
+        syncProfileViewFromState({ name, phone }, email);
+        if (data.session) {
+          await ensureProfileForUser(data.user, {
+            name,
+            phone
+          });
+          await enterApp(data.user);
+        } else {
+          showPendingConfirmation(email, "Account created. Use the confirmation link in your email to finish setup.");
+        }
+      } finally {
+        createAccountBtn.disabled = false;
+        createAccountBtn.textContent = originalButtonText;
       }
     });
     completeAuthBtn.addEventListener("click", () => {
-      window.alert("Code-based auth is disabled. Use email + password sign in.");
+      const email = getPendingConfirmationEmail();
+      if (emailInput && email) emailInput.value = email;
       showAuthScreenAfterBackTarget("login");
     });
 
@@ -26400,18 +26711,36 @@
 
     if (supabaseClient) {
       supabaseClient.auth.onAuthStateChange((event, session) => {
-        if (event !== "PASSWORD_RECOVERY") return;
-        currentUserId = session?.user?.id || null;
-        if (session?.user?.email) {
-          syncProfileViewFromState({ name: "", phone: "" }, session.user.email);
+        if (event === "PASSWORD_RECOVERY") {
+          currentUserId = session?.user?.id || null;
+          if (session?.user?.email) {
+            syncProfileViewFromState({ name: "", phone: "" }, session.user.email);
+          }
+          showAuthScreen("reset", { replaceRoute: true });
+          return;
         }
-        showAuthScreen("reset", { replaceRoute: true });
+        if (event === "SIGNED_IN" && session?.user && !isSignedIn && !authSignedInEntryPending) {
+          authSignedInEntryPending = true;
+          window.setTimeout(async () => {
+            try {
+              if (!isSignedIn && session?.user) {
+                syncProfileViewFromState({ name: "", phone: "" }, session.user.email || "");
+                await ensureProfileForUser(session.user);
+                await enterApp(session.user, { replaceRoute: true });
+              }
+            } catch (err) {
+              console.error("Could not finish email-link sign in", err);
+              window.alert(getAuthErrorText(err, "Could not finish signing in. Try signing in again."));
+            } finally {
+              authSignedInEntryPending = false;
+            }
+          }, 0);
+        }
       });
     }
 
     initializeAddSessionForm();
     initializeManualBankrollDateInput();
-    if (authMethodSelect) authMethodSelect.value = "email";
     if (themeSelect) themeSelect.value = readStoredThemePreference();
     toggleCustomStakeField();
     showSettingsPanel("generalPanel");

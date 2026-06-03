@@ -1,6 +1,6 @@
 # Cloudflare Deployment
 
-This project is set up for **Cloudflare Pages** now, not Netlify.
+This project is set up for **Cloudflare Pages**.
 
 ## Final deployment steps
 
@@ -34,7 +34,12 @@ npx wrangler pages deploy . --project-name chiplogger-site
 
 - `https://chiplogger.com/stripe-webhook`
 
-6. Smoke test the live site:
+6. In Supabase Auth URL configuration, allow the app auth redirect URLs:
+
+- `https://chiplogger.com/poker.html?path=/auth/login`
+- `https://chiplogger.com/poker.html?path=/auth/reset`
+
+7. Smoke test the live site:
 
 - Open `https://chiplogger.com`
 - Confirm `/create-checkout-session`, `/get-subscription-status`, `/admin-tools`, and `/stripe-webhook` all resolve through Pages Functions
@@ -62,6 +67,4 @@ Set these in the Cloudflare Pages project settings:
 - `wrangler.toml` is configured for Pages output from the repo root.
 - The app shell is `index.html`, which redirects into `poker.html`.
 - The server endpoints live under `functions/` and are exposed at the root paths listed in `_routes.json`.
-- Netlify files are still present in the repo for history, but they are not part of the Cloudflare deploy path.
-- The old Netlify form attributes in `poker.html` are harmless, but they do not provide Netlify form handling on Cloudflare.
 - If the runtime complains about version mismatch or plugin loading, make sure `openclaw --version`, `which openclaw`, and the Gateway service are all using the same install.
