@@ -1000,6 +1000,25 @@
       min-width: 168px;
     }
 
+    @media (hover: none) and (pointer: coarse) and (max-width: 767px) {
+      .app-top-bar {
+        padding-top: max(8px, env(safe-area-inset-top, 0px));
+        padding-right: max(8px, env(safe-area-inset-right, 0px));
+        padding-left: max(8px, env(safe-area-inset-left, 0px));
+      }
+
+      .app-top-bar-profile .profile-menu {
+        position: fixed;
+        top: calc(max(8px, env(safe-area-inset-top, 0px)) + 44px);
+        right: max(8px, env(safe-area-inset-right, 0px));
+        left: auto;
+        width: min(184px, calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px)));
+        min-width: 0;
+        max-width: calc(100vw - 16px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+        box-sizing: border-box;
+      }
+    }
+
     .menu-item {
       width: 100%;
       margin: 0;
@@ -7734,6 +7753,41 @@
         width: 100%;
       }
 
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) {
+        width: min(74px, 20vw);
+        min-width: 58px;
+        height: auto;
+        min-height: 40px;
+        padding: 3px 5px;
+        border-radius: 10px;
+        flex-direction: column;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) .hand-seat-compact-num {
+        display: none;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) .hand-seat-details {
+        display: block;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) .hand-seat-label {
+        display: block;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) .hand-seat-value {
+        display: none;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-has-user-stack:not(.hand-seat-expanded) .hand-seat-value {
+        display: block;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) .hand-seat-equity,
+      .hand-table-felt .hand-seat.hand-seat-has-user-data:not(.hand-seat-expanded) .hand-seat-cards {
+        display: none;
+      }
+
       .hand-table-felt .hand-seat.hand-seat-expanded {
         width: min(76px, 21vw);
         min-width: 58px;
@@ -9716,6 +9770,12 @@
                   <option value="light">Light mode</option>
                 </select>
               </div>
+              <div class="field">
+                <label for="startingBankrollInput">Starting Bankroll</label>
+                <input id="startingBankrollInput" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" />
+                <p class="hint" style="margin: 6px 0 0;">Used as the first point of your bankroll graph and included in your current bankroll.</p>
+                <p id="startingBankrollStatus" class="save-message" aria-live="polite"></p>
+              </div>
             </div>
           </div>
 
@@ -11066,6 +11126,8 @@
     const paymentPlanPurchaseBtn = document.getElementById("paymentPlanPurchaseBtn");
     const paymentPlanNote = document.getElementById("paymentPlanNote");
     const themeSelect = document.getElementById("themeSelect");
+    const startingBankrollInput = document.getElementById("startingBankrollInput");
+    const startingBankrollStatus = document.getElementById("startingBankrollStatus");
     const folderBuilderModal = document.getElementById("folderBuilderModal");
     const folderBuilderPanel = document.getElementById("folderBuilderPanel");
     const folderBuilderCloseBtn = document.getElementById("folderBuilderCloseBtn");
@@ -11321,6 +11383,8 @@
     const handStreetForwardBtn = document.getElementById("handStreetForwardBtn");
 
     const UNKNOWN = "unknown";
+    const CUSTOM_STAKE_OPTION_VALUE = "custom";
+    const DEFAULT_STAKE_OPTIONS = ["1/2", "1/3", "2/5", "5/5", "5/10", "10/20", "25/50"];
     const PROFILE_EDIT_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>`;
     const PROFILE_SAVE_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>`;
     const HAND_REPLAY_PREV_ICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>`;
@@ -11338,6 +11402,7 @@
     let handSeatStacks = [];
     let handSeatStartingStacks = [];
     let handSeatNicknames = [];
+    let handSeatStackEdited = [];
     let handSeatCards = [];
     let lastHandPlayerCount = 6;
     let handHeroSeatIndex = null;
@@ -11400,6 +11465,7 @@
     let handExpandedSeatIndex = null;
     let handReplayExpandedSeatIndex = null;
     let handSeatPhoneUiBound = false;
+    let handSaveInProgress = false;
     let currentHandDetailEntry = null;
     let handDetailReturnViewId = "handHistoryView";
     let editingHandSessionIndex = null;
@@ -11467,6 +11533,8 @@
     const sessions = [];
     /** User-defined location names (persisted in profile.saved_locations). */
     let savedLocations = [];
+    /** Reusable non-default stakes entered through the custom stake field. */
+    let savedCustomStakes = [];
     /** History surface mode: "list" (default) or "grid" (folders). */
     let historyDisplayMode = "list";
     /** User-created folder groupings for sessions (local storage). */
@@ -11503,6 +11571,7 @@
     ];
     let bankroll = 0;
     let startingBankroll = 0;
+    let startingBankrollSaveTimer = null;
     let currentPlan = "free";
     let isSignedIn = false;
     let currentUserId = null;
@@ -11909,11 +11978,19 @@
     }
 
     function populateSelect(selectElement, values, placeholderText) {
-      const placeholder = `<option value="" selected disabled>${placeholderText}</option>`;
-      selectElement.innerHTML = values
-        .map((value) => `<option value="${value}">${value}</option>`)
-        .join("");
-      selectElement.innerHTML = placeholder + selectElement.innerHTML;
+      selectElement.innerHTML = "";
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.selected = true;
+      placeholder.disabled = true;
+      placeholder.textContent = placeholderText;
+      selectElement.appendChild(placeholder);
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = String(value);
+        option.textContent = String(value);
+        selectElement.appendChild(option);
+      });
       updateSelectPlaceholderStyle(selectElement);
     }
 
@@ -11923,6 +12000,95 @@
 
     function isSelectEmpty(selectElement) {
       return !selectElement || selectElement.value === "";
+    }
+
+    function normalizeStakeText(value) {
+      return String(value || "").trim();
+    }
+
+    function isReusableCustomStake(value) {
+      const stake = normalizeStakeText(value);
+      return Boolean(
+        stake &&
+        stake !== UNKNOWN &&
+        stake !== CUSTOM_STAKE_OPTION_VALUE &&
+        !DEFAULT_STAKE_OPTIONS.includes(stake)
+      );
+    }
+
+    function normalizeCustomStakeList(values) {
+      if (!Array.isArray(values)) return [];
+      const seen = new Set();
+      const stakes = [];
+      values.forEach((value) => {
+        const stake = normalizeStakeText(value);
+        if (!isReusableCustomStake(stake) || seen.has(stake)) return;
+        seen.add(stake);
+        stakes.push(stake);
+      });
+      return stakes;
+    }
+
+    function customStakeStorageKey() {
+      return `chiplogger_custom_stakes_${currentUserId || "guest"}`;
+    }
+
+    function loadCustomStakesFromStorage() {
+      try {
+        const raw = window.localStorage.getItem(customStakeStorageKey());
+        if (!raw) return [];
+        return normalizeCustomStakeList(JSON.parse(raw));
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function persistCustomStakesToStorage() {
+      try {
+        window.localStorage.setItem(customStakeStorageKey(), JSON.stringify(savedCustomStakes));
+      } catch (_) {
+        // ignore storage write errors
+      }
+    }
+
+    function registerCustomStakeForDropdown(value, options = {}) {
+      const stake = normalizeStakeText(value);
+      if (!isReusableCustomStake(stake) || savedCustomStakes.includes(stake)) return false;
+      savedCustomStakes = normalizeCustomStakeList([...savedCustomStakes, stake]);
+      if (options.persist !== false) persistCustomStakesToStorage();
+      return true;
+    }
+
+    function registerSessionStakesForDropdown(options = {}) {
+      let changed = false;
+      sessions.forEach((session) => {
+        if (registerCustomStakeForDropdown(session && session.stake, { persist: false })) changed = true;
+      });
+      if (changed && options.persist !== false) persistCustomStakesToStorage();
+      return changed;
+    }
+
+    function getStakeDropdownValues() {
+      const sessionCustomStakes = normalizeCustomStakeList(sessions.map((session) => session && session.stake));
+      return [
+        ...DEFAULT_STAKE_OPTIONS,
+        ...normalizeCustomStakeList([...savedCustomStakes, ...sessionCustomStakes]),
+        CUSTOM_STAKE_OPTION_VALUE
+      ];
+    }
+
+    function refreshStakeTypeOptions(preferredValue = stakeType ? stakeType.value : "") {
+      if (!stakeType) return;
+      const values = getStakeDropdownValues();
+      const preferredStake = normalizeStakeText(preferredValue);
+      populateSelect(stakeType, values, "Select stake");
+      const customOption = Array.from(stakeType.options).find((option) => option.value === CUSTOM_STAKE_OPTION_VALUE);
+      if (customOption) customOption.textContent = "Custom";
+      if (preferredStake && values.includes(preferredStake)) {
+        stakeType.value = preferredStake;
+      }
+      updateSelectPlaceholderStyle(stakeType);
+      toggleCustomStakeField();
     }
 
     function isDateComplete() {
@@ -11965,7 +12131,7 @@
 
     function resolveStakeFromForm() {
       if (isSelectEmpty(stakeType)) return UNKNOWN;
-      if (stakeType.value === "custom") {
+      if (stakeType.value === CUSTOM_STAKE_OPTION_VALUE) {
         const t = customStake.value.trim();
         return t === "" ? UNKNOWN : t;
       }
@@ -12097,8 +12263,14 @@
         stakeType.value = "";
         customStake.value = "";
       } else {
-        stakeType.value = "custom";
-        customStake.value = session.stake;
+        registerCustomStakeForDropdown(session.stake);
+        refreshStakeTypeOptions(session.stake);
+        if (stakeType.value !== session.stake) {
+          stakeType.value = CUSTOM_STAKE_OPTION_VALUE;
+          customStake.value = session.stake;
+        } else {
+          customStake.value = "";
+        }
       }
       updateSelectPlaceholderStyle(stakeType);
       toggleCustomStakeField();
@@ -12256,12 +12428,8 @@
       populateSelect(endMinute, Array.from({ length: 60 }, (_, i) => pad(i)), "Minute");
       populateSelect(endMeridiem, ["AM", "PM"], "AM/PM");
       populateSelect(gameType, ["No-Limit Texas Hold'em", "Pot-Limit Omaha"], "Select game type");
-      populateSelect(
-        stakeType,
-        ["1/2", "1/3", "2/5", "5/5", "5/10", "10/20", "25/50", "custom"],
-        "Select stake"
-      );
-      stakeType.querySelector("option[value='custom']").textContent = "Custom";
+      savedCustomStakes = loadCustomStakesFromStorage();
+      refreshStakeTypeOptions();
     }
 
     function initializeManualBankrollDateInput() {
@@ -12269,7 +12437,7 @@
     }
 
     function toggleCustomStakeField() {
-      customStakeWrap.classList.toggle("hidden", stakeType.value !== "custom");
+      customStakeWrap.classList.toggle("hidden", stakeType.value !== CUSTOM_STAKE_OPTION_VALUE);
     }
 
     const viewScrollPositions = new Map();
@@ -13150,6 +13318,82 @@
       if (profilePhoneInput) profilePhoneInput.disabled = true;
     }
 
+    function normalizeStartingBankrollValue(value) {
+      const parsed = Number.parseFloat(String(value ?? "").replace(/,/g, "").trim());
+      if (!Number.isFinite(parsed) || parsed < 0) return 0;
+      return Number(parsed.toFixed(2));
+    }
+
+    function formatStartingBankrollInputValue(value) {
+      return String(normalizeStartingBankrollValue(value));
+    }
+
+    function setStartingBankrollStatus(message = "", kind = "success") {
+      if (!startingBankrollStatus) return;
+      startingBankrollStatus.textContent = message;
+      startingBankrollStatus.style.color = kind === "error" ? "#fca5a5" : kind === "pending" ? "#fde68a" : "#86efac";
+    }
+
+    function clearStartingBankrollSaveTimer() {
+      if (startingBankrollSaveTimer == null) return;
+      window.clearTimeout(startingBankrollSaveTimer);
+      startingBankrollSaveTimer = null;
+    }
+
+    function syncStartingBankrollInput(options = {}) {
+      if (startingBankrollInput) {
+        startingBankrollInput.value = formatStartingBankrollInputValue(startingBankroll);
+      }
+      if (!options.preserveStatus) {
+        setStartingBankrollStatus("");
+      }
+    }
+
+    async function persistProfileSettingsToSupabase() {
+      if (!supabaseClient || !currentUserId) return;
+      await supabaseClient.from("profiles").update({
+        name: profileNameInput.value.trim(),
+        phone: profilePhoneInput.value.trim(),
+        theme: normalizeThemeValue(themeSelect ? themeSelect.value : "dark"),
+        starting_bankroll: normalizeStartingBankrollValue(startingBankroll)
+      }).eq("user_id", currentUserId);
+    }
+
+    async function persistStartingBankrollSetting() {
+      setStartingBankrollStatus("Saving...", "pending");
+      try {
+        await persistProfileSettingsToSupabase();
+        setStartingBankrollStatus(`Saved starting bankroll: ${formatMoney(startingBankroll)}.`);
+      } catch (err) {
+        console.error(err);
+        setStartingBankrollStatus("Could not save starting bankroll.", "error");
+      }
+    }
+
+    function scheduleStartingBankrollSave() {
+      clearStartingBankrollSaveTimer();
+      setStartingBankrollStatus("Saving...", "pending");
+      startingBankrollSaveTimer = window.setTimeout(() => {
+        startingBankrollSaveTimer = null;
+        persistStartingBankrollSetting();
+      }, 500);
+    }
+
+    function applyStartingBankrollInputChange(options = {}) {
+      if (!startingBankrollInput) return;
+      startingBankroll = normalizeStartingBankrollValue(startingBankrollInput.value);
+      if (options.syncInput) syncStartingBankrollInput({ preserveStatus: true });
+      recomputeBankroll();
+      renderAll();
+      if (options.persist === false) return;
+      if (options.immediatePersist) {
+        clearStartingBankrollSaveTimer();
+        persistStartingBankrollSetting();
+        return;
+      }
+      scheduleStartingBankrollSave();
+    }
+
     function profileFieldStopEditing(displayEl, inputEl, buttonEl, label, value) {
       profileSetDisplayState(displayEl, inputEl, label, value);
       profileSetEditButtonState(buttonEl, label, false);
@@ -13223,6 +13467,7 @@
       try {
         window.localStorage.removeItem(folderStorageKey());
         window.localStorage.removeItem(handFolderStorageKey());
+        window.localStorage.removeItem(customStakeStorageKey());
         clearAdminSeedStore();
       } catch (_) {
         // ignore storage errors
@@ -13326,6 +13571,11 @@
       bankrollChanges.length = 0;
       pendingSessionHands = [];
       savedLocations = [];
+      savedCustomStakes = [];
+      startingBankroll = 0;
+      bankroll = 0;
+      clearStartingBankrollSaveTimer();
+      syncStartingBankrollInput();
       sessionFolders = [];
       handFolders = [];
       editingSessionIndex = null;
@@ -13339,6 +13589,7 @@
       if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
       if (sessionLocationNewInput) sessionLocationNewInput.value = "";
       recomputeBankroll();
+      refreshStakeTypeOptions();
       populateHistoryToolbarLocationSelect();
       renderSessionLocationPickerList();
     }
@@ -13431,6 +13682,10 @@
     async function loadDataFromSupabase() {
       if (!supabaseClient || !currentUserId) return;
       savedLocations = [];
+      savedCustomStakes = loadCustomStakesFromStorage();
+      clearStartingBankrollSaveTimer();
+      startingBankroll = 0;
+      bankroll = 0;
       currentProfileSubscriptionStatus = "";
       currentPlan = "free";
       const { data: profileData } = await supabaseClient
@@ -13444,7 +13699,7 @@
           name: profileData.name || "",
           phone: profileData.phone || ""
         }, profileEmailInput ? profileEmailInput.value : "");
-        startingBankroll = Number(profileData.starting_bankroll || 0);
+        startingBankroll = normalizeStartingBankrollValue(profileData.starting_bankroll);
         bankroll = startingBankroll;
         const hasManualPremium = normalizePremiumValue(profileData.manual_premium);
         const developerPlanOverride = getDeveloperPlanOverride(profileData);
@@ -13475,6 +13730,7 @@
           savedLocations = [];
         }
       }
+      syncStartingBankrollInput();
       writeStoredThemePreference(themeSelect ? themeSelect.value : "dark");
       const overridePlan = getDeveloperPlanOverride(currentProfileSubscriptionStatus);
       if (!overridePlan) {
@@ -13507,6 +13763,8 @@
       bankrollChanges.length = 0;
       (changeRows || []).forEach((row) => bankrollChanges.push(fromDbBankrollChange(row)));
       mergeAdminSeedStoreIntoState();
+      registerSessionStakesForDropdown();
+      refreshStakeTypeOptions();
       sessionFolders = loadSessionFoldersFromStorage();
       handFolders = loadHandFoldersFromStorage();
       recomputeBankroll();
@@ -13529,12 +13787,7 @@
 
     async function persistProfileFromUI() {
       if (!supabaseClient || !currentUserId) return;
-      await supabaseClient.from("profiles").update({
-        name: profileNameInput.value.trim(),
-        phone: profilePhoneInput.value.trim(),
-        theme: normalizeThemeValue(themeSelect ? themeSelect.value : "dark"),
-        starting_bankroll: Number(startingBankroll || 0)
-      }).eq("user_id", currentUserId);
+      await persistProfileSettingsToSupabase();
       const nextEmail = profileEmailInput ? profileEmailInput.value.trim() : "";
       if (nextEmail) {
         const { error } = await supabaseClient.auth.updateUser({ email: nextEmail });
@@ -14817,7 +15070,9 @@
       let streetBet = streetKey === "preflop" ? Math.max(0, ...handSeatCommitted) : 0;
       let trackedNeedSeats = null;
       if (opts.trackAction) {
-        trackedNeedSeats = getActionOrder();
+        trackedNeedSeats = actions.length === 0 && shouldSkipCurrentStreetActionsBecauseAllOthersAllIn()
+          ? []
+          : getActionOrder();
         handStreetNeedSeats = trackedNeedSeats.slice();
         handStreetCurrentBet = streetBet;
         handCurrentActorIndex = trackedNeedSeats.length ? trackedNeedSeats[0] : null;
@@ -14961,6 +15216,14 @@
       });
     }
 
+    function shouldSkipCurrentStreetActionsBecauseAllOthersAllIn() {
+      const street = getCurrentStreetKey();
+      if (!street || street === "preflop") return false;
+      const activeSeats = getActiveHandSeatIndices();
+      if (activeSeats.length < 2) return false;
+      return getLiveSeatIndices().length <= 1;
+    }
+
     function getActionOrder() {
       const street = getCurrentStreetKey();
       const allSeated = getLiveSeatIndices();
@@ -15061,6 +15324,9 @@
       if (seatIndex == null || handCurrentActorIndex !== seatIndex) return [];
       if (handStageIndex <= 0 || !handSetupConfirmed || handAwaitingUndoAfterBack) return [];
       if (!isCurrentStreetBoardReady() || isViewingFinalHandState()) return [];
+      const street = getCurrentStreetKey();
+      const currentStreetActions = street ? (handStreetActions[street] || []) : [];
+      if (currentStreetActions.length === 0 && shouldSkipCurrentStreetActionsBecauseAllOthersAllIn()) return [];
       if (handSeatFolded[seatIndex]) return [];
       const stack = Number(handSeatStacks[seatIndex]);
       if (!Number.isFinite(stack) || stack <= 0) return [];
@@ -15122,6 +15388,19 @@
       const nick = handSeatNicknames[seatIndex];
       if (nick && nick.trim()) return nick.trim();
       return `Seat ${seatIndex + 1}`;
+    }
+
+    function seatHasUserNameOrHeroLabel(seatIndex) {
+      const nick = handSeatNicknames[seatIndex];
+      return handHeroSeatIndex === seatIndex || Boolean(nick && String(nick).trim());
+    }
+
+    function seatHasUserEditedStack(seatIndex) {
+      return Boolean(handSeatStackEdited[seatIndex]);
+    }
+
+    function seatHasPhoneCollapsedUserData(seatIndex) {
+      return seatHasUserNameOrHeroLabel(seatIndex) || seatHasUserEditedStack(seatIndex);
     }
 
     function seatHasFoldActionOnStreet(seatIndex, streetKey) {
@@ -16188,7 +16467,10 @@
         handCurrentActorIndex = null;
         return;
       }
-      const order = getActionOrder();
+      const currentStreetActions = handStreetActions[street] || [];
+      const order = currentStreetActions.length === 0 && shouldSkipCurrentStreetActionsBecauseAllOthersAllIn()
+        ? []
+        : getActionOrder();
       handStreetNeedSeats = order.slice();
       const committedBySeat = getStreetCommittedBySeat(street);
       const committedBet = Math.max(0, ...committedBySeat);
@@ -16839,7 +17121,10 @@
       } else if (!handStreetNeedSeats.includes(handCurrentActorIndex)) {
         handCurrentActorIndex = handStreetNeedSeats[0];
       }
-      if (handCurrentActorIndex == null) {
+      const actionsSkippedBecauseAllOthersAllIn = currentStreetActions.length === 0 && shouldSkipCurrentStreetActionsBecauseAllOthersAllIn();
+      if (actionsSkippedBecauseAllOthersAllIn) {
+        handActorLabel.textContent = "All other active players are all in. No action needed.";
+      } else if (handCurrentActorIndex == null) {
         handActorLabel.textContent = "No active players with stacks.";
       } else {
         handActorLabel.textContent = `${getSeatDisplayName(handCurrentActorIndex)} to act`;
@@ -17032,15 +17317,17 @@
           hand: h
         }));
       });
-      pendingSessionHands.forEach((h, handIndex) => list.push({
-        sessionIndex: null,
-        handIndex,
-        handId: ensureHandHistoryId(h, `pending-${handIndex}`, handIndex),
-        sessionTitle: "(current unsaved session)",
-        sessionGameType: gameType && gameType.value ? gameType.value : UNKNOWN,
-        sessionStake: stakeType && stakeType.value ? stakeType.value : "",
-        hand: h
-      }));
+      if (!Number.isInteger(editingSessionIndex)) {
+        pendingSessionHands.forEach((h, handIndex) => list.push({
+          sessionIndex: null,
+          handIndex,
+          handId: ensureHandHistoryId(h, `pending-${handIndex}`, handIndex),
+          sessionTitle: "(current unsaved session)",
+          sessionGameType: gameType && gameType.value ? gameType.value : UNKNOWN,
+          sessionStake: resolveStakeFromForm(),
+          hand: h
+        }));
+      }
       return list;
     }
 
@@ -17198,6 +17485,14 @@
         : [];
       handSeatStacks = handSeatStartingStacks.slice();
       handSeatNicknames = Array.isArray(hand.seatNicknames) ? hand.seatNicknames.slice() : [];
+      if (Array.isArray(hand.seatStackEdited)) {
+        handSeatStackEdited = hand.seatStackEdited.map(Boolean);
+      } else {
+        const defaultStack = getDefaultSeatStackAmount();
+        handSeatStackEdited = handSeatStartingStacks.map((value) => (
+          Number.isFinite(Number(value)) && Number(value) !== defaultStack
+        ));
+      }
       handSeatCards = Array.isArray(hand.seatCards)
         ? hand.seatCards.map((cards) => (Array.isArray(cards) ? cards.map((c) => ({ rank: c && c.rank ? c.rank : "", suit: c && c.suit ? c.suit : "" })) : []))
         : [];
@@ -18412,12 +18707,16 @@
 
     function saveCurrentHandToSessionDraft() {
       const streets = getStreetKeysForGame();
-      const streetName = handStageIndex === 0 ? "setup" : getStreetTitle(getCurrentStreetKey()).toLowerCase();
       const winnerSeatIndex = getHandWinnerSeatIndex();
-      let savedHandIndex = editingHandSessionIndex != null && editingHandIndex != null
+      const assignedSessionIndex = Number.isInteger(editingSessionIndex)
+        ? editingSessionIndex
+        : Number.isInteger(editingHandSessionIndex)
+          ? editingHandSessionIndex
+          : null;
+      let savedHandIndex = editingHandIndex != null && pendingSessionHands[editingHandIndex]
         ? editingHandIndex
         : pendingSessionHands.length;
-      const existingHand = editingHandSessionIndex != null && editingHandIndex != null
+      const existingHand = editingHandIndex != null
         ? pendingSessionHands[editingHandIndex]
         : null;
       const existingName = existingHand
@@ -18435,6 +18734,7 @@
         summary: `${getActiveHandSeatIndices().length} players · ${streets.map((k) => handStreetActions[k].length).reduce((a, b) => a + b, 0)} actions`,
         seatStacks: handSeatStacks.slice(),
         seatNicknames: handSeatNicknames.slice(),
+        seatStackEdited: handSeatStackEdited.slice(),
         seatCards: handSeatCards.map((c) => c.map((x) => ({ ...x }))),
         buttonSeatIndex: handButtonSeatIndex,
         heroSeatIndex: handHeroSeatIndex,
@@ -18448,20 +18748,23 @@
         boardCards: JSON.parse(JSON.stringify(handBoardCards)),
         streetActions: JSON.parse(JSON.stringify(handStreetActions))
       };
-      if (editingHandSessionIndex != null && editingHandIndex != null && pendingSessionHands[editingHandIndex]) {
+      if (editingHandIndex != null && pendingSessionHands[editingHandIndex]) {
         pendingSessionHands[editingHandIndex] = hand;
         savedHandIndex = editingHandIndex;
-        editingHandSessionIndex = null;
-        editingHandIndex = null;
       } else {
         pendingSessionHands.push(hand);
         savedHandIndex = pendingSessionHands.length - 1;
       }
       handSaveMessage.textContent = "Hand saved to current session draft.";
       handSaveMessage.style.color = "#86efac";
-      ensureHandHistoryId(hand, editingSessionIndex != null && sessions[editingSessionIndex] ? sessions[editingSessionIndex].id : "pending", savedHandIndex);
+      const sessionIdForHand = assignedSessionIndex != null && sessions[assignedSessionIndex]
+        ? sessions[assignedSessionIndex].id
+        : "pending";
+      ensureHandHistoryId(hand, sessionIdForHand, savedHandIndex);
+      editingHandSessionIndex = assignedSessionIndex;
+      editingHandIndex = savedHandIndex;
       return {
-        sessionIndex: editingSessionIndex,
+        sessionIndex: assignedSessionIndex,
         handIndex: savedHandIndex,
         handId: hand.id,
         hand
@@ -18479,10 +18782,17 @@
       const saved = saveCurrentHandToSessionDraft();
       if (!saved) return;
       let sessionToPersist = null;
-      if (Number.isInteger(editingSessionIndex) && sessions[editingSessionIndex]) {
-        const session = sessions[editingSessionIndex];
+      if (Number.isInteger(saved.sessionIndex) && sessions[saved.sessionIndex]) {
+        const session = sessions[saved.sessionIndex];
         session.hands = pendingSessionHands.map((h) => JSON.parse(JSON.stringify(h)));
         sessionToPersist = session;
+      }
+      if (sessionToPersist && supabaseClient && currentUserId) {
+        if (handSaveMessage) {
+          handSaveMessage.textContent = "Saving hand...";
+          handSaveMessage.style.color = "#fde68a";
+        }
+        await saveSessionToSupabase(sessionToPersist, sessionToPersist.hands || []);
       }
       handHistorySessionPickerMode = false;
       handHistoryDisplayMode = "list";
@@ -18507,11 +18817,6 @@
         refreshHandHistoryAfterSave();
         scrollPageToTop();
       });
-      if (sessionToPersist && supabaseClient && currentUserId) {
-        saveSessionToSupabase(sessionToPersist, sessionToPersist.hands || []).catch((err) => {
-          console.error("Could not persist saved hand", err);
-        });
-      }
     }
 
     function renderHandTable() {
@@ -18526,6 +18831,7 @@
       const prevStacks = handSeatStacks.slice();
       const prevStartingStacks = handSeatStartingStacks.slice();
       const prevNicks = handSeatNicknames.slice();
+      const prevStackEdited = handSeatStackEdited.slice();
       const prevCards = handSeatCards.slice();
       const prevCommitted = handSeatCommitted.slice();
       const defaultStack = getDefaultSeatStackAmount();
@@ -18542,6 +18848,7 @@
         return defaultStack;
       });
       handSeatNicknames = Array.from({ length: n }, (_, i) => (i < prevNicks.length ? prevNicks[i] : null));
+      handSeatStackEdited = Array.from({ length: n }, (_, i) => (i < prevStackEdited.length ? Boolean(prevStackEdited[i]) : false));
       handSeatCards = Array.from({ length: n }, (_, i) => (i < prevCards.length ? prevCards[i] : []));
       handSeatCommitted = Array.from({ length: n }, (_, i) => (i < prevCommitted.length ? prevCommitted[i] : 0));
       handSeatFolded = Array.from({ length: n }, (_, i) => (i < handSeatFolded.length ? handSeatFolded[i] : false));
@@ -18594,6 +18901,12 @@
         }
         if (handStageIndex > 0 && handSeatFolded[i]) {
           btn.classList.add("folded-seat");
+        }
+        if (seatHasPhoneCollapsedUserData(i)) {
+          btn.classList.add("hand-seat-has-user-data");
+        }
+        if (seatHasUserEditedStack(i)) {
+          btn.classList.add("hand-seat-has-user-stack");
         }
         btn.style.left = `${xPct}%`;
         btn.style.top = `${yPct}%`;
@@ -18732,7 +19045,7 @@
       }
       const cur = handSeatStacks[seatIndex];
       const startStack = handSeatStartingStacks[seatIndex];
-      handStackInput.value = startStack != null ? String(startStack) : "";
+      handStackInput.value = handSeatStackEdited[seatIndex] && startStack != null ? String(startStack) : "";
       if (handStackNicknameInput) {
         const nk = handSeatNicknames[seatIndex];
         handStackNicknameInput.value = nk != null && nk !== "" ? nk : "";
@@ -18792,6 +19105,7 @@
       handSeatStacks = [];
       handSeatStartingStacks = [];
       handSeatNicknames = [];
+      handSeatStackEdited = [];
       handSeatCards = [];
       handSeatCommitted = [];
       handSeatFolded = [];
@@ -24591,6 +24905,8 @@
 
     function renderAll() {
       applyTheme();
+      registerSessionStakesForDropdown();
+      refreshStakeTypeOptions();
       updateBankrollValue();
       renderHistory();
       renderHandHistory();
@@ -25689,11 +26005,24 @@
     themeSelect.addEventListener("change", async () => {
       renderAll();
       try {
-        await persistProfileFromUI();
+        await persistProfileSettingsToSupabase();
       } catch (err) {
         console.error(err);
       }
     });
+    if (startingBankrollInput) {
+      startingBankrollInput.addEventListener("input", () => {
+        applyStartingBankrollInputChange();
+      });
+      startingBankrollInput.addEventListener("blur", () => {
+        applyStartingBankrollInputChange({ syncInput: true, immediatePersist: true });
+      });
+      startingBankrollInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        startingBankrollInput.blur();
+      });
+    }
     openManualBankrollBtn.addEventListener("click", () => {
       manualBankrollWrap.classList.toggle("hidden");
     });
@@ -26097,14 +26426,17 @@
       handStackSaveBtn.addEventListener("click", () => {
         if (editingHandSeatIndex == null) return;
         const seat = editingHandSeatIndex;
-        const v = Number.parseFloat(handStackInput.value);
-        if (Number.isNaN(v)) {
+        const rawStack = handStackInput.value.trim();
+        const v = Number.parseFloat(rawStack);
+        if (!rawStack || Number.isNaN(v)) {
+          handSeatStackEdited[seat] = false;
           handSeatStartingStacks[seat] = null;
           handSeatStacks[seat] = null;
         } else {
           const oldStart = handSeatStartingStacks[seat] != null ? handSeatStartingStacks[seat] : (handSeatStacks[seat] || 0);
           const oldCurrent = handSeatStacks[seat] != null ? handSeatStacks[seat] : oldStart;
           const invested = Math.max(0, oldStart - oldCurrent);
+          handSeatStackEdited[seat] = true;
           handSeatStartingStacks[seat] = v;
           handSeatStacks[seat] = Math.max(0, v - invested);
         }
@@ -26233,13 +26565,27 @@
     if (handSaveToSessionBtn) {
       handSaveToSessionBtn.addEventListener("click", (event) => {
         event.preventDefault();
-        saveCurrentHandDraftAndOpenHistory().catch((err) => {
-          console.error("Could not save hand", err);
-          if (handSaveMessage) {
-            handSaveMessage.textContent = err.message || "Could not save hand.";
-            handSaveMessage.style.color = "#fca5a5";
-          }
-        });
+        if (handSaveInProgress) return;
+        handSaveInProgress = true;
+        const originalButtonText = handSaveToSessionBtn.textContent;
+        handSaveToSessionBtn.disabled = true;
+        handSaveToSessionBtn.textContent = "Saving hand...";
+        saveCurrentHandDraftAndOpenHistory()
+          .catch((err) => {
+            console.error("Could not save hand", err);
+            if (handSaveMessage) {
+              handSaveMessage.textContent = err.message || "Could not save hand.";
+              handSaveMessage.style.color = "#fca5a5";
+            }
+          })
+          .finally(() => {
+            handSaveInProgress = false;
+            handSaveToSessionBtn.disabled = false;
+            updateHandSaveButtonLabel();
+            if (!handSaveToSessionBtn.textContent || handSaveToSessionBtn.textContent === "Saving hand...") {
+              handSaveToSessionBtn.textContent = originalButtonText;
+            }
+          });
       });
     }
 
@@ -26388,6 +26734,10 @@
       bankroll = 0;
       startingBankroll = 0;
       savedLocations = [];
+      clearStartingBankrollSaveTimer();
+      syncStartingBankrollInput();
+      savedCustomStakes = loadCustomStakesFromStorage();
+      refreshStakeTypeOptions();
       sessionFolders = loadSessionFoldersFromStorage();
       handFolders = loadHandFoldersFromStorage();
       historyAdvancedCriteria = emptyHistoryAdvancedCriteria();
@@ -26479,6 +26829,8 @@
           });
         }
         if (session.profit - originalProfit !== 0) recomputeBankroll();
+        registerCustomStakeForDropdown(session.stake);
+        refreshStakeTypeOptions(session.stake);
 
         editingSessionIndex = null;
         editingHandSessionIndex = null;
@@ -26512,6 +26864,8 @@
         return;
       }
       sessions.push(sessionData);
+      registerCustomStakeForDropdown(sessionData.stake);
+      refreshStakeTypeOptions(sessionData.stake);
       bankrollChanges.push({
         id: sessionData.bankrollChangeId || `session-change-${Date.now()}`,
         amount: sessionData.profit,
@@ -26742,6 +27096,7 @@
     initializeAddSessionForm();
     initializeManualBankrollDateInput();
     if (themeSelect) themeSelect.value = readStoredThemePreference();
+    syncStartingBankrollInput();
     toggleCustomStakeField();
     showSettingsPanel("generalPanel");
     sessionFolders = loadSessionFoldersFromStorage();
