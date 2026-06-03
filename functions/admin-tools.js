@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 
-const ADMIN_EMAIL = "jadenbray@gmail.com";
+const ADMIN_EMAIL = "jadenray555@gmail.com";
 const DEFAULT_SUPABASE_URL = "https://gaobxnzfiogklkoueldd.supabase.co";
 
 function getRuntime(env) {
