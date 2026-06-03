@@ -7,11 +7,17 @@
     <script>
       (function () {
         const currentPath = window.location.pathname || "/";
+        const currentSearch = window.location.search || "";
+        const currentHash = window.location.hash || "";
         if (currentPath === "/" || currentPath === "/index.html") {
-          window.location.replace("/poker.html");
+          window.location.replace(`/poker.html${currentSearch}${currentHash}`);
           return;
         }
-        window.location.replace(`/poker.html?path=${encodeURIComponent(currentPath)}`);
+        const params = new URLSearchParams(currentSearch);
+        if (!params.has("path")) {
+          params.set("path", currentPath);
+        }
+        window.location.replace(`/poker.html?${params.toString()}${currentHash}`);
       }());
     </script>
   </head>

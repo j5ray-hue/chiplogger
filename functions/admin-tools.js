@@ -303,6 +303,50 @@ async function countRows(adminSupabase, table, column, userId = null) {
   return Number(count || 0);
 }
 
+function chunkValues(values, size = 100) {
+  const chunks = [];
+  for (let index = 0; index < values.length; index += size) {
+    chunks.push(values.slice(index, index + size));
+  }
+  return chunks;
+}
+
+async function selectUserSessionIds(adminSupabase, userId) {
+  const { data, error } = await adminSupabase
+    .from("sessions")
+    .select("session_id")
+    .eq("user_id", userId);
+  if (error) {
+    throw new Error(`Supabase session lookup failed: ${error.message}`);
+  }
+  return [...new Set((data || [])
+    .map((row) => row && row.session_id ? String(row.session_id) : "")
+    .filter(Boolean))];
+}
+
+async function runCleanupQuery(query, label) {
+  const { error } = await query;
+  if (error) {
+    throw new Error(`Supabase account cleanup failed (${label}): ${error.message}`);
+  }
+}
+
+async function deleteRowsByUserId(adminSupabase, table, userId) {
+  await runCleanupQuery(
+    adminSupabase.from(table).delete().eq("user_id", userId),
+    `${table} by user`
+  );
+}
+
+async function deleteRowsBySessionIds(adminSupabase, table, sessionIds) {
+  for (const chunk of chunkValues(sessionIds)) {
+    await runCleanupQuery(
+      adminSupabase.from(table).delete().in("session_id", chunk),
+      `${table} by session`
+    );
+  }
+}
+
 async function buildSummary(adminSupabase, user) {
   const profile = await getProfileRow(adminSupabase, user.id);
   const [sessions, hands, bankrollChanges] = await Promise.all([
@@ -396,31 +440,22 @@ async function handleSeedData(adminSupabase, user, body = {}, mode = "random") {
 
 async function handleClearAccountData(adminSupabase, user) {
   const profile = await getProfileRow(adminSupabase, user.id);
+  const sessionIds = await selectUserSessionIds(adminSupabase, user.id);
   const [existingSessions, existingHands, existingChanges] = await Promise.all([
     countRows(adminSupabase, "sessions", "session_id", user.id).catch(() => 0),
     countRows(adminSupabase, "hands", "id", user.id).catch(() => 0),
     countRows(adminSupabase, "bankroll_changes", "change_id", user.id).catch(() => 0)
   ]);
   const existingSavedLocations = countSavedLocations(profile?.saved_locations);
-  const { error: unlinkErr } = await adminSupabase
-    .from("sessions")
-    .update({ bankroll_change_id: null })
-    .eq("user_id", user.id);
-  if (unlinkErr) {
-    throw new Error(`Supabase account cleanup failed: ${unlinkErr.message}`);
-  }
-  const { error: handsErr } = await adminSupabase.from("hands").delete().eq("user_id", user.id);
-  if (handsErr) {
-    throw new Error(`Supabase account cleanup failed: ${handsErr.message}`);
-  }
-  const { error: changesErr } = await adminSupabase.from("bankroll_changes").delete().eq("user_id", user.id);
-  if (changesErr) {
-    throw new Error(`Supabase account cleanup failed: ${changesErr.message}`);
-  }
-  const { error: sessionsErr } = await adminSupabase.from("sessions").delete().eq("user_id", user.id);
-  if (sessionsErr) {
-    throw new Error(`Supabase account cleanup failed: ${sessionsErr.message}`);
-  }
+  await runCleanupQuery(
+    adminSupabase.from("sessions").update({ bankroll_change_id: null }).eq("user_id", user.id),
+    "unlink session bankroll changes"
+  );
+  await deleteRowsByUserId(adminSupabase, "hands", user.id);
+  await deleteRowsBySessionIds(adminSupabase, "hands", sessionIds);
+  await deleteRowsByUserId(adminSupabase, "bankroll_changes", user.id);
+  await deleteRowsBySessionIds(adminSupabase, "bankroll_changes", sessionIds);
+  await deleteRowsByUserId(adminSupabase, "sessions", user.id);
   try {
     await updateProfileRow(adminSupabase, user.id, {
       starting_bankroll: 0,
