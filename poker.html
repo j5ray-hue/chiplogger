@@ -5489,9 +5489,20 @@
       inset: 0;
       display: none;
       place-items: center;
+      gap: 10px;
       padding-top: 0;
       z-index: 3;
       pointer-events: none;
+      text-align: center;
+    }
+
+    .analytics-free-upgrade-copy {
+      max-width: min(320px, 90vw);
+      margin: 0;
+      padding: 0 12px;
+      color: rgba(248, 250, 252, 0.92);
+      font-size: 0.92rem;
+      line-height: 1.45;
     }
 
     .analytics-page.analytics-page--free .analytics-free-upgrade-overlay {
@@ -9445,11 +9456,6 @@
         </div>
 
         <div class="field">
-          <label for="startingBankroll">Starting Bankroll</label>
-          <input id="startingBankroll" type="number" step="0.01" placeholder="0.00" />
-        </div>
-
-        <div class="field">
           <label for="authMethod">Authenticate via</label>
           <select id="authMethod">
             <option value="text">Text</option>
@@ -10706,7 +10712,8 @@
 
           <div id="analyticsFreeBelow" class="analytics-free-below">
             <div class="analytics-free-upgrade-overlay">
-              <button id="analyticsUpgradeToPremiumBtn" type="button">Upgrade to premium to view</button>
+              <p class="analytics-free-upgrade-copy">Unlock the full analytics view to spot leaks, track win rate, and see what is driving your results.</p>
+              <button id="analyticsUpgradeToPremiumBtn" type="button">Unlock Analytics</button>
             </div>
             <div id="analyticsFreeContent" class="analytics-free-content">
               <div class="analytics-range-panel" aria-label="Analytics date range controls">
@@ -10986,7 +10993,6 @@
     const newEmailInput = document.getElementById("newEmail");
     const newPasswordInput = document.getElementById("newPassword");
     const authMethodSelect = document.getElementById("authMethod");
-    const startingBankrollInput = document.getElementById("startingBankroll");
     const leftPanel = document.getElementById("leftPanel");
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
     const avatarBtn = document.getElementById("avatarBtn");
@@ -25283,8 +25289,6 @@
         window.alert("Password must be at least 6 characters.");
         return;
       }
-      const value = Number.parseFloat(startingBankrollInput.value);
-      const startingValue = Number.isNaN(value) ? 0 : value;
       const { data, error } = await supabaseClient.auth.signUp({
         email,
         password,
@@ -25300,8 +25304,7 @@
       }
       await ensureProfileForUser(data.user, {
         name,
-        phone,
-        startingBankroll: startingValue
+        phone
       });
       syncProfileViewFromState({ name, phone }, email);
       if (data.session) {

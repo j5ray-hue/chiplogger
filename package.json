@@ -2,7 +2,7 @@
   "name": "chiplogger-site",
   "private": true,
   "version": "1.0.0",
-  "description": "Static site with Netlify Functions",
+  "description": "Static site with Cloudflare Pages Functions",
   "dependencies": {
     "@supabase/supabase-js": "^2.57.2",
     "stripe": "^18.5.0"
