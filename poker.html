@@ -135,6 +135,19 @@
       text-align: center;
     }
 
+    .starting-bankroll-prompt-screen .auth-wrap {
+      max-width: 460px;
+    }
+
+    .starting-bankroll-prompt-screen .field {
+      text-align: left;
+    }
+
+    .starting-bankroll-prompt-screen .hint {
+      text-align: left;
+      line-height: 1.45;
+    }
+
     .auth-back-btn {
       position: absolute;
       top: 18px;
@@ -2834,6 +2847,13 @@
         display: block;
       }
 
+      #historyView {
+        --history-phone-date-col: 86px;
+        --history-phone-profit-col: 68px;
+        --history-phone-delete-col: 34px;
+        --history-phone-col-gap: 8px;
+      }
+
       #historyView .history-session-row,
       #handHistoryView .hand-history-row {
         grid-template-columns: minmax(0, 1fr) 82px;
@@ -2846,9 +2866,14 @@
       #historyView .history-item,
       #handHistoryView .history-item {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 34px;
+        grid-template-columns: minmax(0, 1fr) var(--history-phone-delete-col, 34px);
         align-items: center;
+        gap: 0;
         min-height: 42px;
+      }
+
+      #historyView .history-list-example {
+        display: block;
       }
 
       #handHistoryView .history-item {
@@ -2864,6 +2889,17 @@
         gap: 10px;
       }
 
+      #historyView .history-list-example .history-summary-row {
+        grid-template-columns: minmax(0, 1fr) var(--history-phone-delete-col);
+        gap: 0;
+      }
+
+      #historyView .history-session-row {
+        grid-template-columns: minmax(0, 1fr) var(--history-phone-date-col) var(--history-phone-profit-col);
+        gap: var(--history-phone-col-gap);
+        box-sizing: border-box;
+      }
+
       #historyView .history-list-example .history-session-link,
       #handHistoryView .hand-history-header-link {
         display: grid;
@@ -2874,12 +2910,18 @@
         opacity: 0.92;
       }
 
+      #historyView .history-list-example .history-session-link {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: minmax(0, 1fr) var(--history-phone-date-col) var(--history-phone-profit-col);
+        gap: var(--history-phone-col-gap);
+        box-sizing: border-box;
+      }
+
       #historyView .history-session-row .history-col-location,
       #historyView .history-session-row .history-col-duration,
-      #historyView .history-session-row .history-col-profit,
       #historyView .history-list-example .history-col-location,
       #historyView .history-list-example .history-col-duration,
-      #historyView .history-list-example .history-col-profit,
       #handHistoryView .hand-history-row .history-col-location,
       #handHistoryView .hand-history-row .history-col-duration,
       #handHistoryView .hand-history-header-link .history-col-location,
@@ -2918,6 +2960,42 @@
         font-variant-numeric: tabular-nums;
       }
 
+      #historyView .mobile-history-date {
+        width: var(--history-phone-date-col);
+        min-width: var(--history-phone-date-col);
+        max-width: var(--history-phone-date-col);
+      }
+
+      #historyView .history-session-row .history-col-profit,
+      #historyView .history-list-example .history-col-profit {
+        display: block;
+        align-self: center;
+        height: 42px;
+        line-height: 42px;
+        width: var(--history-phone-profit-col);
+        min-width: var(--history-phone-profit-col);
+        max-width: var(--history-phone-profit-col);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: left;
+        font-variant-numeric: tabular-nums;
+      }
+
+      #historyView .history-session-row .history-col-profit {
+        font-size: 0.82rem;
+      }
+
+      #historyView .history-list-example .history-col-date,
+      #historyView .history-list-example .mobile-history-date-head,
+      #historyView .history-list-example .history-col-profit {
+        color: #9ca3af;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+        font-variant-numeric: normal;
+      }
+
       #historyView .mobile-history-date-head,
       #handHistoryView .mobile-history-date-head {
         color: #9ca3af;
@@ -2928,11 +3006,20 @@
       #historyView .history-delete-btn,
       #handHistoryView .history-delete-btn {
         display: grid !important;
-        width: 34px;
-        min-width: 34px;
+        width: var(--history-phone-delete-col, 34px);
+        min-width: var(--history-phone-delete-col, 34px);
         height: 42px;
         min-height: 42px;
+        padding: 0;
+        box-sizing: border-box;
         border-radius: 0;
+      }
+
+      #historyView .history-delete-spacer {
+        width: var(--history-phone-delete-col);
+        min-width: var(--history-phone-delete-col);
+        max-width: var(--history-phone-delete-col);
+        box-sizing: border-box;
       }
 
       #handHistoryView .hand-history-row {
@@ -7799,6 +7886,11 @@
         z-index: 8;
       }
 
+      .hand-table-felt .hand-seat.hand-seat-expanded.hand-seat-has-cards {
+        width: min(106px, 30vw);
+        min-width: 74px;
+      }
+
       .hand-table-felt .hand-seat.hand-seat-expanded.hand-seat-compact {
         width: min(68px, 19vw);
         min-width: 54px;
@@ -7810,6 +7902,12 @@
         min-width: 50px;
         min-height: 40px;
         font-size: 0.66rem;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded.hand-seat-has-cards.hand-seat-compact,
+      .hand-table-felt .hand-seat.hand-seat-expanded.hand-seat-has-cards.hand-seat-micro {
+        width: min(106px, 30vw);
+        min-width: 74px;
       }
 
       .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-compact-num {
@@ -7825,6 +7923,19 @@
       .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-equity,
       .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-cards {
         display: block;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-cards {
+        display: inline-flex;
+        justify-content: center;
+        max-width: none;
+        overflow: visible;
+      }
+
+      .hand-table-felt .hand-seat.hand-seat-expanded .hand-seat-card {
+        min-width: 16px;
+        height: 18px;
+        font-size: 0.62rem;
       }
 
       .hand-table-felt .hand-dealer-btn {
@@ -8381,42 +8492,48 @@
       }
 
       #addHandRight > .hand-table-wrap {
-        order: 2;
+        order: 3;
         margin-top: 0;
         padding-top: 0;
       }
 
       #handStreetNavRow {
-        order: 3;
+        order: 4;
         margin-top: 8px;
         margin-bottom: 10px;
       }
 
       #addHandGameTypeLine {
-        order: 4;
-      }
-
-      #addHandRight > .field {
         order: 5;
       }
 
-      #addHandRight > .hand-setup-top-row {
+      #addHandRight > .field {
         order: 1;
+        margin-bottom: 8px;
+      }
+
+      #addHandRight > .hand-setup-top-row {
+        order: 2;
         align-items: center;
         justify-content: center;
         gap: 10px;
         margin-bottom: 8px;
         width: 100%;
+        flex-direction: column;
       }
 
       #addHandRight > .hand-setup-top-row > .field {
-        display: none;
+        display: block;
+        width: 100%;
+        max-width: 100% !important;
+        margin: 0;
       }
 
       #addHandRight .hand-button-dock {
         justify-content: center;
         max-width: min(100%, 320px);
         touch-action: none;
+        margin-top: 2px;
       }
 
       #addHandRight .hand-button-prompt {
@@ -8841,6 +8958,18 @@
     body[data-theme="light"] .feature-caption,
     body[data-theme="light"] .landing-section-title {
       color: #000000;
+    }
+
+    body[data-theme="light"] .profit-positive {
+      color: #15803d;
+    }
+
+    body[data-theme="light"] .profit-zero {
+      color: #b45309;
+    }
+
+    body[data-theme="light"] .profit-negative {
+      color: #dc2626;
     }
 
     body[data-theme="light"] .feature-card,
@@ -9595,6 +9724,22 @@
       </div>
     </main>
 
+    <main id="startingBankrollPromptScreen" class="screen hidden starting-bankroll-prompt-screen">
+      <div class="auth-wrap">
+        <h1 class="title">Starting Bankroll</h1>
+        <p class="subtitle">Enter the bankroll you are starting with before tracking sessions.</p>
+
+        <div class="field">
+          <label for="startingBankrollPromptInput">Starting Bankroll</label>
+          <input id="startingBankrollPromptInput" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" />
+          <p class="hint">This becomes the first point on your bankroll graph and is included in your current bankroll.</p>
+        </div>
+
+        <button id="startingBankrollPromptSaveBtn" type="button">Save Starting Bankroll</button>
+        <p id="startingBankrollPromptStatus" class="save-message" aria-live="polite"></p>
+      </div>
+    </main>
+
     <main id="homeScreen" class="hidden app-shell app-home-shell">
       <header class="app-top-bar" aria-label="App toolbar">
         <div class="app-top-bar-profile">
@@ -10046,7 +10191,7 @@
             />
           </div>
           <div class="hand-setup-top-row">
-            <div class="field" style="max-width: 220px; margin: 0;">
+            <div class="field hand-rake-field" style="max-width: 220px; margin: 0;">
               <label for="handRakeInput">Rake (optional)</label>
               <input id="handRakeInput" type="number" min="0" step="0.01" placeholder="0.00" />
             </div>
@@ -10847,6 +10992,16 @@
                     <svg id="analyticsHandsChart" class="analytics-chart--narrow" viewBox="0 0 700 260" width="100%" height="260" aria-label="Hands per session histogram"></svg>
                   </div>
                 </div>
+                <div class="analytics-grid analytics-grid--split">
+                  <div class="chart-card chart-with-tooltip">
+                    <p class="chart-title">Session length vs profit</p>
+                    <svg id="analyticsDurationProfitChart" viewBox="0 0 700 300" width="100%" height="300" aria-label="Session length versus profit chart"></svg>
+                  </div>
+                  <div class="chart-card chart-with-tooltip">
+                    <p class="chart-title">Win/loss ratio by midpoint time</p>
+                    <svg id="analyticsTimeOfDayChart" viewBox="0 0 700 260" width="100%" height="260" aria-label="Win/loss ratio by session midpoint time histogram"></svg>
+                  </div>
+                </div>
               </section>
 
               <section class="analytics-section">
@@ -10989,6 +11144,7 @@
     const authSupportScreen = document.getElementById("authSupportScreen");
     const authCodeScreen = document.getElementById("authCodeScreen");
     const resetPasswordScreen = document.getElementById("resetPasswordScreen");
+    const startingBankrollPromptScreen = document.getElementById("startingBankrollPromptScreen");
     const authBackBtn = document.getElementById("authBackBtn");
     const createAuthBackBtn = document.getElementById("createAuthBackBtn");
     const authSupportBackBtn = document.getElementById("authSupportBackBtn");
@@ -11011,6 +11167,9 @@
     const resetPasswordConfirmInput = document.getElementById("resetPasswordConfirmInput");
     const saveResetPasswordBtn = document.getElementById("saveResetPasswordBtn");
     const resetPasswordMessage = document.getElementById("resetPasswordMessage");
+    const startingBankrollPromptInput = document.getElementById("startingBankrollPromptInput");
+    const startingBankrollPromptSaveBtn = document.getElementById("startingBankrollPromptSaveBtn");
+    const startingBankrollPromptStatus = document.getElementById("startingBankrollPromptStatus");
     const contactBackBtn = document.getElementById("contactBackBtn");
     const supportForm = document.getElementById("supportForm");
     const supportSubmitBtn = document.getElementById("supportSubmitBtn");
@@ -11229,6 +11388,8 @@
     const analyticsWeekdayChart = document.getElementById("analyticsWeekdayChart");
     const analyticsDurationChart = document.getElementById("analyticsDurationChart");
     const analyticsHandsChart = document.getElementById("analyticsHandsChart");
+    const analyticsDurationProfitChart = document.getElementById("analyticsDurationProfitChart");
+    const analyticsTimeOfDayChart = document.getElementById("analyticsTimeOfDayChart");
     const analyticsPotChart = document.getElementById("analyticsPotChart");
     const analyticsSeatCountChart = document.getElementById("analyticsSeatCountChart");
     const analyticsSessionVariableTableBody = document.getElementById("analyticsSessionVariableTableBody");
@@ -11533,6 +11694,7 @@
     const sessions = [];
     /** User-defined location names (persisted in profile.saved_locations). */
     let savedLocations = [];
+    let savedLocationsPersistChain = Promise.resolve();
     /** Reusable non-default stakes entered through the custom stake field. */
     let savedCustomStakes = [];
     /** History surface mode: "list" (default) or "grid" (folders). */
@@ -11571,6 +11733,7 @@
     ];
     let bankroll = 0;
     let startingBankroll = 0;
+    let startingBankrollPromptRequired = false;
     let startingBankrollSaveTimer = null;
     let currentPlan = "free";
     let isSignedIn = false;
@@ -11963,6 +12126,7 @@
       authSupportScreen.classList.add("hidden");
       authCodeScreen.classList.add("hidden");
       resetPasswordScreen.classList.add("hidden");
+      if (startingBankrollPromptScreen) startingBankrollPromptScreen.classList.add("hidden");
       homeScreen.classList.add("hidden");
       recalculateLandingLayoutMetrics();
       setLandingSnap(true);
@@ -12818,6 +12982,7 @@
       authSupportScreen.classList.toggle("hidden", name !== "support");
       authCodeScreen.classList.toggle("hidden", name !== "code");
       resetPasswordScreen.classList.toggle("hidden", name !== "reset");
+      if (startingBankrollPromptScreen) startingBankrollPromptScreen.classList.add("hidden");
       homeScreen.classList.add("hidden");
       const activeAuthScreen =
         name === "create" ? createAccountScreen :
@@ -13262,17 +13427,56 @@
 
     async function persistSavedLocationsToSupabase() {
       if (!supabaseClient || !currentUserId || !profileSavedLocationsSupported) return;
-      const { error } = await supabaseClient.from("profiles").update({
-        saved_locations: normalizeSavedLocationList(savedLocations)
-      }).eq("user_id", currentUserId);
-      if (error) {
-        if (isMissingSavedLocationsColumnError(error)) {
-          profileSavedLocationsSupported = false;
-          console.warn("persistSavedLocationsToSupabase: disabled because saved_locations is unavailable in profiles", error);
-          return;
+      try {
+        const { error } = await supabaseClient.from("profiles").update({
+          saved_locations: normalizeSavedLocationList(savedLocations)
+        }).eq("user_id", currentUserId);
+        if (error) {
+          if (isMissingSavedLocationsColumnError(error)) {
+            profileSavedLocationsSupported = false;
+            console.warn("persistSavedLocationsToSupabase: disabled because saved_locations is unavailable in profiles", error);
+            return;
+          }
+          console.warn("persistSavedLocationsToSupabase", error);
         }
+      } catch (error) {
         console.warn("persistSavedLocationsToSupabase", error);
       }
+    }
+
+    function syncLocationDropdowns() {
+      populateHistoryToolbarLocationSelect();
+      renderSessionLocationPickerList();
+    }
+
+    function queueSavedLocationsPersist() {
+      savedLocationsPersistChain = savedLocationsPersistChain
+        .catch(() => {})
+        .then(() => persistSavedLocationsToSupabase());
+      return savedLocationsPersistChain;
+    }
+
+    function rememberSavedLocation(value, options = {}) {
+      const location = String(value || "").trim();
+      if (!location) return "";
+      savedLocations = normalizeSavedLocationList([...savedLocations, location]);
+      if (options.select !== false) {
+        setSessionLocationPickerSelection(location);
+      }
+      syncLocationDropdowns();
+      if (options.persist !== false) {
+        queueSavedLocationsPersist();
+      }
+      return location;
+    }
+
+    function saveSessionLocationFromInput() {
+      const raw = sessionLocationNewInput ? sessionLocationNewInput.value.trim() : "";
+      const location = rememberSavedLocation(raw);
+      if (!location) return;
+      if (sessionLocationNewInput) sessionLocationNewInput.value = "";
+      if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
+      setSessionLocationPanelOpen(false);
     }
 
     function folderStorageKey() {
@@ -13324,6 +13528,10 @@
       return Number(parsed.toFixed(2));
     }
 
+    function hasSavedStartingBankrollValue(value) {
+      return normalizeStartingBankrollValue(value) > 0;
+    }
+
     function formatStartingBankrollInputValue(value) {
       return String(normalizeStartingBankrollValue(value));
     }
@@ -13332,6 +13540,12 @@
       if (!startingBankrollStatus) return;
       startingBankrollStatus.textContent = message;
       startingBankrollStatus.style.color = kind === "error" ? "#fca5a5" : kind === "pending" ? "#fde68a" : "#86efac";
+    }
+
+    function setStartingBankrollPromptStatus(message = "", kind = "success") {
+      if (!startingBankrollPromptStatus) return;
+      startingBankrollPromptStatus.textContent = message;
+      startingBankrollPromptStatus.style.color = kind === "error" ? "#fca5a5" : kind === "pending" ? "#fde68a" : "#86efac";
     }
 
     function clearStartingBankrollSaveTimer() {
@@ -13351,12 +13565,13 @@
 
     async function persistProfileSettingsToSupabase() {
       if (!supabaseClient || !currentUserId) return;
-      await supabaseClient.from("profiles").update({
+      const { error } = await supabaseClient.from("profiles").update({
         name: profileNameInput.value.trim(),
         phone: profilePhoneInput.value.trim(),
         theme: normalizeThemeValue(themeSelect ? themeSelect.value : "dark"),
         starting_bankroll: normalizeStartingBankrollValue(startingBankroll)
       }).eq("user_id", currentUserId);
+      if (error) throw error;
     }
 
     async function persistStartingBankrollSetting() {
@@ -13392,6 +13607,91 @@
         return;
       }
       scheduleStartingBankrollSave();
+    }
+
+    function hideStartingBankrollPrompt() {
+      if (startingBankrollPromptScreen) startingBankrollPromptScreen.classList.add("hidden");
+      setStartingBankrollPromptStatus("");
+    }
+
+    function showStartingBankrollPrompt() {
+      clearMotionBackdropBlur("app");
+      landingScreen.classList.add("hidden");
+      appStage.classList.remove("hidden");
+      authScreen.classList.add("hidden");
+      createAccountScreen.classList.add("hidden");
+      authSupportScreen.classList.add("hidden");
+      authCodeScreen.classList.add("hidden");
+      resetPasswordScreen.classList.add("hidden");
+      homeScreen.classList.add("hidden");
+      if (startingBankrollPromptScreen) {
+        startingBankrollPromptScreen.classList.remove("hidden");
+        startingBankrollPromptScreen.classList.remove("screen-enter-animate");
+        void startingBankrollPromptScreen.offsetWidth;
+        startingBankrollPromptScreen.classList.add("screen-enter-animate");
+      }
+      if (startingBankrollPromptInput) {
+        startingBankrollPromptInput.value = "";
+        window.setTimeout(() => startingBankrollPromptInput.focus(), 0);
+      }
+      leftPanel.classList.remove("panel-visible");
+      sidebarToggleBtn.setAttribute("aria-expanded", "false");
+      closeProfileMenu();
+      setTopBarMode("auth");
+      startMotionBackdropBlur("app");
+      replaceCurrentRoute("/starting-bankroll");
+    }
+
+    function showSignedInApp(options = {}) {
+      hideStartingBankrollPrompt();
+      landingScreen.classList.add("hidden");
+      landingNav.classList.remove("landing-hidden");
+      appStage.classList.remove("hidden");
+      authScreen.classList.add("hidden");
+      createAccountScreen.classList.add("hidden");
+      authSupportScreen.classList.add("hidden");
+      authCodeScreen.classList.add("hidden");
+      resetPasswordScreen.classList.add("hidden");
+      homeScreen.classList.remove("hidden");
+      leftPanel.classList.remove("panel-visible");
+      sidebarToggleBtn.setAttribute("aria-expanded", "false");
+      closeProfileMenu();
+      setTopBarMode("app");
+      updateDeveloperControlsVisibility();
+      const requestedView = getViewForRoute(getCurrentAppRoutePath());
+      const initialView = requestedView && requestedView !== "authScreen" ? requestedView : "homeView";
+      showView(initialView, { syncRoute: options.syncRoute !== false, replaceRoute: Boolean(options.replaceRoute) });
+    }
+
+    async function submitStartingBankrollPrompt() {
+      if (!startingBankrollPromptInput || !startingBankrollPromptSaveBtn) return;
+      if (startingBankrollPromptSaveBtn.disabled) return;
+      const value = normalizeStartingBankrollValue(startingBankrollPromptInput.value);
+      if (value <= 0) {
+        setStartingBankrollPromptStatus("Enter a starting bankroll greater than $0.", "error");
+        startingBankrollPromptInput.focus();
+        return;
+      }
+      startingBankroll = value;
+      syncStartingBankrollInput({ preserveStatus: true });
+      recomputeBankroll();
+      renderAll();
+      startingBankrollPromptSaveBtn.disabled = true;
+      setStartingBankrollPromptStatus("Saving...", "pending");
+      try {
+        await persistProfileSettingsToSupabase();
+        startingBankrollPromptRequired = false;
+        setStartingBankrollStatus(`Saved starting bankroll: ${formatMoney(startingBankroll)}.`);
+        showSignedInApp({ replaceRoute: true });
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => renderAll());
+        });
+      } catch (err) {
+        console.error(err);
+        setStartingBankrollPromptStatus("Could not save starting bankroll. Try again.", "error");
+      } finally {
+        startingBankrollPromptSaveBtn.disabled = false;
+      }
     }
 
     function profileFieldStopEditing(displayEl, inputEl, buttonEl, label, value) {
@@ -13573,6 +13873,7 @@
       savedLocations = [];
       savedCustomStakes = [];
       startingBankroll = 0;
+      startingBankrollPromptRequired = false;
       bankroll = 0;
       clearStartingBankrollSaveTimer();
       syncStartingBankrollInput();
@@ -13688,6 +13989,7 @@
       bankroll = 0;
       currentProfileSubscriptionStatus = "";
       currentPlan = "free";
+      startingBankrollPromptRequired = true;
       const { data: profileData } = await supabaseClient
         .from("profiles")
         .select("*")
@@ -13700,6 +14002,7 @@
           phone: profileData.phone || ""
         }, profileEmailInput ? profileEmailInput.value : "");
         startingBankroll = normalizeStartingBankrollValue(profileData.starting_bankroll);
+        startingBankrollPromptRequired = !hasSavedStartingBankrollValue(profileData.starting_bankroll);
         bankroll = startingBankroll;
         const hasManualPremium = normalizePremiumValue(profileData.manual_premium);
         const developerPlanOverride = getDeveloperPlanOverride(profileData);
@@ -13775,6 +14078,13 @@
 
     async function ensureProfileForUser(user, defaults = {}) {
       if (!supabaseClient || !user) return;
+      const { data: existing, error: lookupError } = await supabaseClient
+        .from("profiles")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (lookupError) throw lookupError;
+      if (existing) return;
       const payload = {
         user_id: user.id,
         name: defaults.name || user.user_metadata?.full_name || "",
@@ -13782,7 +14092,8 @@
         theme: normalizeThemeValue(themeSelect ? themeSelect.value : "dark"),
         starting_bankroll: Number(defaults.startingBankroll || 0)
       };
-      await supabaseClient.from("profiles").upsert(payload, { onConflict: "user_id" });
+      const { error } = await supabaseClient.from("profiles").insert(payload);
+      if (error && error.code !== "23505") throw error;
     }
 
     async function persistProfileFromUI() {
@@ -13929,23 +14240,25 @@
       syncProfileViewFromState({ name: "", phone: "" }, user?.email || profileEmailInput.value || "");
       isSignedIn = true;
       landingScreen.classList.add("hidden");
-      landingNav.classList.remove("landing-hidden");
       appStage.classList.remove("hidden");
       authScreen.classList.add("hidden");
       createAccountScreen.classList.add("hidden");
       authSupportScreen.classList.add("hidden");
       authCodeScreen.classList.add("hidden");
-      homeScreen.classList.remove("hidden");
+      resetPasswordScreen.classList.add("hidden");
+      if (startingBankrollPromptScreen) startingBankrollPromptScreen.classList.add("hidden");
+      homeScreen.classList.add("hidden");
       leftPanel.classList.remove("panel-visible");
       sidebarToggleBtn.setAttribute("aria-expanded", "false");
       closeProfileMenu();
-      setTopBarMode("app");
-      updateDeveloperControlsVisibility();
-      const requestedView = getViewForRoute(getCurrentAppRoutePath());
-      const initialView = requestedView || "homeView";
-      showView(initialView, { syncRoute: options.syncRoute !== false, replaceRoute: Boolean(options.replaceRoute) });
+      setTopBarMode("auth");
       await loadDataFromSupabase();
       recomputeBankroll();
+      if (startingBankrollPromptRequired) {
+        showStartingBankrollPrompt();
+        return;
+      }
+      showSignedInApp({ syncRoute: options.syncRoute !== false, replaceRoute: Boolean(options.replaceRoute) });
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => renderAll());
       });
@@ -14992,6 +15305,19 @@
       return liveSeats[0];
     }
 
+    function getHandActionCount() {
+      return Object.values(handStreetActions)
+        .reduce((sum, arr) => sum + (Array.isArray(arr) ? arr.length : 0), 0);
+    }
+
+    function isHandWonByFoldEnough() {
+      return handSetupConfirmed
+        && handStageIndex > 0
+        && getHandActionCount() > 0
+        && getHandWinnerSeatIndex() != null
+        && getActiveHandSeatIndices().length === 1;
+    }
+
     function getHandWinnerText() {
       if (!isViewingFinalHandState()) return "";
       refundUnmatchedCommittedPots();
@@ -15006,6 +15332,7 @@
 
     function isViewingFinalHandState() {
       if (!handSetupConfirmed) return false;
+      if (isHandWonByFoldEnough()) return true;
       if (handStageIndex < 4) return false;
       if (getCurrentStreetKey() !== "river") return false;
       if (!isCurrentStreetBoardReady()) return false;
@@ -15399,8 +15726,16 @@
       return Boolean(handSeatStackEdited[seatIndex]);
     }
 
+    function seatCardsHaveCompleteCards(cards) {
+      return Array.isArray(cards) && cards.some((card) => card && card.rank && card.suit);
+    }
+
+    function seatHasEnteredCards(seatIndex) {
+      return seatCardsHaveCompleteCards(handSeatCards[seatIndex]);
+    }
+
     function seatHasPhoneCollapsedUserData(seatIndex) {
-      return seatHasUserNameOrHeroLabel(seatIndex) || seatHasUserEditedStack(seatIndex);
+      return seatHasUserNameOrHeroLabel(seatIndex) || seatHasUserEditedStack(seatIndex) || seatHasEnteredCards(seatIndex);
     }
 
     function seatHasFoldActionOnStreet(seatIndex, streetKey) {
@@ -16402,9 +16737,10 @@
     }
 
     function isHandConcludedEnough() {
+      if (isHandWonByFoldEnough()) return true;
       if (handStageIndex < 4) return false;
       const boardFilled = [...handBoardCards.flop, ...handBoardCards.turn, ...handBoardCards.river].every((c) => !!c);
-      const actionCount = Object.values(handStreetActions).reduce((sum, arr) => sum + arr.length, 0);
+      const actionCount = getHandActionCount();
       return boardFilled && actionCount > 0 && getActiveHandSeatIndices().length >= 2;
     }
 
@@ -18192,6 +18528,10 @@
         if (state.buttonSeatIndex === seatIndex) button.classList.add("button-seat");
         if (state.currentActorIndex === seatIndex && state.streetKey) button.classList.add("actor-seat");
         if (state.seatFolded[seatIndex]) button.classList.add("folded-seat");
+        const replaySeatCards = state.seatCards[seatIndex] || [];
+        if (seatCardsHaveCompleteCards(replaySeatCards)) {
+          button.classList.add("hand-seat-has-cards");
+        }
         button.style.left = `${xPct}%`;
         button.style.top = `${yPct}%`;
         if (state.buttonSeatIndex === seatIndex) {
@@ -18210,7 +18550,7 @@
           labelText,
           stackText: state.seatStacks[seatIndex] != null ? formatHandSeatChipAmount(state.seatStacks[seatIndex]) : "Unknown",
           equityPct: typeof eq === "number" ? eq : null,
-          seatCards: state.seatCards[seatIndex] || []
+          seatCards: replaySeatCards
         });
         button.setAttribute(
           "aria-label",
@@ -18723,6 +19063,7 @@
         ? getHandDisplayName(existingHand, "").trim()
         : "";
       const netPotBreakdown = applyRakeToPotBreakdown(handLastPotBreakdown);
+      const handIsDraft = !isHandConcludedEnough();
       const hand = {
         id: existingHand && existingHand.id ? existingHand.id : null,
         name: existingName,
@@ -18730,7 +19071,7 @@
         editedAt: new Date().toISOString(),
         stageIndex: handStageIndex,
         currentStreet: getCurrentStreetKey(),
-        draft: !isHandConcludedEnough(),
+        draft: handIsDraft,
         summary: `${getActiveHandSeatIndices().length} players · ${streets.map((k) => handStreetActions[k].length).reduce((a, b) => a + b, 0)} actions`,
         seatStacks: handSeatStacks.slice(),
         seatNicknames: handSeatNicknames.slice(),
@@ -18755,7 +19096,7 @@
         pendingSessionHands.push(hand);
         savedHandIndex = pendingSessionHands.length - 1;
       }
-      handSaveMessage.textContent = "Hand saved to current session draft.";
+      handSaveMessage.textContent = handIsDraft ? "Hand saved to current session draft." : "Hand saved.";
       handSaveMessage.style.color = "#86efac";
       const sessionIdForHand = assignedSessionIndex != null && sessions[assignedSessionIndex]
         ? sessions[assignedSessionIndex].id
@@ -18902,6 +19243,10 @@
         if (handStageIndex > 0 && handSeatFolded[i]) {
           btn.classList.add("folded-seat");
         }
+        const currentSeatCards = handSeatCards[i] || [];
+        if (seatCardsHaveCompleteCards(currentSeatCards)) {
+          btn.classList.add("hand-seat-has-cards");
+        }
         if (seatHasPhoneCollapsedUserData(i)) {
           btn.classList.add("hand-seat-has-user-data");
         }
@@ -18923,7 +19268,7 @@
           labelText,
           stackText: handSeatStacks[i] != null ? formatHandSeatChipAmount(handSeatStacks[i]) : "Unknown",
           equityPct: eq,
-          seatCards: handSeatCards[i] || []
+          seatCards: currentSeatCards
         });
         const allowedSeatActions = getAllowedActionsForSeat(i);
         if (allowedSeatActions.length) {
@@ -22482,6 +22827,91 @@
       }));
     }
 
+    const TIME_OF_DAY_OUTCOME_BUCKETS = [
+      { key: "morning", label: "Morning", detail: "6 AM-12 PM" },
+      { key: "afternoon", label: "Afternoon", detail: "12 PM-6 PM" },
+      { key: "evening", label: "Evening", detail: "6 PM-12 AM" },
+      { key: "night", label: "Night", detail: "12 AM-6 AM" }
+    ];
+
+    function getSessionMidpointClockMinutes(session) {
+      const start = parseClockMinutesFromUserTimeString(session?.timeStarted);
+      const end = parseClockMinutesFromUserTimeString(session?.timeEnded);
+      if (start == null || end == null) return null;
+      let normalizedEnd = end;
+      if (normalizedEnd < start) normalizedEnd += 24 * 60;
+      return Math.round(start + ((normalizedEnd - start) / 2)) % (24 * 60);
+    }
+
+    function getTimeOfDayOutcomeBucketKey(minutes) {
+      if (!Number.isFinite(Number(minutes))) return "";
+      const m = ((Math.round(Number(minutes)) % (24 * 60)) + (24 * 60)) % (24 * 60);
+      if (m >= 6 * 60 && m < 12 * 60) return "morning";
+      if (m >= 12 * 60 && m < 18 * 60) return "afternoon";
+      if (m >= 18 * 60) return "evening";
+      return "night";
+    }
+
+    function formatAnalyticsHourTick(value) {
+      const hours = Number(value) || 0;
+      if (Math.abs(hours) >= 10 || Number.isInteger(hours)) return `${Math.round(hours)}h`;
+      return `${hours.toFixed(1)}h`;
+    }
+
+    function buildTimeOfDayOutcomeBuckets(sessionEntries) {
+      const buckets = new Map(TIME_OF_DAY_OUTCOME_BUCKETS.map((bucket) => [
+        bucket.key,
+        {
+          ...bucket,
+          wins: 0,
+          losses: 0,
+          breakeven: 0
+        }
+      ]));
+      sessionEntries.forEach((entry) => {
+        const bucketKey = getTimeOfDayOutcomeBucketKey(getSessionMidpointClockMinutes(entry.session));
+        const bucket = buckets.get(bucketKey);
+        if (!bucket) return;
+        if (entry.profit > 0) bucket.wins += 1;
+        else if (entry.profit < 0) bucket.losses += 1;
+        else bucket.breakeven += 1;
+      });
+      return TIME_OF_DAY_OUTCOME_BUCKETS.map((bucket) => {
+        const stats = buckets.get(bucket.key) || bucket;
+        const decisive = (stats.wins || 0) + (stats.losses || 0);
+        const total = decisive + (stats.breakeven || 0);
+        const winRate = decisive ? ((stats.wins || 0) / decisive) * 100 : 0;
+        return {
+          label: bucket.label,
+          value: winRate,
+          count: total,
+          decisive,
+          wins: stats.wins || 0,
+          losses: stats.losses || 0,
+          breakeven: stats.breakeven || 0,
+          detail: bucket.detail,
+          note: `${formatCompactCount(stats.wins || 0)}W · ${formatCompactCount(stats.losses || 0)}L · ${formatCompactCount(stats.breakeven || 0)} even`,
+          color: decisive ? (winRate >= 50 ? positiveGreenColor() : "#f87171") : "#64748b"
+        };
+      });
+    }
+
+    function buildTimeOfDayOutcomeTooltip(item) {
+      const wins = Number(item?.wins) || 0;
+      const losses = Number(item?.losses) || 0;
+      const breakeven = Number(item?.breakeven) || 0;
+      const decisive = wins + losses;
+      const ratioText = decisive ? (losses ? `${(wins / losses).toFixed(2)}:1` : `${formatCompactCount(wins)}:0`) : "No wins/losses";
+      return buildChartTooltipPanel(item.label, [
+        { label: "Win rate", htmlValue: escapeHtml(`${(Number(item.value) || 0).toFixed(1)}%`) },
+        { label: "Win/loss", value: ratioText },
+        { label: "Wins", htmlValue: escapeHtml(formatCompactCount(wins)) },
+        { label: "Losses", htmlValue: escapeHtml(formatCompactCount(losses)) },
+        { label: "Breakeven", htmlValue: escapeHtml(formatCompactCount(breakeven)) },
+        { label: "Midpoint", value: item.detail || "" }
+      ], "Based on session midpoint time");
+    }
+
     function buildAnalyticsDataset() {
       const allSessionEntries = getSessionSortEntries();
       const allDateEntries = allSessionEntries.filter((entry) => entry.chartDate).sort((a, b) => a.chartDate - b.chartDate);
@@ -22649,6 +23079,17 @@
           color: entry.profit >= 0 ? positiveGreenColor() : "#f87171",
           sessionId: entry.session.id
         }));
+      const durationProfitPoints = sessionEntries
+        .filter((entry) => Number.isFinite(Number(entry.durationMinutes)) && Number(entry.durationMinutes) > 0)
+        .map((entry) => ({
+          x: Number(entry.durationMinutes) / 60,
+          y: entry.profit,
+          hours: entry.hours,
+          label: `${entry.session.title || entry.session.date || "Untitled"} · ${formatDurationFromMinutes(entry.durationMinutes)} · ${formatMoney(entry.profit)}`,
+          color: entry.profit >= 0 ? positiveGreenColor() : "#f87171",
+          sessionId: entry.session.id
+        }));
+      const timeOfDayOutcomeBuckets = buildTimeOfDayOutcomeBuckets(sessionEntries);
 
       const firstDate = orderedDateEntries.length ? orderedDateEntries[0].chartDate : null;
       const lastDate = orderedDateEntries.length ? orderedDateEntries[orderedDateEntries.length - 1].chartDate : null;
@@ -22818,6 +23259,8 @@
         handPotBuckets,
         seatCountBuckets,
         scatterPoints,
+        durationProfitPoints,
+        timeOfDayOutcomeBuckets,
         bestSessions,
         worstSessions,
         fieldStats,
@@ -23423,6 +23866,7 @@
         chartKey === "analyticsWeekdayChart" ||
         chartKey === "analyticsDurationChart" ||
         chartKey === "analyticsHandsChart" ||
+        chartKey === "analyticsTimeOfDayChart" ||
         chartKey === "analyticsPotChart" ||
         chartKey === "analyticsSeatCountChart"
       ) {
@@ -23481,43 +23925,56 @@
             color: "#f59e0b",
             detail: "Hands per session"
           })),
+          analyticsTimeOfDayChart: model.timeOfDayOutcomeBuckets,
           analyticsPotChart: model.handPotBuckets,
           analyticsSeatCountChart: model.seatCountBuckets
         };
         const chartItems = chartItemsByKey[chartKey] || [];
         if (expandSvg) {
+          const isSessionCountChart = chartKey === "analyticsWeekdayChart" || chartKey === "analyticsDurationChart" || chartKey === "analyticsHandsChart";
+          const isSessionMixChart = chartKey === "analyticsGameChart" || chartKey === "analyticsStakeChart" || chartKey === "analyticsLocationChart";
+          const isTimeOfDayChart = chartKey === "analyticsTimeOfDayChart";
           renderAnalyticsBarChart(expandSvg, chartItems, {
-            valueFormatter: (value) => (chartKey === "analyticsWeekdayChart" || chartKey === "analyticsDurationChart" || chartKey === "analyticsHandsChart"
+            valueFormatter: (value) => (isTimeOfDayChart
+              ? `${(Number(value) || 0).toFixed(0)}%`
+              : (isSessionCountChart
               ? formatCompactCount(value)
-              : (chartKey === "analyticsGameChart" || chartKey === "analyticsStakeChart" || chartKey === "analyticsLocationChart"
+              : (isSessionMixChart
                 ? sessionMixConfig.metricValueFormatter(value)
-                : formatMoney(value))),
-            formatTick: (value) => (chartKey === "analyticsWeekdayChart" || chartKey === "analyticsDurationChart" || chartKey === "analyticsHandsChart"
+                : formatMoney(value)))),
+            formatTick: (value) => (isTimeOfDayChart
+              ? `${(Number(value) || 0).toFixed(0)}%`
+              : (isSessionCountChart
               ? formatCompactCount(value)
-              : (chartKey === "analyticsGameChart" || chartKey === "analyticsStakeChart" || chartKey === "analyticsLocationChart"
+              : (isSessionMixChart
                 ? sessionMixConfig.metricValueFormatter(value)
-                : formatMoney(value))),
+                : formatMoney(value)))),
             xTicks: 4,
             tooltipKey: `analyticsExpand-${chartKey}`,
+            tooltipBuilder: isTimeOfDayChart ? buildTimeOfDayOutcomeTooltip : undefined,
             showValueLabels: false,
             minimalBars: true,
             fixedHeight: tall,
-            primaryMetricLabel: chartKey === "analyticsWeekdayChart" || chartKey === "analyticsDurationChart" || chartKey === "analyticsHandsChart"
+            primaryMetricLabel: isTimeOfDayChart
+              ? "Win rate"
+              : (isSessionCountChart
               ? "Sessions"
-              : (chartKey === "analyticsGameChart" || chartKey === "analyticsStakeChart" || chartKey === "analyticsLocationChart"
+              : (isSessionMixChart
                 ? sessionMixConfig.metricLabel
-                : "Profit"),
-            xAxisLabel: chartKey === "analyticsWeekdayChart" || chartKey === "analyticsDurationChart" || chartKey === "analyticsHandsChart"
+                : "Profit")),
+            xAxisLabel: isTimeOfDayChart
+              ? "Win rate"
+              : (isSessionCountChart
               ? "Sessions"
-              : (chartKey === "analyticsGameChart" || chartKey === "analyticsStakeChart" || chartKey === "analyticsLocationChart"
+              : (isSessionMixChart
                 ? sessionMixConfig.metricAxisLabel
-                : "Profit"),
+                : "Profit")),
             yAxisLabel: title,
             width: wide,
             clickBehavior: "pin"
           });
         }
-      } else if (chartKey === "analyticsScatterChart") {
+      } else if (chartKey === "analyticsScatterChart" || chartKey === "analyticsDurationProfitChart") {
         const wrap = document.createElement("div");
         wrap.className = "chart-card chart-with-tooltip analytics-expand-chart-card";
         wrap.innerHTML = `
@@ -23551,6 +24008,13 @@
         const scatterZoomInBtn = wrap.querySelector("#analyticsScatterZoomInBtn");
         const scatterZoomOutBtn = wrap.querySelector("#analyticsScatterZoomOutBtn");
         if (expandSvg && scatterShell && scatterScroll && scatterXAxis && scatterYAxis) {
+          const isDurationProfitChart = chartKey === "analyticsDurationProfitChart";
+          const scatterPoints = isDurationProfitChart
+            ? model.durationProfitPoints
+            : model.scatterPoints.map((point) => ({
+              ...point,
+              y: sessionMixConfig.mode === "hourly" ? ((Number(point.hours) || 0) > 0 ? ((Number(point.y) || 0) / (Number(point.hours) || 1)) : 0) : point.y
+            }));
           renderAnalyticsZoomableScatterChart({
             svgEl: expandSvg,
             scrollEl: scatterScroll,
@@ -23560,15 +24024,17 @@
             zoomInput: scatterZoomInput,
             zoomInBtn: scatterZoomInBtn,
             zoomOutBtn: scatterZoomOutBtn
-          }, model.scatterPoints.map((point) => ({
-            ...point,
-            y: sessionMixConfig.mode === "hourly" ? ((Number(point.hours) || 0) > 0 ? ((Number(point.y) || 0) / (Number(point.hours) || 1)) : 0) : point.y
-          })), {
-            xLabel: "Buy-in",
-            yLabel: sessionMixConfig.scatterYLabel,
+          }, scatterPoints, {
+            xLabel: isDurationProfitChart ? "Session length" : "Buy-in",
+            xValueLabel: isDurationProfitChart ? "Session length" : "Buy-in",
+            xValueFormatter: isDurationProfitChart
+              ? ((value) => formatDurationFromMinutes((Number(value) || 0) * 60))
+              : formatMoney,
+            formatXTick: isDurationProfitChart ? formatAnalyticsHourTick : undefined,
+            yLabel: isDurationProfitChart ? "Profit" : sessionMixConfig.scatterYLabel,
             tooltipKey: "analyticsExpandScatter",
-            yValueLabel: sessionMixConfig.scatterTooltipLabel,
-            yValueFormatter: sessionMixConfig.metricValueFormatter,
+            yValueLabel: isDurationProfitChart ? "Profit" : sessionMixConfig.scatterTooltipLabel,
+            yValueFormatter: isDurationProfitChart ? formatMoney : sessionMixConfig.metricValueFormatter,
             dotRadius: 5.6,
             clickBehavior: "navigate",
             navigateReturnView: "analyticsView"
@@ -23993,6 +24459,8 @@
       const syncZoomInput = () => {
         if (zoomInput) zoomInput.value = `${zoomPercent}%`;
       };
+      const xValueLabel = options.xValueLabel || options.xLabel || "Buy-in";
+      const xValueFormatter = options.xValueFormatter || formatMoney;
 
       const rawMinX = Math.min(...points.map((point) => Number(point.x) || 0), 0);
       const rawMaxX = Math.max(...points.map((point) => Number(point.x) || 0), 1);
@@ -24062,7 +24530,7 @@
         const point = points[index];
         if (!point) return;
         tooltipEl.innerHTML = buildChartTooltipPanel(point.label || `${point.x}, ${point.y}`, [
-          { label: "Buy-in", htmlValue: escapeHtml(formatMoney(point.x)) },
+          { label: xValueLabel, htmlValue: escapeHtml(xValueFormatter(point.x)) },
           { label: yValueLabel, htmlValue: escapeHtml(yValueFormatter(point.y)), valueClass: toneClassForMoney(point.y) },
           point.sessionId != null ? { label: "Linked", value: "Open session details" } : null
         ], "Click to pin details");
@@ -24226,6 +24694,8 @@
       }
       const tooltipEl = options.interactive === false ? null : ensureAnalyticsChartTooltip(svgEl, options.tooltipKey || "scatter");
       const clickBehavior = options.clickBehavior || "popup";
+      const xValueLabel = options.xValueLabel || options.xLabel || "Buy-in";
+      const xValueFormatter = options.xValueFormatter || formatMoney;
       const yValueLabel = options.yValueLabel || options.yLabel || "Profit";
       const yValueFormatter = options.yValueFormatter || formatMoney;
       const minX = Math.min(...points.map((point) => Number(point.x) || 0));
@@ -24300,7 +24770,7 @@
         const point = points[index];
         if (!point) return;
         tooltipEl.innerHTML = buildChartTooltipPanel(point.label || `${point.x}, ${point.y}`, [
-          { label: "Buy-in", htmlValue: escapeHtml(formatMoney(point.x)) },
+          { label: xValueLabel, htmlValue: escapeHtml(xValueFormatter(point.x)) },
           { label: yValueLabel, htmlValue: escapeHtml(yValueFormatter(point.y)), valueClass: toneClassForMoney(point.y) },
           point.sessionId != null ? { label: "Linked", value: "Open session details" } : null
         ], "Click to pin details");
@@ -24566,6 +25036,37 @@
         primaryMetricLabel: "Sessions",
         xAxisLabel: "Sessions",
         yAxisLabel: "Hands"
+      });
+      renderAnalyticsScatterChart(analyticsDurationProfitChart, model.durationProfitPoints, {
+        xLabel: "Session length",
+        yLabel: "Profit",
+        xValueLabel: "Session length",
+        xValueFormatter: (value) => formatDurationFromMinutes((Number(value) || 0) * 60),
+        yValueLabel: "Profit",
+        yValueFormatter: formatMoney,
+        formatXTick: formatAnalyticsHourTick,
+        formatYTick: formatMoney,
+        tooltipKey: "duration-profit",
+        noDataText: "No duration data yet",
+        height: 360,
+        leftGutter: 92,
+        rightGutter: 24,
+        topGutter: 30,
+        bottomGutter: 66,
+        dotRadius: 7.4
+      });
+      renderAnalyticsBarChart(analyticsTimeOfDayChart, model.timeOfDayOutcomeBuckets, {
+        valueFormatter: (value) => `${(Number(value) || 0).toFixed(0)}%`,
+        formatTick: (value) => `${(Number(value) || 0).toFixed(0)}%`,
+        xTicks: 4,
+        tooltipKey: "time-of-day",
+        tooltipBuilder: buildTimeOfDayOutcomeTooltip,
+        showValueLabels: false,
+        minimalBars: true,
+        fixedHeight: 360,
+        primaryMetricLabel: "Win rate",
+        xAxisLabel: "Win rate",
+        yAxisLabel: "Midpoint"
       });
       renderAnalyticsKpiGrid(analyticsHandKpiGrid, [
         { label: "Logged hands", value: formatCompactCount(model.totalHands), note: `${formatCompactCount(model.buttonHands || 0)} button seats · ${formatCompactCount(model.heroHands || 0)} hero seats` },
@@ -25482,18 +25983,17 @@
       });
     }
     if (sessionLocationSaveNewBtn) {
-      sessionLocationSaveNewBtn.addEventListener("click", async (e) => {
+      sessionLocationSaveNewBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        const raw = sessionLocationNewInput ? sessionLocationNewInput.value.trim() : "";
-        if (!raw) return;
-        savedLocations = normalizeSavedLocationList([...savedLocations, raw]);
-        await persistSavedLocationsToSupabase();
-        setSessionLocationPickerSelection(raw);
-        populateHistoryToolbarLocationSelect();
-        renderSessionLocationPickerList();
-        if (sessionLocationNewInput) sessionLocationNewInput.value = "";
-        if (sessionLocationAddFields) sessionLocationAddFields.classList.add("hidden");
-        setSessionLocationPanelOpen(false);
+        saveSessionLocationFromInput();
+      });
+    }
+    if (sessionLocationNewInput) {
+      sessionLocationNewInput.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter") return;
+        e.preventDefault();
+        e.stopPropagation();
+        saveSessionLocationFromInput();
       });
     }
     if (sessionLocationOptionsList) {
@@ -25509,12 +26009,11 @@
           if (!ok) return;
           savedLocations = savedLocations.filter((x) => x !== loc);
           savedLocations = normalizeSavedLocationList(savedLocations);
-          await persistSavedLocationsToSupabase();
+          await queueSavedLocationsPersist();
           if (sessionLocationValue && sessionLocationValue.value.trim() === loc) {
             setSessionLocationPickerSelection("");
           }
-          renderSessionLocationPickerList();
-          populateHistoryToolbarLocationSelect();
+          syncLocationDropdowns();
           return;
         }
         const choose = e.target.closest(".location-picker-choose");
@@ -26021,6 +26520,21 @@
         if (event.key !== "Enter") return;
         event.preventDefault();
         startingBankrollInput.blur();
+      });
+    }
+    if (startingBankrollPromptSaveBtn) {
+      startingBankrollPromptSaveBtn.addEventListener("click", () => {
+        submitStartingBankrollPrompt();
+      });
+    }
+    if (startingBankrollPromptInput) {
+      startingBankrollPromptInput.addEventListener("input", () => {
+        setStartingBankrollPromptStatus("");
+      });
+      startingBankrollPromptInput.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter") return;
+        event.preventDefault();
+        submitStartingBankrollPrompt();
       });
     }
     openManualBankrollBtn.addEventListener("click", () => {
@@ -26733,6 +27247,7 @@
       pendingSessionHands = [];
       bankroll = 0;
       startingBankroll = 0;
+      startingBankrollPromptRequired = false;
       savedLocations = [];
       clearStartingBankrollSaveTimer();
       syncStartingBankrollInput();
@@ -26790,6 +27305,7 @@
         saveMessage.style.color = "#fca5a5";
         return;
       }
+      rememberSavedLocation(payload.location, { select: false });
 
       if (editingSessionIndex !== null) {
         const session = sessions[editingSessionIndex];
