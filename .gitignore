@@ -4,3 +4,5 @@
 # Local Cloudflare/Wrangler state
 .wrangler
 node_modules/.mf/
+.wrangler/
+node_modules/.mf/
