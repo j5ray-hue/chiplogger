@@ -61,6 +61,7 @@
     }
 
     .app-stage {
+      --stage-gutter: clamp(12px, 4vw, 24px);
       position: relative;
       z-index: 10;
       isolation: isolate;
@@ -71,7 +72,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px;
+      padding-top: max(var(--stage-gutter), env(safe-area-inset-top));
+      padding-right: max(var(--stage-gutter), env(safe-area-inset-right));
+      padding-bottom: max(var(--stage-gutter), env(safe-area-inset-bottom));
+      padding-left: max(var(--stage-gutter), env(safe-area-inset-left));
       box-sizing: border-box;
       opacity: 1;
     }
@@ -87,7 +91,7 @@
       align-self: stretch;
       width: 100%;
       padding: 0;
-      margin: 0 -24px;
+      margin: 0 calc(-1 * var(--stage-gutter));
       flex: 1;
       min-height: 0;
     }
@@ -111,7 +115,7 @@
       border: 1px solid var(--panelBorder);
       border-radius: 16px;
       box-shadow: var(--shadow);
-      padding: 26px;
+      padding: clamp(18px, 5vw, 26px);
       opacity: 1;
     }
 
@@ -130,16 +134,42 @@
     }
 
     .auth-wrap {
+      width: 100%;
       max-width: 420px;
       margin: 0 auto;
       text-align: center;
+      min-width: 0;
+    }
+
+    .auth-header {
+      display: grid;
+      grid-template-columns: minmax(72px, 1fr) minmax(0, max-content) minmax(72px, 1fr);
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .auth-header::after {
+      content: "";
+      grid-column: 3;
+      min-width: 0;
+    }
+
+    .auth-header .title {
+      grid-column: 2;
+      min-width: 0;
+      margin: 0;
+      line-height: 1.15;
+      overflow-wrap: anywhere;
     }
 
     .auth-back-btn {
-      position: absolute;
-      top: 18px;
-      left: 18px;
+      position: static;
+      grid-column: 1;
+      justify-self: start;
       width: auto;
+      max-width: 100%;
       margin: 0;
       padding: 8px 11px;
       border-radius: 8px;
@@ -148,6 +178,7 @@
       border: 1px solid var(--buttonSecondaryBorder);
       font-size: 0.9rem;
       line-height: 1;
+      white-space: nowrap;
     }
 
     .auth-back-btn:hover {
@@ -156,7 +187,31 @@
 
     .title {
       margin: 0 0 10px;
-      font-size: 1.9rem;
+      font-size: clamp(1.55rem, 6vw, 1.9rem);
+    }
+
+    @media (max-width: 520px) {
+      .auth-header {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        row-gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .auth-header::after {
+        display: none;
+      }
+
+      .auth-header .auth-back-btn {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+      }
+
+      .auth-header .title {
+        grid-column: 1;
+        grid-row: 2;
+      }
     }
 
     .subtitle {
@@ -2141,13 +2196,14 @@
 
     .support-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
       gap: 10px;
       margin-top: 12px;
     }
 
     .support-grid .field {
       margin-bottom: 0;
+      min-width: 0;
     }
 
     .support-grid .field--full {
@@ -2167,7 +2223,9 @@
 
     .support-actions button {
       width: auto;
-      min-width: 160px;
+      min-width: min(160px, 100%);
+      max-width: 100%;
+      flex: 1 1 160px;
       margin-top: 0;
     }
 
@@ -7981,9 +8039,11 @@
       </div>
     </div>
     <main id="authScreen" class="screen hidden">
-      <button id="authBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
       <div class="auth-wrap">
-        <h1 class="title">Chip Logger</h1>
+        <header class="auth-header">
+          <button id="authBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
+          <h1 class="title">Chip Logger</h1>
+        </header>
         <p class="subtitle">Sign in to view sessions, hands, and analytics.</p>
 
         <div class="field">
@@ -8006,9 +8066,11 @@
     </main>
 
     <main id="createAccountScreen" class="screen hidden">
-      <button id="createAuthBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
       <div class="auth-wrap">
-        <h1 class="title">Create Account</h1>
+        <header class="auth-header">
+          <button id="createAuthBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
+          <h1 class="title">Create Account</h1>
+        </header>
 
         <div class="field">
           <label for="newName">Name</label>
@@ -8052,9 +8114,11 @@
     </main>
 
     <main id="authSupportScreen" class="screen hidden">
-      <button id="authSupportBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
       <div class="auth-wrap">
-        <h1 class="title">Contact Support</h1>
+        <header class="auth-header">
+          <button id="authSupportBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
+          <h1 class="title">Contact Support</h1>
+        </header>
         <p class="support-intro">Send a message through the site form below.</p>
         <form
           id="authSupportForm"
@@ -8105,9 +8169,11 @@
     </main>
 
     <main id="resetPasswordScreen" class="screen hidden">
-      <button id="resetPasswordBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
       <div class="auth-wrap">
-        <h1 class="title">Reset Password</h1>
+        <header class="auth-header">
+          <button id="resetPasswordBackBtn" class="auth-back-btn" type="button" aria-label="Go back">← Back</button>
+          <h1 class="title">Reset Password</h1>
+        </header>
         <p class="subtitle">Choose a new password for your account.</p>
 
         <div class="field">
