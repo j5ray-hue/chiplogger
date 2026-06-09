@@ -6,3 +6,4 @@
 node_modules/.mf/
 .wrangler/
 node_modules/.mf/
+.env
